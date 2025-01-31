@@ -25,6 +25,8 @@ namespace UserMPA
             app.MapRazorPages();
 
             app.Run();
+
+			Console.WriteLine("Error");
         }
     }
 }
