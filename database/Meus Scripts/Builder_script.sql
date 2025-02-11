@@ -89,12 +89,13 @@ CREATE TABLE AutorObra (
 -- Create Leitor table
 CREATE TABLE Leitor (
     pk_leitor INT IDENTITY(1,1) PRIMARY KEY,
+	loggin_password NVARCHAR(50) NOT NULL,
+	user_role NVARCHAR(50) DEFAULT 'USER',
     stat NVARCHAR(50) DEFAULT 'active',
     nome_leitor NVARCHAR(50) NOT NULL,
     telefone NVARCHAR(20) DEFAULT NULL,
     email NVARCHAR(50) DEFAULT NULL,
-    morada NVARCHAR(50) DEFAULT NULL,
-    pass NVARCHAR(50) NOT NULL
+    morada NVARCHAR(50) DEFAULT NULL
 );
 
 -- Create Nucleo table
@@ -223,14 +224,14 @@ INSERT INTO GeneroObra (pk_genero, pk_obra) VALUES
 (7, 15);
 
 -- Insert into Leitor
-INSERT INTO Leitor (nome_leitor, telefone, email, morada, stat, pass) VALUES
-('John Doe', '1234567890', 'john.doe@example.com', '123 Main St', 'active', '1234'),
-('Jane Smith', '0987654321', 'jane.smith@example.com', '456 Elm St', 'Inactive', '1234'),
-('Alice Johnson', '1122334455', 'alice.johnson@example.com', '789 Oak St', 'active', '1234'),
-('Bob Brown', '5566778899', 'bob.brown@example.com', '101 Pine St', 'active', '1234'),
-('Charlie Black', '6677889900', 'charlie.black@example.com', '202 Maple St', 'active', '1234'),
-('Diana White', '7788990011', 'diana.white@example.com', '303 Birch St', 'active', '1234'),
-('New Leitor', '1234567890', 'new.leitor@example.com', '456 New St', 'active', '1234');
+INSERT INTO Leitor (nome_leitor, telefone, email, morada, stat, loggin_password, user_role) VALUES
+('John Doe', '1234567890', 'john.doe@example.com', '123 Main St', 'active', 1234, 'ADMIN'),
+('Jane Smith', '0987654321', 'jane.smith@example.com', '456 Elm St', 'Inactive', 1234, 'USER'),
+('Alice Johnson', '1122334455', 'alice.johnson@example.com', '789 Oak St', 'active', 1234, 'USER'),
+('Bob Brown', '5566778899', 'bob.brown@example.com', '101 Pine St', 'active', 1234, 'USER'),
+('Charlie Black', '6677889900', 'charlie.black@example.com', '202 Maple St', 'active', 1234, 'USER'),
+('Diana White', '7788990011', 'diana.white@example.com', '303 Birch St', 'active', 1234, 'USER'),
+('New Leitor', '1234567890', 'new.leitor@example.com', '456 New St', 'active', 1234, 'USER');
 
 -- Insert into Nucleo
 INSERT INTO Nucleo (nome_nucleo, morada, telefone, fk_central) VALUES
@@ -321,4 +322,3 @@ INSERT INTO [History] (nome_obra, id_obra, nucleo, data_requisicao, data_devoluc
 ('The Great Gatsby', 1, 'Central Library', '2023-01-01', '2023-01-15', 'John Doe', 1),
 ('To Kill a Mockingbird', 2, 'Westside Branch', '2023-02-01', '2023-02-15', 'Jane Smith', 2),
 ('1984', 3, 'Eastside Branch', '2023-03-01', '2023-03-15', 'Alice Johnson', 3);
-
