@@ -10,33 +10,30 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-var summaries = new[]
-{
-	"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+//ARGV method
+//app.MapPost("/items", (Dictionary<string, string> args) =>
+//{
+//    return Results.Json(args);
+//});
 
-app.MapGet("/weatherforecast", () =>
+
+
+app.MapPost("/login", (string login, string password) =>
 {
-	var forecast =  Enumerable.Range(1, 5).Select(index =>
-		new WeatherForecast
-		(
-			DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-			Random.Shared.Next(-20, 55),
-			summaries[Random.Shared.Next(summaries.Length)]
-		))
-		.ToArray();
-	return forecast;
+    if (login == "admin" && password == "admin")
+    {
+        return Results.Ok("You are logged in");
+    }
+    else
+    {
+        return Results.BadRequest("Incorrect login or password");
+    }
 })
-.WithName("GetWeatherForecast")
+.WithName("Login")
 .WithOpenApi();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}

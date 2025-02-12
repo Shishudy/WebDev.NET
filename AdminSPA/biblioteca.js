@@ -19,6 +19,29 @@ document.addEventListener("DOMContentLoaded", function() {
         const password = document.getElementById("password").value;
 
         // Aqui você pode verificar o usuário e senha com um banco de dados ou API externa.
+
+        // fetch('https://example.com/protected-endpoint', {
+        //     method: 'POST',
+        //     headers: {
+        //         "Authorization": "Bearer your-jwt-token",   // For authentication
+        //         "Content-Type": "application/json"          // To indicate that you're sending JSON data
+        //     },
+        //     body: JSON.stringify({ key: 'value' })          // Data you're sending in the body
+        // })
+        // .then(response => response.json())
+        // .then(data => console.log(data))
+        // .catch(error => console.error("Error:", error));
+        
+        // fetch("http://localhost:5000/login", {
+        //     method: "POST",
+        //     headers: {
+        //       "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify({ login, password })
+        //   })
+        //     .then(response => response.json())
+        //     .then(data => liberarAcesso())
+        //     .catch(error => alert("Error:", error));
         if (username === "admin" && password === "1234") {
             localStorage.setItem("usuarioLogado", username);
             liberarAcesso();
