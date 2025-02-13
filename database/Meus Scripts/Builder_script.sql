@@ -43,6 +43,16 @@ IF OBJECT_ID('dbo.Nucleo', 'U') IS NOT NULL
 IF OBJECT_ID('dbo.NucleoObra', 'U') IS NOT NULL
     DROP TABLE dbo.NucleoObra;
 
+CREATE TABLE LookupTable (
+    pk_lookup INT IDENTITY(1,1) PRIMARY KEY,
+    categoty INT NOT NULL,
+    sp_AdoNet NVARCHAR(50) NOT NULL,
+    sp_EFCore NVARCHAR(50) NOT NULL,
+    n_params INT DEFAULT 0,
+    name_params NVARCHAR(50) DEFAULT NULL,
+    description NVARCHAR(255)
+);
+
 -- Create ImageReferences table
 CREATE TABLE ImageReferences (
     pk_image INT IDENTITY(1,1) PRIMARY KEY,
@@ -89,7 +99,8 @@ CREATE TABLE AutorObra (
 -- Create Leitor table
 CREATE TABLE Leitor (
     pk_leitor INT IDENTITY(1,1) PRIMARY KEY,
-	loggin_password NVARCHAR(50) NOT NULL,
+	data_inscricao DATE DEFAULT GETDATE(),
+    user_password NVARCHAR(50) NOT NULL,
 	user_role NVARCHAR(50) DEFAULT 'USER',
     stat NVARCHAR(50) DEFAULT 'active',
     nome_leitor NVARCHAR(50) NOT NULL,
@@ -125,6 +136,7 @@ CREATE TABLE Requisicao (
     stat NVARCHAR(50) DEFAULT 'borrowed',
     data_levantamento DATE,
     data_devolucao DATE DEFAULT NULL,
+    already_suspend BIT DEFAULT 0,
     PRIMARY KEY (pk_leitor, pk_obra, pk_nucleo),
     FOREIGN KEY (pk_leitor) REFERENCES Leitor(pk_leitor),
     FOREIGN KEY (pk_obra) REFERENCES Obra(pk_obra)
@@ -224,7 +236,7 @@ INSERT INTO GeneroObra (pk_genero, pk_obra) VALUES
 (7, 15);
 
 -- Insert into Leitor
-INSERT INTO Leitor (nome_leitor, telefone, email, morada, stat, loggin_password, user_role) VALUES
+INSERT INTO Leitor (nome_leitor, telefone, email, morada, stat, user_password, user_role) VALUES
 ('John Doe', '1234567890', 'john.doe@example.com', '123 Main St', 'active', 1234, 'ADMIN'),
 ('Jane Smith', '0987654321', 'jane.smith@example.com', '456 Elm St', 'Inactive', 1234, 'USER'),
 ('Alice Johnson', '1122334455', 'alice.johnson@example.com', '789 Oak St', 'active', 1234, 'USER'),

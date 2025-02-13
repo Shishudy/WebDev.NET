@@ -99,7 +99,7 @@
 		@editora NVARCHAR(50),
 		@ano INT,
 		@image_path NVARCHAR(50) = NULL,
-		@quantidade INT = 1
+		@quantidade INT = 0
 	)
 	AS
 	BEGIN
@@ -125,7 +125,7 @@
 			VALUES (@nome_obra, @isbn, @editora, @ano)
 			SET @new_pk_obra = SCOPE_IDENTITY()
 			-- insert obra into nucleo relationship
-			INSERT INTO dbo.[NucleoObra] (pk_nucleo, pk_obra, quantidade) --quantidade default 1
+			INSERT INTO dbo.[NucleoObra] (pk_nucleo, pk_obra, quantidade) --quantidade default 0
 			VALUES (@pk_nucleo, @new_pk_obra, @quantidade)
 			-- update image, if image path is not null
 			EXEC dbo.sp_update_image @new_pk_obra, @image_path, @isbn
@@ -257,8 +257,8 @@
 			IF NOT EXISTS (SELECT * FROM dbo.[NucleoObra] WHERE pk_obra = @pk_obra AND pk_nucleo = @pk_nucleo)
 				THROW 50000, 'Error: obra not found in given nucleo', 1;
 			-- check if there are enough available copies
-			IF (dbo.fn_available_copies(@pk_obra, @pk_nucleo) - @quantidade) < 1
-				THROW 500001, 'need to leave at least 1 copy', 1;
+			IF (dbo.fn_available_copies(@pk_obra, @pk_nucleo) - @quantidade) < 0
+				THROW 50000, 'Error: Insuficient obras for request in given nucleo', 1;
 			--UPDATE:
 			--update the quantity of obra in nucleo
 			UPDATE dbo.[NucleoObra]
@@ -362,9 +362,12 @@
 			END
 			--UPDATE:
 			--update the quantity of obra in nucleo
-			UPDATE dbo.[NucleoObra]
-			SET quantidade = quantidade + @quantidade
-			WHERE pk_obra = @pk_obra AND pk_nucleo = @pk_nucleo
+			ELSE
+			BEGIN
+				UPDATE dbo.[NucleoObra]
+				SET quantidade = quantidade + @quantidade
+				WHERE pk_obra = @pk_obra AND pk_nucleo = @pk_nucleo
+			END
 			IF @initial_trancount = 0 AND @@TRANCOUNT > 0
 				COMMIT TRANSACTION;
 		END TRY
@@ -388,7 +391,9 @@
 		@nome NVARCHAR(50),
 		@morada NVARCHAR(50),
 		@telefone NVARCHAR(50),
-		@email NVARCHAR(50)
+		@email NVARCHAR(50),
+		@user_password NVARCHAR(50),
+		@user_role NVARCHAR(50) = 'USER'
 		--@STAT IS DEFAULTED in the create table
 	AS
 	BEGIN
@@ -398,11 +403,13 @@
 		BEGIN TRY
 			--CHECKS:
 			--check if user already exists (duplicate)
-			IF EXISTS (SELECT * FROM dbo.[Leitor] WHERE nome_leitor = @nome AND morada = @morada AND telefone = @telefone AND email = @email)
+			IF EXISTS (SELECT * FROM dbo.[Leitor] WHERE email = @email)
+				THROW 50000, 'matching leitor login already exists', 1;
+			IF EXISTS (SELECT * FROM dbo.[Leitor] WHERE nome_leitor = @nome AND morada = @morada AND telefone = @telefone)
 				THROW 50000, 'matching leitor already exists', 1;
 			--ACTUAL INSERT:
-			INSERT INTO dbo.[Leitor] (nome_leitor, morada, telefone, email)
-			VALUES (@nome, @morada, @telefone, @email)
+			INSERT INTO dbo.[Leitor] (nome_leitor, data_inscricao, morada, telefone, email, user_password, user_role)
+			VALUES (@nome, GETDATE(), @morada, @telefone, @email, @user_password, @user_role)
 			IF @initial_trancount = 0 AND @@TRANCOUNT > 0
 				COMMIT TRANSACTION;
 		END TRY
@@ -439,7 +446,7 @@
 			--count the number of late returns
 			SELECT @count_late = COUNT(*)
 			FROM dbo.fn_requisicoes_leitor(@pk_leitor)
-			WHERE dbo.fn_check_overtime(data_levantamento, data_devolucao, 15) = 1
+			WHERE dbo.fn_check_overtime(data_levantamento, data_devolucao, 15) = 1 AND already_suspend = 0
 			--if more than 3 late returns, suspend leitor
 			IF @count_late > 3
 			BEGIN
@@ -476,6 +483,10 @@
 			UPDATE dbo.[Leitor]
 			SET stat = 'suspended'
 			WHERE pk_leitor = @pk_leitor
+			-- ignore books returned and flagged as late
+			UPDATE dbp.[Requisicao]
+			SET already_suspend = 1
+			WHERE pk_leitor = @pk_leitor AND stat = 'returned'
 			IF @initial_trancount = 0 AND @@TRANCOUNT > 0
 				COMMIT TRANSACTION;
 		END TRY
@@ -517,10 +528,10 @@
 	AS
 	RETURN
 	(
-	-- Get all requisitions of a leitor
-	SELECT *
-	FROM dbo.[Requisicao]
-	WHERE pk_leitor = @pk_leitor
+		-- Get all requisitions of a leitor
+		SELECT *
+		FROM dbo.[Requisicao]
+		WHERE pk_leitor = @pk_leitor
 	)
 	GO
 
@@ -593,6 +604,8 @@
 			--check if leitor already requested this obra in any nucleo
 			IF EXISTS (SELECT * FROM dbo.[Requisicao] WHERE pk_leitor = @pk_leitor AND pk_obra = @pk_obra)
 				THROW 50000, 'leitor already requested this obra', 1;
+			IF ((SELECT COUNT(dbo.[Requisicao].pk_obra) FROM dbo.[Requisicao] WHERE pk_leitor = @pk_leitor AND stat = 'borrowed') = 4)
+				THROW 50000, 'leitor has 4 requesitions already', 1;
 			--ACTUAL INSERT:
 			--insert requisition
 			INSERT INTO dbo.[Requisicao] (pk_leitor, pk_obra, pk_nucleo, data_levantamento)
