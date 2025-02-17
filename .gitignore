@@ -3,4 +3,5 @@ Admin/.vs/
 
 UserMPA/.vs/
 
-*/.vs/
+*.vs
+*.vsidx

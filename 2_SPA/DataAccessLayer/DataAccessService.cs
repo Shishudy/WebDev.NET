@@ -1,47 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
-using EfProcedures;
+using Microsoft.EntityFrameworkCore;
 using System.Transactions;
+using DataAccessLayer.Models;
 
 namespace DataAccessLayer
-{
-
-    public class AppDbContext : DbContext
-    {
-        public DbSet<Leitor> Leitors { get; set; }
-        public DbSet<Requisicao> Requisicaos { get; set; }
-        public DbSet<NucleoObra> NucleoObras { get; set; }
-        public DbSet<Obra> Obras { get; set; 
-        public DbSet<ImageReference> ImageReferences { get; set; }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseSqlServer("your_connection_string");
-        }
-        //TODO: scaffolded code and use Fluent API configurations to update the model (database-first approach)
-        // protected override void OnModelCreating(ModelBuilder modelBuilder)
-        // {
-        //     // Apply configurations using Fluent API
-        //     modelBuilder.ApplyConfiguration(new UserConfiguration());
-        //     modelBuilder.ApplyConfiguration(new OrderConfiguration());
-        // }
-    }
-}
-
-public class Procedures
-{
-    //dependency injection: https://docs.microsoft.com/en-us/aspnet/core/fundamentals/dependency-injection?view=aspnetcore-5.0
-    private readonly AppDbContext context;
-    public Procedures(AppDbContext dbContext)
-    {
-        this.context = dbContext;
-    }
-
-
-namespace EfProcedures
 {
     public class Procedures
     {
@@ -57,14 +23,14 @@ namespace EfProcedures
         //		1
         /////////////////////
 
-        public int GetTotalObras()
+        public int GetTotalObra()
         {
-            return context.NucleoObras.Sum(no => no.Quantidade);
+            return context.NucleoObra.Sum(no => no.Quantidade);
         }
-        public List<(string NomeGenero, int TotalQuantidade)> GetTotalObrasPorGenero()
+        public List<(string NomeGenero, int TotalQuantidade)> GetTotalObraPorGenero()
         {
-            var result = from n in context.NucleoObras
-                         join go in context.GeneroObras on n.PkObra equals go.PkObra
+            var result = from n in context.NucleoObra
+                         join go in context.GeneroObra on n.PkObra equals go.PkObra
                          join g in context.Generos on g.PkGenero equals g.PkGenero
                          group n by g.NomeGenero into g
                          select new
@@ -85,7 +51,7 @@ namespace EfProcedures
 
         public List<(string NomeObra, int TimesRequested)> GetTopRequestedByTime(DateTime? startDate = null, DateTime? endDate = null)
         {
-            var query = context.Requisicaos.Include(r => r.Obra).AsQueryable();
+            var query = context.Requisicao.Include(r => r.Obra).AsQueryable();
 
             if (startDate.HasValue)
                 query = query.Where(r => r.DataLevantamento >= startDate);
@@ -108,19 +74,20 @@ namespace EfProcedures
 
         public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
         {
-            var result = from r in context.Requisicaos
-                         join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+            var result = from r in context.Requisicao
+                         join n in context.Nucleos on r.pk_nucleo equals n.pk_nucleo
+                         select r;
 
             if (startDate != null)
-                result = result.Where(r.DataLevantamento >= startDate);
+                result = result.Where(r => r.DataLevantamento >= startDate);
             if (endDate != null)
-                result = result.Where(r.DataLevantamento <= endDate);
-            result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
-                select new somethingsomething
-                {
-                    NomeNucleo = g.Key.NomeNucleo,
-                    TotalRequisicoes = g.Count()
-                };
+                result = result.Where(r => r.DataLevantamento <= endDate);
+            //result = result.group r by new { n.pk_nucleo, n.NomeNucleo } into g
+            //    select new somethingsomething
+            //    {
+            //        NomeNucleo = g.Key.NomeNucleo,
+            //        TotalRequisicoes = g.Count()
+            //    };
             return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
         }
 
@@ -128,27 +95,27 @@ namespace EfProcedures
         //		5
         /////////////////////
 
-        public bool InsertObra(int? pkNucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
+        public bool InsertObra(int? pk_nucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
         {
-            using (var transaction = Database.BeginTransaction())
+            using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var Obras = context.Obras;
+                    var Obra = context.Obra;
                     var Nucleos = context.Nucleos;
-                    var NucleoObras = context.NucleoObras;
+                    var NucleoObra = context.NucleoObra;
 
                     // Check for existing obra and nucleo in a single query
-                    // var existingObra = Obras.FirstOrDefault(o => o.Isbn == isbn);
+                    // var existingObra = Obra.FirstOrDefault(o => o.Isbn == isbn);
                     // if (existingObra != null)
                     // 	throw new Exception("Error: obra already exists");
                     // Synchronous database operations
-                    if (Obras.Any(o => o.Isbn == isbn))
+                    if (Obra.Any(o => o.Isbn == isbn))
                         throw new Exception("Error: obra already exists");
-                    if (pkNucleo.HasValue && !Nucleos.Any(n => n.PkNucleo == pkNucleo))
+                    if (pk_nucleo.HasValue && !Nucleos.Any(n => n.pk_nucleo == pk_nucleo))
                         throw new Exception("Error: nucleo not found");
-                    if (!pkNucleo.HasValue)
-                        pkNucleo = GetCentralNucleo(); //TODO: implement GetCentralNucleo
+                    if (!pk_nucleo.HasValue)
+                        pk_nucleo = GetCentralNucleo(); //TODO: implement GetCentralNucleo
                     var obra = new Obra
                     {
                         NomeObra = nomeObra,
@@ -156,15 +123,15 @@ namespace EfProcedures
                         Editora = editora,
                         Ano = ano
                     };
-                    Obras.Add(obra);
+                    Obra.Add(obra);
                     context.SaveChanges();
                     var nucleoObra = new NucleoObra
                     {
-                        PkNucleo = pkNucleo.Value,
+                        pk_nucleo = pk_nucleo.Value,
                         PkObra = obra.PkObra, //autoincremented
                         Quantidade = quantidade
                     };
-                    NucleoObras.Add(nucleoObra);
+                    NucleoObra.Add(nucleoObra);
                     context.SaveChanges();
                     if (!string.IsNullOrEmpty(imagePath))
                         UpdateImage(obra.PkObra, imagePath, isbn);
@@ -185,7 +152,7 @@ namespace EfProcedures
             {
                 try
                 {
-                    var obra = context.Obras.FirstOrDefault(o => o.PkObra == pkObra);
+                    var obra = context.Obra.FirstOrDefault(o => o.PkObra == pkObra);
                     if (obra == null)
                         throw new Exception("Obra not found.");
                     var novaImagem = new ImageReference
@@ -210,53 +177,50 @@ namespace EfProcedures
 
         private int GetCentralNucleo()
         {
-            return context.Nucleos.Where(n => n.FkCentral == null).Select(n => n.PkNucleo).FirstOrDefault();
+            return context.Nucleos.Where(n => n.FkCentral == null).Select(n => n.pk_nucleo).FirstOrDefault();
         }
 
         /////////////////////
         //		6
         /////////////////////
 
-        public bool AddObra(int pkObra, int pkNucleo, int quantidade)
-        {
-            using (var context = new AppDbContext())
-            {
-                using (var transaction = context.Database.BeginTransaction())
-                {
-                    try
-                    {
-                        if (!context.Obras.Any(o => o.PkObra == pkObra))
-                            throw new Exception("Error: obra not found");
-
-                        var nucleoObra = context.NucleoObras.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == pkNucleo);
-                        if (nucleoObra == null)
-                            throw new Exception("Error: obra not found in given nucleo");
-                        nucleoObra.Quantidade += quantidade;
-                        context.SaveChanges();
-                        transaction.Commit();
-                        return true;
-                    }
-                    catch (Exception)
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
-                }
-            }
-        }
-
-        public bool RemoveObra(int pkObra, int pkNucleo, int quantidade)
+        public bool AddObra(int pkObra, int pk_nucleo, int quantidade)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var nucleoObra = context.NucleoObras.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == pkNucleo);
+                    if (!context.Obra.Any(o => o.PkObra == pkObra))
+                        throw new Exception("Error: obra not found");
+
+                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleo);
                     if (nucleoObra == null)
                         throw new Exception("Error: obra not found in given nucleo");
-                    int available_copies = available_copies(pkObra, pkNucleo);
+                    nucleoObra.Quantidade += quantidade;
+                    context.SaveChanges();
+                    transaction.Commit();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+        }
+
+        public bool RemoveObra(int pkObra, int pk_nucleo, int quantidade)
+        {
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleo);
+                    if (nucleoObra == null)
+                        throw new Exception("Error: obra not found in given nucleo");
+                    int available_copies = available_copies(pkObra, pk_nucleo);
                     if (available_copies < quantidade)
-                        throw new Exception("Error: insufficient obras for request in given nucleo");
+                        throw new Exception("Error: insufficient Obra for request in given nucleo");
                     nucleoObra.Quantidade -= quantidade;
                     context.SaveChanges();
                     transaction.Commit();
@@ -272,12 +236,12 @@ namespace EfProcedures
 
         public int available_copies(int pk_obra, int pk_nucleo)
         {
-            int count_in_nucleo = context.NucleoObras
-                .Where(n => n.PkObra == pk_obra && n.PkNucleo == pk_nucleo)
+            int count_in_nucleo = context.NucleoObra
+                .Where(n => n.PkObra == pk_obra && n.pk_nucleo == pk_nucleo)
                 .Select(n => n.Quantidade)
                 .FirstOrDefault();
-            int count_in_requisitions = context.Requisicaos
-                .Where(r => r.PkObra == pk_obra && r.PkNucleo == pk_nucleo && r.Stat == "borrowed")
+            int count_in_requisitions = context.Requisicao
+                .Where(r => r.PkObra == pk_obra && r.pk_nucleo == pk_nucleo && r.Stat == "borrowed")
                 .Count();
             int available_copies = count_in_nucleo - count_in_requisitions;
             return available_copies;
@@ -287,26 +251,26 @@ namespace EfProcedures
         //		7
         /////////////////////
 
-        public bool AddObraInNucleo(int pkObra, int pkNucleo, int quantidade)
+        public bool AddObraInNucleo(int pkObra, int pk_nucleo, int quantidade)
         {//TODO maybe not needed
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var nucleoObraDestino = context.NucleoObras.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == pkNucleoDestino);
+                    var nucleoObraDestino = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleoDestino);
                     if (nucleoObraDestino != null)
                     {
-                        AddObra(pkObra, pkNucleo, quantidade);
+                        AddObra(pkObra, pk_nucleo, quantidade);
                     }
                     else
                     {
                         var novaNucleoObra = new NucleoObra
                         {
-                            PkNucleo = pkNucleo,
+                            pk_nucleo = pk_nucleo,
                             PkObra = pkObra,
                             Quantidade = quantidade
                         };
-                        context.NucleoObras.Add(novaNucleoObra);
+                        context.NucleoObra.Add(novaNucleoObra);
                         context.SaveChanges();
                     }
                     return true;
@@ -319,14 +283,14 @@ namespace EfProcedures
             }
         }
 
-        public bool TransferObra(int pkObra, int pkNucleoOrigem, int pkNucleoDestino, int quantidade)
+        public bool TransferObra(int pkObra, int pk_nucleoOrigem, int pk_nucleoDestino, int quantidade)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    RemoveObra(pkObra, pkNucleoOrigem, quantidade);
-                    AddObraInNucleo(pkObra, pkNucleoDestino, quantidade);
+                    RemoveObra(pkObra, pk_nucleoOrigem, quantidade);
+                    AddObraInNucleo(pkObra, pk_nucleoDestino, quantidade);
                     transaction.Commit();
                     return true;
                 }
@@ -348,9 +312,9 @@ namespace EfProcedures
             {
                 try
                 {
-                    if (context.Leitors.Any(l => l.Email == email))
+                    if (context.Leitor.Any(l => l.Email == email))
                         throw new Exception("matching leitor login already exists");
-                    if (context.Leitors.Any(l => l.NomeLeitor == nome && l.Morada == morada && l.Telefone == telefone))
+                    if (context.Leitor.Any(l => l.NomeLeitor == nome && l.Morada == morada && l.Telefone == telefone))
                         throw new Exception("matching leitor already exists");
                     var leitor = new Leitor
                     {
@@ -363,7 +327,7 @@ namespace EfProcedures
                         UserRole = userRole,
                         Stat = "active"
                     };
-                    context.Leitors.Add(leitor);
+                    context.Leitor.Add(leitor);
                     context.SaveChanges();
                     transaction.Commit();
                     return true;
@@ -384,12 +348,12 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor != null && leitor.Stat == "suspended")
                         throw new Exception("leitor is suspended");
-                    var leitor_requesitions = context.Requisicaos.Where(r => r.pk_leitor == pk_leitor);
+                    var leitor_requesitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor);
                     var countLate = leitor_requesitions.Where(fn_check_overtime(r.DataLevantamento, r.DataDevolucao.Value, 15)).Count();
                     // removed r.DataDevolucao.HasValue && 
                     if (countLate < 3)
@@ -422,7 +386,7 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor != null && leitor.Stat == "suspended")
@@ -450,7 +414,7 @@ namespace EfProcedures
 
         public List<Requisicao> GetRequisicoesLeitor(int pk_leitor)
         {
-            return context.Requisicaos.Where(r => r.pk_leitor == pk_leitor).ToList();
+            return context.Requisicao.Where(r => r.pk_leitor == pk_leitor).ToList();
         }
 
         /////////////////////
@@ -463,10 +427,10 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    var requisition = context.Requisicaos.FirstOrDefault(r => r.pk_leitor == pk_leitor && r.PkObra == pkObra && r.PkNucleo == nucleo);
+                    var requisition = context.Requisicao.FirstOrDefault(r => r.pk_leitor == pk_leitor && r.PkObra == pkObra && r.pk_nucleo == nucleo);
                     if (requisition == null)
                         throw new Exception("requisition not found");
                     requisition.Stat = "returned";
@@ -482,27 +446,27 @@ namespace EfProcedures
             }
         }
 
-        public bool Requisition(int pk_leitor, int pkObra, int pkNucleo)
+        public bool Requisition(int pk_leitor, int pkObra, int pk_nucleo)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    var obra = context.Obras.FirstOrDefault(o => o.PkObra == pkObra);
+                    var obra = context.Obra.FirstOrDefault(o => o.PkObra == pkObra);
                     if (obra == null)
                         throw new Exception("obra not found");
-                    var nucleo = context.Nucleos.FirstOrDefault(n => n.PkNucleo == pkNucleo);
+                    var nucleo = context.Nucleos.FirstOrDefault(n => n.pk_nucleo == pk_nucleo);
                     if (nucleo == null)
                         throw new Exception("nucleo not found");
                     SuspendLateLeitor(pk_leitor);
                     if (leitor.Stat == "suspended")
                         throw new Exception("leitor is suspended");
-                    if (available_copies(pkObra, pkNucleo) < 2)
+                    if (available_copies(pkObra, pk_nucleo) < 2)
                         throw new Exception("no available copies");
-                    var leitor_requisitions = context.Requisicaos.Where(r => r.pk_leitor == pk_leitor && r.Stat == "borrowed").ToList();
+                    var leitor_requisitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor && r.Stat == "borrowed").ToList();
                     if (leitor_requisitions.Any(r => r.pk_leitor == pk_leitor && r.PkObra == pkObra))
                         throw new Exception("leitor already requested this obra");
                     if (leitor_requisitions.Count() == 4)
@@ -511,10 +475,10 @@ namespace EfProcedures
                     {
                         pk_leitor = pk_leitor,
                         PkObra = pkObra,
-                        PkNucleo = pkNucleo,
+                        pk_nucleo = pk_nucleo,
                         DataLevantamento = DateTime.Now
                     };
-                    context.Requisicaos.Add(requisition);
+                    context.Requisicao.Add(requisition);
                     context.SaveChanges();
                     transaction.Commit();
                     return true;
@@ -539,7 +503,7 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor.Stat != "suspended")
@@ -561,7 +525,7 @@ namespace EfProcedures
         //		11
         /////////////////////
 
-        public bool sp_delete_inactive_leitors(DateTime? date_since)
+        public bool sp_delete_inactive_Leitor(DateTime? date_since)
         {// TODO: not correct i am only deleting people that have done rquesitions and are inactive
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -570,7 +534,7 @@ namespace EfProcedures
                     if (date_since == null)
                         date_since = 365;
                     // linq commands will be efficiently combined by the provider
-                    var requesitions = context.Requisicaos
+                    var requesitions = context.Requisicao
                         .Where(r => DateTime.Now.Subtract(r.DataLevantamento) > date_since)
                         .GroupBy(r => r.pk_leitor);
                     foreach (var leitores in requesitions)
@@ -592,11 +556,11 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     sp_save_leitor_history(pk_leitor);
-                    context.Leitors.Remove(leitor);
+                    context.Leitor.Remove(leitor);
                     context.SaveChanges();
                     transaction.Commit();
                     return true;
@@ -615,15 +579,15 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     // Perform the insert into the History table
                     var historyEntries = from l in leitor
-                                         join r in context.Requisicaos on l.pk_leitor equals r.pk_leitor
-                                         join obra in context.Obras on r.PkObra equals obra.PkObra
-                                         join no in context.NucleoObras on obra.PkObra equals no.PkObra
-                                         join n in context.Nucleos on no.PkNucleo equals n.PkNucleo
+                                         join r in context.Requisicao on l.pk_leitor equals r.pk_leitor
+                                         join obra in context.Obra on r.PkObra equals obra.PkObra
+                                         join no in context.NucleoObra on obra.PkObra equals no.PkObra
+                                         join n in context.Nucleos on no.pk_nucleo equals n.pk_nucleo
                                          select new History
                                          { //same time wedo select wedo create new object
                                              NomeObra = obra.NomeObra,
@@ -662,13 +626,13 @@ namespace EfProcedures
             {
                 try
                 {
-                    var leitor = context.Leitors.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    var leitor_requisitions = context.Requisicaos.Where(r => r.pk_leitor == pk_leitor);
+                    var leitor_requisitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor);
                     var undelivered_requisitions = leitor_requisitions.Where(r => r.Stat == "borrowed");
                     foreach (var requisition in undelivered_requisitions)
-                        Devolution(pk_leitor, requisition.PkObra, requisition.PkNucleo);
+                        Devolution(pk_leitor, requisition.PkObra, requisition.pk_nucleo);
                     sp_del_leitor(pk_leitor);
                     return true;
                 }
@@ -680,11 +644,11 @@ namespace EfProcedures
             }
         }
 
-        // 3. search for obras by name
+        // 3. search for Obra by name
 
-        public List<Obra> sp_search_obras(string obraName)
+        public List<Obra> sp_search_Obra(string obraName)
         {
-            return context.Obras.Where(o => o.NomeObra.Contains(obraName)).ToList();
+            return context.Obra.Where(o => o.NomeObra.Contains(obraName)).ToList();
         }
 
         public List<Nucleo> sp_search_nucleos(string nucleoName)
@@ -693,43 +657,43 @@ namespace EfProcedures
         }
 
 
-        public List<Obra> sp_search_obras_genero(string generoName)
+        public List<Obra> sp_search_Obra_genero(string generoName)
         {
-            var obras_genero = context.Obras
-                .Join(context.GeneroObras, o => o.PkObra, go => go.PkObra, (o, go) => new { o, go })
+            var Obra_genero = context.Obra
+                .Join(context.GeneroObra, o => o.PkObra, go => go.PkObra, (o, go) => new { o, go })
                 .Join(context.Generos, og => og.go.PkGenero, g => g.PkGenero, (og, g) => new { og, g })
                 .Where(og => og.g.NomeGenero.Contains(generoName))
                 .Select(og => og.og.o)
                 .ToList();
-            return obras_genero;
+            return Obra_genero;
         }
 
-        public class RequisicaoStatus
+        public class Requisicaotatus
         {
             public string NomeObra { get; set; }
-            public int PkNucleo { get; set; }
+            public int pk_nucleo { get; set; }
             public string NomeNucleo { get; set; }
             public DateTime DataLevantamento { get; set; }
             public DateTime DataDevolucao { get; set; }
             public string StatusMessage { get; set; }
         }
 
-        public List<RequisicaoStatus> requesicao_status(int pk_leitor, int? pk_nucleo = null)
+        public List<Requisicaotatus> requesicao_status(int pk_leitor, int? pk_nucleo = null)
         {
-            var leitoresFiltradas = from l in context.Leitors
+            var leitoresFiltradas = from l in context.Leitor
                                     where l.pk_leitor == pk_leitor select l;
 
-            var requisicoesFiltradas = from l in context.Requisicaos
+            var requisicoesFiltradas = from l in context.Requisicao
                                        where l.Stat == "borrowed" select l;
             var query = from l in leitoresFiltradas
                         join r in requisicoesFiltradas on l.pk_leitor equals r.pk_leitor
-                        join o in context.Obras on r.PkObra equals o.PkObra
-                        join no in context.NucleoObras on o.PkObra equals no.PkObra
-                        join n in context.Nucleos on no.PkNucleo equals n.PkNucleo // Get Núcleo Name
-                        select new RequisicaoStatus// anonymous type
+                        join o in context.Obra on r.PkObra equals o.PkObra
+                        join no in context.NucleoObra on o.PkObra equals no.PkObra
+                        join n in context.Nucleos on no.pk_nucleo equals n.pk_nucleo // Get Núcleo Name
+                        select new Requisicaotatus// anonymous type
                         {
                             NomeObra = o.NomeObra,
-                            PkNucleo = n.PkNucleo,
+                            pk_nucleo = n.pk_nucleo,
                             NomeNucleo = n.NomeNucleo,
                             DataLevantamento = r.DataLevantamento,
                             DataDevolucao = r.DataDevolucao,
@@ -739,7 +703,7 @@ namespace EfProcedures
             // Apply filter if pk_nucleo is provided
             if (pk_nucleo.HasValue)
             {
-                query = query.Where(x => x.PkNucleo == pk_nucleo.Value);
+                query = query.Where(x => x.pk_nucleo == pk_nucleo.Value);
             }
 
             // Convert to List and Set Status Messages
@@ -755,19 +719,19 @@ namespace EfProcedures
     }
 }
 
-        // public async Task<bool> InsertObraAsync(int? pkNucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
+        // public async Task<bool> InsertObraAsync(int? pk_nucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
         // {
         // 	using (var transaction = await Database.BeginTransactionAsync())
         // 	{
         // 		try
         // 		{
         // 			// Asynchronous database operations
-        // 			if (await Obras.AnyAsync(o => o.Isbn == isbn))
+        // 			if (await Obra.AnyAsync(o => o.Isbn == isbn))
         // 				throw new Exception("Error: obra already exists");
-        // 			if (pkNucleo.HasValue && !await Nucleos.AnyAsync(n => n.PkNucleo == pkNucleo))
+        // 			if (pk_nucleo.HasValue && !await Nucleos.AnyAsync(n => n.pk_nucleo == pk_nucleo))
         // 				throw new Exception("Error: nucleo not found");
-        // 			if (!pkNucleo.HasValue)
-        // 				pkNucleo = await GetCentralNucleoAsync();
+        // 			if (!pk_nucleo.HasValue)
+        // 				pk_nucleo = await GetCentralNucleoAsync();
         // 			var obra = new Obra
         // 			{
         // 				NomeObra = nomeObra,
@@ -775,15 +739,15 @@ namespace EfProcedures
         // 				Editora = editora,
         // 				Ano = ano
         // 			};
-        // 			Obras.Add(obra);
+        // 			Obra.Add(obra);
         // 			await SaveChangesAsync();
         // 			var nucleoObra = new NucleoObra
         // 			{
-        // 				PkNucleo = pkNucleo.Value,
+        // 				pk_nucleo = pk_nucleo.Value,
         // 				PkObra = obra.PkObra,
         // 				Quantidade = quantidade
         // 			};
-        // 			NucleoObras.Add(nucleoObra);
+        // 			NucleoObra.Add(nucleoObra);
         // 			await SaveChangesAsync();
         // 			if (!string.IsNullOrEmpty(imagePath))
         // 			{
