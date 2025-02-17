@@ -15,25 +15,25 @@ public partial class AppDbContext : DbContext
     {
     }
 
-    public virtual DbSet<Autor> Autors { get; set; }
+    public virtual DbSet<Autor> Autor { get; set; }
 
-    public virtual DbSet<Genero> Generos { get; set; }
+    public virtual DbSet<Genero> Genero { get; set; }
 
-    public virtual DbSet<History> Histories { get; set; }
+    public virtual DbSet<History> Historie { get; set; }
 
-    public virtual DbSet<ImageReference> ImageReferences { get; set; }
+    public virtual DbSet<ImageReference> ImageReference { get; set; }
 
-    public virtual DbSet<Leitor> Leitors { get; set; }
+    public virtual DbSet<Leitor> Leitor { get; set; }
 
-    public virtual DbSet<LookupTable> LookupTables { get; set; }
+    public virtual DbSet<LookupTable> LookupTable { get; set; }
 
-    public virtual DbSet<Nucleo> Nucleos { get; set; }
+    public virtual DbSet<Nucleo> Nucleo { get; set; }
 
-    public virtual DbSet<NucleoObra> NucleoObras { get; set; }
+    public virtual DbSet<NucleoObra> NucleoObra { get; set; }
 
-    public virtual DbSet<Obra> Obras { get; set; }
+    public virtual DbSet<Obra> Obra { get; set; }
 
-    public virtual DbSet<Requisicao> Requisicaos { get; set; }
+    public virtual DbSet<Requisicao> Requisicao { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.

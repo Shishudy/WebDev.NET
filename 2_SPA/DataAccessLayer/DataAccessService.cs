@@ -75,7 +75,7 @@ namespace DataAccessLayer
         public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
         {
             var result = from r in context.Requisicao
-                         join n in context.Nucleos on r.pk_nucleo equals n.pk_nucleo
+                         join n in context.Nucleo on r.pk_nucleo equals n.pk_nucleo
                          select r;
 
             if (startDate != null)
@@ -102,7 +102,7 @@ namespace DataAccessLayer
                 try
                 {
                     var Obra = context.Obra;
-                    var Nucleos = context.Nucleos;
+                    var Nucleo = context.Nucleo;
                     var NucleoObra = context.NucleoObra;
 
                     // Check for existing obra and nucleo in a single query
@@ -112,7 +112,7 @@ namespace DataAccessLayer
                     // Synchronous database operations
                     if (Obra.Any(o => o.Isbn == isbn))
                         throw new Exception("Error: obra already exists");
-                    if (pk_nucleo.HasValue && !Nucleos.Any(n => n.pk_nucleo == pk_nucleo))
+                    if (pk_nucleo.HasValue && !Nucleo.Any(n => n.pk_nucleo == pk_nucleo))
                         throw new Exception("Error: nucleo not found");
                     if (!pk_nucleo.HasValue)
                         pk_nucleo = GetCentralNucleo(); //TODO: implement GetCentralNucleo
@@ -177,7 +177,7 @@ namespace DataAccessLayer
 
         private int GetCentralNucleo()
         {
-            return context.Nucleos.Where(n => n.FkCentral == null).Select(n => n.pk_nucleo).FirstOrDefault();
+            return context.Nucleo.Where(n => n.FkCentral == null).Select(n => n.pk_nucleo).FirstOrDefault();
         }
 
         /////////////////////
@@ -458,7 +458,7 @@ namespace DataAccessLayer
                     var obra = context.Obra.FirstOrDefault(o => o.PkObra == pkObra);
                     if (obra == null)
                         throw new Exception("obra not found");
-                    var nucleo = context.Nucleos.FirstOrDefault(n => n.pk_nucleo == pk_nucleo);
+                    var nucleo = context.Nucleo.FirstOrDefault(n => n.pk_nucleo == pk_nucleo);
                     if (nucleo == null)
                         throw new Exception("nucleo not found");
                     SuspendLateLeitor(pk_leitor);
@@ -587,7 +587,7 @@ namespace DataAccessLayer
                                          join r in context.Requisicao on l.pk_leitor equals r.pk_leitor
                                          join obra in context.Obra on r.PkObra equals obra.PkObra
                                          join no in context.NucleoObra on obra.PkObra equals no.PkObra
-                                         join n in context.Nucleos on no.pk_nucleo equals n.pk_nucleo
+                                         join n in context.Nucleo on no.pk_nucleo equals n.pk_nucleo
                                          select new History
                                          { //same time wedo select wedo create new object
                                              NomeObra = obra.NomeObra,
@@ -651,9 +651,9 @@ namespace DataAccessLayer
             return context.Obra.Where(o => o.NomeObra.Contains(obraName)).ToList();
         }
 
-        public List<Nucleo> sp_search_nucleos(string nucleoName)
+        public List<Nucleo> sp_search_Nucleo(string nucleoName)
         {
-            return context.Nucleos.Where(n => n.NomeNucleo.Contains(nucleoName)).ToList();
+            return context.Nucleo.Where(n => n.NomeNucleo.Contains(nucleoName)).ToList();
         }
 
 
@@ -689,7 +689,7 @@ namespace DataAccessLayer
                         join r in requisicoesFiltradas on l.pk_leitor equals r.pk_leitor
                         join o in context.Obra on r.PkObra equals o.PkObra
                         join no in context.NucleoObra on o.PkObra equals no.PkObra
-                        join n in context.Nucleos on no.pk_nucleo equals n.pk_nucleo // Get Núcleo Name
+                        join n in context.Nucleo on no.pk_nucleo equals n.pk_nucleo // Get Núcleo Name
                         select new Requisicaotatus// anonymous type
                         {
                             NomeObra = o.NomeObra,
@@ -728,7 +728,7 @@ namespace DataAccessLayer
         // 			// Asynchronous database operations
         // 			if (await Obra.AnyAsync(o => o.Isbn == isbn))
         // 				throw new Exception("Error: obra already exists");
-        // 			if (pk_nucleo.HasValue && !await Nucleos.AnyAsync(n => n.pk_nucleo == pk_nucleo))
+        // 			if (pk_nucleo.HasValue && !await Nucleo.AnyAsync(n => n.pk_nucleo == pk_nucleo))
         // 				throw new Exception("Error: nucleo not found");
         // 			if (!pk_nucleo.HasValue)
         // 				pk_nucleo = await GetCentralNucleoAsync();
