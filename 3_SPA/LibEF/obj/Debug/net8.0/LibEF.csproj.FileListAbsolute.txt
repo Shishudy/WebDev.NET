@@ -1,0 +1,15 @@
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\bin\Debug\net8.0\LibEF.deps.json
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\bin\Debug\net8.0\LibEF.runtimeconfig.json
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\bin\Debug\net8.0\LibEF.dll
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\bin\Debug\net8.0\LibEF.pdb
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.csproj.AssemblyReference.cache
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.AssemblyInfoInputs.cache
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.AssemblyInfo.cs
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.csproj.CoreCompileInputs.cache
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.sourcelink.json
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.dll
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\refint\LibEF.dll
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.pdb
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\LibEF.genruntimeconfig.cache
+C:\Users\Jk\Desktop\Grupo\WebDev.NET\2_SPA\DataAccessLayer\LibEF\obj\Debug\net8.0\ref\LibEF.dll
