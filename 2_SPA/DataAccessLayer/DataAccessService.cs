@@ -31,7 +31,7 @@ namespace DataAccessLayer
         {
             var result = from n in context.NucleoObra
                          join go in context.GeneroObra on n.PkObra equals go.PkObra
-                         join g in context.Generos on g.PkGenero equals g.PkGenero
+                         join g in context.Genero on g.PkGenero equals g.PkGenero
                          group n by g.NomeGenero into g
                          select new
                          {
@@ -75,14 +75,14 @@ namespace DataAccessLayer
         public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
         {
             var result = from r in context.Requisicao
-                         join n in context.Nucleo on r.pk_nucleo equals n.pk_nucleo
+                         join n in context.Nucleo on r.PkNucleo equals n.PkNucleo
                          select r;
 
             if (startDate != null)
                 result = result.Where(r => r.DataLevantamento >= startDate);
             if (endDate != null)
                 result = result.Where(r => r.DataLevantamento <= endDate);
-            //result = result.group r by new { n.pk_nucleo, n.NomeNucleo } into g
+            //result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
             //    select new somethingsomething
             //    {
             //        NomeNucleo = g.Key.NomeNucleo,
@@ -95,7 +95,7 @@ namespace DataAccessLayer
         //		5
         /////////////////////
 
-        public bool InsertObra(int? pk_nucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
+        public bool InsertObra(int? PkNucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -112,10 +112,10 @@ namespace DataAccessLayer
                     // Synchronous database operations
                     if (Obra.Any(o => o.Isbn == isbn))
                         throw new Exception("Error: obra already exists");
-                    if (pk_nucleo.HasValue && !Nucleo.Any(n => n.pk_nucleo == pk_nucleo))
+                    if (PkNucleo.HasValue && !Nucleo.Any(n => n.PkNucleo == PkNucleo))
                         throw new Exception("Error: nucleo not found");
-                    if (!pk_nucleo.HasValue)
-                        pk_nucleo = GetCentralNucleo(); //TODO: implement GetCentralNucleo
+                    if (!PkNucleo.HasValue)
+                        PkNucleo = GetCentralNucleo(); //TODO: implement GetCentralNucleo
                     var obra = new Obra
                     {
                         NomeObra = nomeObra,
@@ -127,7 +127,7 @@ namespace DataAccessLayer
                     context.SaveChanges();
                     var nucleoObra = new NucleoObra
                     {
-                        pk_nucleo = pk_nucleo.Value,
+                        PkNucleo = PkNucleo.Value,
                         PkObra = obra.PkObra, //autoincremented
                         Quantidade = quantidade
                     };
@@ -177,14 +177,14 @@ namespace DataAccessLayer
 
         private int GetCentralNucleo()
         {
-            return context.Nucleo.Where(n => n.FkCentral == null).Select(n => n.pk_nucleo).FirstOrDefault();
+            return context.Nucleo.Where(n => n.FkCentral == null).Select(n => n.PkNucleo).FirstOrDefault();
         }
 
         /////////////////////
         //		6
         /////////////////////
 
-        public bool AddObra(int pkObra, int pk_nucleo, int quantidade)
+        public bool AddObra(int pkObra, int PkNucleo, int quantidade)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -193,7 +193,7 @@ namespace DataAccessLayer
                     if (!context.Obra.Any(o => o.PkObra == pkObra))
                         throw new Exception("Error: obra not found");
 
-                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleo);
+                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == PkNucleo);
                     if (nucleoObra == null)
                         throw new Exception("Error: obra not found in given nucleo");
                     nucleoObra.Quantidade += quantidade;
@@ -209,16 +209,16 @@ namespace DataAccessLayer
             }
         }
 
-        public bool RemoveObra(int pkObra, int pk_nucleo, int quantidade)
+        public bool RemoveObra(int pkObra, int PkNucleo, int quantidade)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleo);
+                    var nucleoObra = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == PkNucleo);
                     if (nucleoObra == null)
                         throw new Exception("Error: obra not found in given nucleo");
-                    int available_copies = available_copies(pkObra, pk_nucleo);
+                    int available_copies = available_copies(pkObra, PkNucleo);
                     if (available_copies < quantidade)
                         throw new Exception("Error: insufficient Obra for request in given nucleo");
                     nucleoObra.Quantidade -= quantidade;
@@ -234,14 +234,14 @@ namespace DataAccessLayer
             }
         }
 
-        public int available_copies(int pk_obra, int pk_nucleo)
+        public int available_copies(int PkObra, int PkNucleo)
         {
             int count_in_nucleo = context.NucleoObra
-                .Where(n => n.PkObra == pk_obra && n.pk_nucleo == pk_nucleo)
+                .Where(n => n.PkObra == PkObra && n.PkNucleo == PkNucleo)
                 .Select(n => n.Quantidade)
                 .FirstOrDefault();
             int count_in_requisitions = context.Requisicao
-                .Where(r => r.PkObra == pk_obra && r.pk_nucleo == pk_nucleo && r.Stat == "borrowed")
+                .Where(r => r.PkObra == PkObra && r.PkNucleo == PkNucleo && r.Stat == "borrowed")
                 .Count();
             int available_copies = count_in_nucleo - count_in_requisitions;
             return available_copies;
@@ -251,22 +251,22 @@ namespace DataAccessLayer
         //		7
         /////////////////////
 
-        public bool AddObraInNucleo(int pkObra, int pk_nucleo, int quantidade)
+        public bool AddObraInNucleo(int pkObra, int PkNucleo, int quantidade)
         {//TODO maybe not needed
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var nucleoObraDestino = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.pk_nucleo == pk_nucleoDestino);
+                    var nucleoObraDestino = context.NucleoObra.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == PkNucleoDestino);
                     if (nucleoObraDestino != null)
                     {
-                        AddObra(pkObra, pk_nucleo, quantidade);
+                        AddObra(pkObra, PkNucleo, quantidade);
                     }
                     else
                     {
                         var novaNucleoObra = new NucleoObra
                         {
-                            pk_nucleo = pk_nucleo,
+                            PkNucleo = PkNucleo,
                             PkObra = pkObra,
                             Quantidade = quantidade
                         };
@@ -283,14 +283,14 @@ namespace DataAccessLayer
             }
         }
 
-        public bool TransferObra(int pkObra, int pk_nucleoOrigem, int pk_nucleoDestino, int quantidade)
+        public bool TransferObra(int pkObra, int PkNucleoOrigem, int PkNucleoDestino, int quantidade)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    RemoveObra(pkObra, pk_nucleoOrigem, quantidade);
-                    AddObraInNucleo(pkObra, pk_nucleoDestino, quantidade);
+                    RemoveObra(pkObra, PkNucleoOrigem, quantidade);
+                    AddObraInNucleo(pkObra, PkNucleoDestino, quantidade);
                     transaction.Commit();
                     return true;
                 }
@@ -342,18 +342,18 @@ namespace DataAccessLayer
 
 
 
-        public bool SuspendLateLeitor(int pk_leitor)
+        public bool SuspendLateLeitor(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor != null && leitor.Stat == "suspended")
                         throw new Exception("leitor is suspended");
-                    var leitor_requesitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor);
+                    var leitor_requesitions = context.Requisicao.Where(r => r.PkLeitor == PkLeitor);
                     var countLate = leitor_requesitions.Where(fn_check_overtime(r.DataLevantamento, r.DataDevolucao.Value, 15)).Count();
                     // removed r.DataDevolucao.HasValue && 
                     if (countLate < 3)
@@ -380,13 +380,13 @@ namespace DataAccessLayer
             }
         }
 
-        public bool SuspendLeitor(int pk_leitor)
+        public bool SuspendLeitor(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor != null && leitor.Stat == "suspended")
@@ -412,25 +412,25 @@ namespace DataAccessLayer
             return diff > diasLimite;
         }
 
-        public List<Requisicao> GetRequisicoesLeitor(int pk_leitor)
+        public List<Requisicao> GetRequisicoesLeitor(int PkLeitor)
         {
-            return context.Requisicao.Where(r => r.pk_leitor == pk_leitor).ToList();
+            return context.Requisicao.Where(r => r.PkLeitor == PkLeitor).ToList();
         }
 
         /////////////////////
         //		bonus
         /////////////////////
 
-        public bool Devolution(int pk_leitor, int pkObra, int nucleo)
+        public bool Devolution(int PkLeitor, int pkObra, int nucleo)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    var requisition = context.Requisicao.FirstOrDefault(r => r.pk_leitor == pk_leitor && r.PkObra == pkObra && r.pk_nucleo == nucleo);
+                    var requisition = context.Requisicao.FirstOrDefault(r => r.PkLeitor == PkLeitor && r.PkObra == pkObra && r.PkNucleo == nucleo);
                     if (requisition == null)
                         throw new Exception("requisition not found");
                     requisition.Stat = "returned";
@@ -446,36 +446,36 @@ namespace DataAccessLayer
             }
         }
 
-        public bool Requisition(int pk_leitor, int pkObra, int pk_nucleo)
+        public bool Requisition(int PkLeitor, int pkObra, int PkNucleo)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     var obra = context.Obra.FirstOrDefault(o => o.PkObra == pkObra);
                     if (obra == null)
                         throw new Exception("obra not found");
-                    var nucleo = context.Nucleo.FirstOrDefault(n => n.pk_nucleo == pk_nucleo);
+                    var nucleo = context.Nucleo.FirstOrDefault(n => n.PkNucleo == PkNucleo);
                     if (nucleo == null)
                         throw new Exception("nucleo not found");
-                    SuspendLateLeitor(pk_leitor);
+                    SuspendLateLeitor(PkLeitor);
                     if (leitor.Stat == "suspended")
                         throw new Exception("leitor is suspended");
-                    if (available_copies(pkObra, pk_nucleo) < 2)
+                    if (available_copies(pkObra, PkNucleo) < 2)
                         throw new Exception("no available copies");
-                    var leitor_requisitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor && r.Stat == "borrowed").ToList();
-                    if (leitor_requisitions.Any(r => r.pk_leitor == pk_leitor && r.PkObra == pkObra))
+                    var leitor_requisitions = context.Requisicao.Where(r => r.PkLeitor == PkLeitor && r.Stat == "borrowed").ToList();
+                    if (leitor_requisitions.Any(r => r.PkLeitor == PkLeitor && r.PkObra == pkObra))
                         throw new Exception("leitor already requested this obra");
                     if (leitor_requisitions.Count() == 4)
                         throw new Exception("leitor has 4 requesitions already");
                     var requisition = new Requisicao
                     {
-                        pk_leitor = pk_leitor,
+                        PkLeitor = PkLeitor,
                         PkObra = pkObra,
-                        pk_nucleo = pk_nucleo,
+                        PkNucleo = PkNucleo,
                         DataLevantamento = DateTime.Now
                     };
                     context.Requisicao.Add(requisition);
@@ -497,13 +497,13 @@ namespace DataAccessLayer
         //		10
         /////////////////////
 
-        public bool sp_leitor_reactivate(int pk_leitor)
+        public bool sp_leitor_reactivate(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     if (leitor.Stat != "suspended")
@@ -535,10 +535,10 @@ namespace DataAccessLayer
                         date_since = 365;
                     // linq commands will be efficiently combined by the provider
                     var requesitions = context.Requisicao
-                        .Where(r => DateTime.Now.Subtract(r.DataLevantamento) > date_since)
-                        .GroupBy(r => r.pk_leitor);
+                        .Where(r => DateTime.Now.Subtract(r.DataLevantamento).days > date_since)
+                        .GroupBy(r => r.PkLeitor);
                     foreach (var leitores in requesitions)
-                        sp_del_leitor(leitores.pk_leitor);
+                        sp_del_leitor(leitores.PkLeitor);
                     transaction.Commit();
                     return true;
                 }
@@ -550,16 +550,16 @@ namespace DataAccessLayer
             }
         }
 
-        public bool sp_del_leitor(int pk_leitor)
+        public bool sp_del_leitor(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    sp_save_leitor_history(pk_leitor);
+                    sp_save_leitor_history(PkLeitor);
                     context.Leitor.Remove(leitor);
                     context.SaveChanges();
                     transaction.Commit();
@@ -573,21 +573,21 @@ namespace DataAccessLayer
             }
         }
 
-        public bool sp_save_leitor_history(int pk_leitor)
+        public bool sp_save_leitor_history(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     // Perform the insert into the History table
                     var historyEntries = from l in leitor
-                                         join r in context.Requisicao on l.pk_leitor equals r.pk_leitor
+                                         join r in context.Requisicao on l.PkLeitor equals r.PkLeitor
                                          join obra in context.Obra on r.PkObra equals obra.PkObra
                                          join no in context.NucleoObra on obra.PkObra equals no.PkObra
-                                         join n in context.Nucleo on no.pk_nucleo equals n.pk_nucleo
+                                         join n in context.Nucleo on no.PkNucleo equals n.PkNucleo
                                          select new History
                                          { //same time wedo select wedo create new object
                                              NomeObra = obra.NomeObra,
@@ -596,13 +596,13 @@ namespace DataAccessLayer
                                              DataRequisicao = r.DataLevantamento,
                                              DataDevolucao = r.DataDevolucao,
                                              NomeLeitor = l.NomeLeitor,
-                                             IdLeitor = l.pk_leitor
+                                             IdLeitor = l.PkLeitor
                                          };
                     if (historyEntries.Any())
                     {
                         // if i want to add single entrie
-                        // context.LeitorHistories.Add(leitor_history);
-                        context.Histories.AddRange(historyEntries);
+                        // context.LeitorHistorie.Add(leitor_history);
+                        context.Historie.AddRange(historyEntries);
                         context.SaveChanges();
                     }
                     transaction.Commit();
@@ -620,20 +620,20 @@ namespace DataAccessLayer
 
         // 2. cancelar a inscrição de um leitor
 
-        public bool sp_cancel_leitor(int pk_leitor)
+        public bool sp_cancel_leitor(int PkLeitor)
         {
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
-                    var leitor = context.Leitor.FirstOrDefault(l => l.pk_leitor == pk_leitor);
+                    var leitor = context.Leitor.FirstOrDefault(l => l.PkLeitor == PkLeitor);
                     if (leitor == null)
                         throw new Exception("leitor not found");
-                    var leitor_requisitions = context.Requisicao.Where(r => r.pk_leitor == pk_leitor);
+                    var leitor_requisitions = context.Requisicao.Where(r => r.PkLeitor == PkLeitor);
                     var undelivered_requisitions = leitor_requisitions.Where(r => r.Stat == "borrowed");
                     foreach (var requisition in undelivered_requisitions)
-                        Devolution(pk_leitor, requisition.PkObra, requisition.pk_nucleo);
-                    sp_del_leitor(pk_leitor);
+                        Devolution(PkLeitor, requisition.PkObra, requisition.PkNucleo);
+                    sp_del_leitor(PkLeitor);
                     return true;
                 }
                 catch (Exception)
@@ -661,7 +661,7 @@ namespace DataAccessLayer
         {
             var Obra_genero = context.Obra
                 .Join(context.GeneroObra, o => o.PkObra, go => go.PkObra, (o, go) => new { o, go })
-                .Join(context.Generos, og => og.go.PkGenero, g => g.PkGenero, (og, g) => new { og, g })
+                .Join(context.Genero, og => og.go.PkGenero, g => g.PkGenero, (og, g) => new { og, g })
                 .Where(og => og.g.NomeGenero.Contains(generoName))
                 .Select(og => og.og.o)
                 .ToList();
@@ -671,39 +671,39 @@ namespace DataAccessLayer
         public class Requisicaotatus
         {
             public string NomeObra { get; set; }
-            public int pk_nucleo { get; set; }
+            public int PkNucleo { get; set; }
             public string NomeNucleo { get; set; }
             public DateTime DataLevantamento { get; set; }
             public DateTime DataDevolucao { get; set; }
             public string StatusMessage { get; set; }
         }
 
-        public List<Requisicaotatus> requesicao_status(int pk_leitor, int? pk_nucleo = null)
+        public List<Requisicaotatus> requesicao_status(int PkLeitor, int? PkNucleo = null)
         {
             var leitoresFiltradas = from l in context.Leitor
-                                    where l.pk_leitor == pk_leitor select l;
+                                    where l.PkLeitor == PkLeitor select l;
 
             var requisicoesFiltradas = from l in context.Requisicao
                                        where l.Stat == "borrowed" select l;
             var query = from l in leitoresFiltradas
-                        join r in requisicoesFiltradas on l.pk_leitor equals r.pk_leitor
+                        join r in requisicoesFiltradas on l.PkLeitor equals r.PkLeitor
                         join o in context.Obra on r.PkObra equals o.PkObra
                         join no in context.NucleoObra on o.PkObra equals no.PkObra
-                        join n in context.Nucleo on no.pk_nucleo equals n.pk_nucleo // Get Núcleo Name
+                        join n in context.Nucleo on no.PkNucleo equals n.PkNucleo // Get Núcleo Name
                         select new Requisicaotatus// anonymous type
                         {
                             NomeObra = o.NomeObra,
-                            pk_nucleo = n.pk_nucleo,
+                            PkNucleo = n.PkNucleo,
                             NomeNucleo = n.NomeNucleo,
                             DataLevantamento = r.DataLevantamento,
                             DataDevolucao = r.DataDevolucao,
                             StatusMessage = ""
                         };
 
-            // Apply filter if pk_nucleo is provided
-            if (pk_nucleo.HasValue)
+            // Apply filter if PkNucleo is provided
+            if (PkNucleo.HasValue)
             {
-                query = query.Where(x => x.pk_nucleo == pk_nucleo.Value);
+                query = query.Where(x => x.PkNucleo == PkNucleo.Value);
             }
 
             // Convert to List and Set Status Messages
@@ -719,7 +719,7 @@ namespace DataAccessLayer
     }
 }
 
-        // public async Task<bool> InsertObraAsync(int? pk_nucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
+        // public async Task<bool> InsertObraAsync(int? PkNucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)
         // {
         // 	using (var transaction = await Database.BeginTransactionAsync())
         // 	{
@@ -728,10 +728,10 @@ namespace DataAccessLayer
         // 			// Asynchronous database operations
         // 			if (await Obra.AnyAsync(o => o.Isbn == isbn))
         // 				throw new Exception("Error: obra already exists");
-        // 			if (pk_nucleo.HasValue && !await Nucleo.AnyAsync(n => n.pk_nucleo == pk_nucleo))
+        // 			if (PkNucleo.HasValue && !await Nucleo.AnyAsync(n => n.PkNucleo == PkNucleo))
         // 				throw new Exception("Error: nucleo not found");
-        // 			if (!pk_nucleo.HasValue)
-        // 				pk_nucleo = await GetCentralNucleoAsync();
+        // 			if (!PkNucleo.HasValue)
+        // 				PkNucleo = await GetCentralNucleoAsync();
         // 			var obra = new Obra
         // 			{
         // 				NomeObra = nomeObra,
@@ -743,7 +743,7 @@ namespace DataAccessLayer
         // 			await SaveChangesAsync();
         // 			var nucleoObra = new NucleoObra
         // 			{
-        // 				pk_nucleo = pk_nucleo.Value,
+        // 				PkNucleo = PkNucleo.Value,
         // 				PkObra = obra.PkObra,
         // 				Quantidade = quantidade
         // 			};
