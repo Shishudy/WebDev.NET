@@ -84,3 +84,60 @@ header {
   justify-content: center;
   z-index: 2;
 }
+
+.cartas-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    overflow-y: auto;
+    max-height: 80vh;
+    padding: 20px;
+}
+
+.card {
+    text-align: center;
+    border: 1px solid #e1e1e1;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+    width: 250px;
+}
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    .card img {
+        width: 100%;
+        height: auto;
+        border-bottom: 1px solid #e1e1e1;
+    }
+
+.info-card {
+    padding: 10px 20px;
+}
+
+    .info-card h4 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .info-card p {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 5px;
+    }
+
+        .info-card .preco span {
+            font-weight: 700;
+            font-size: 20px;
+            color: #e44e52;
+        }
+
+    .agregar-carrinho:hover {
+        background: linear-gradient(to right, #e44e52 0%, #741d51 100%);
+    }
