@@ -30,8 +30,23 @@ namespace LibEF
 			int available_copies = count_in_nucleo - count_in_requisitions;
 			return available_copies;
 		}
+		public string GetPassWordbyLogin(string name)
+		{
+			try
+			{
+				var leitor = context.Leitors.FirstOrDefault(l => l.NomeLeitor == name);
+				if (leitor == null)
+					throw new Exception("leitor not found");
+				return leitor.UserPassword;
+			}
+			catch (Exception)
+			{
+				throw;
+			}
+		}
 	}
 }
+
 
 
 //        /////////////////////
