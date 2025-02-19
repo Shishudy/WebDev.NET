@@ -12,20 +12,12 @@ namespace LibADO
     {
         private readonly LoginRepository _loginRepository;
 
-        public LoginService(LoginRepository loginRepository)
-        {
-            _loginRepository = loginRepository;
-        }
+        public LoginService(LoginRepository loginRepository) => _loginRepository = loginRepository;
 
-        public bool ValidarLogin(string email, string senha)
-        {
-            return _loginRepository.ValidarLogin(email, senha);
-        }
+        public bool ValidarLogin(string email, string senha) => _loginRepository.ValidarLogin(email, senha);
 
-        public LoginModel ObterUsuario(string email, string senha)
-        {
-            return _loginRepository.ObterUsuarioPorEmail(email, senha);
-        }
+        public LoginModel? ObterUsuario(string email) => _loginRepository.ObterUsuarioPorEmail(email);
     }
+}
 }
 

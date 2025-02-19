@@ -1,72 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using LibADO.Login;
+using LibDB;
 
 namespace LibADO
 {
-
     public interface LoginRepository
     {
         bool ValidarLogin(string email, string senha);
-        LoginModel ObterUsuarioPorEmail(string email, string senha);
+        LoginModel ObterUsuarioPorEmail(string email);
     }
-
 
     public class LoginRepositoryADO : LoginRepository
     {
         private readonly string _connectionString;
 
-        public LoginRepositoryADO(string connectionString)
-        {
-            _connectionString = connectionString;
-        }
+        public LoginRepositoryADO(string connectionString) => _connectionString = connectionString;
 
         public bool ValidarLogin(string email, string senha)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using var conn = DB.Open(_connectionString);
+            string query = "SELECT COUNT(*) FROM Leitor WHERE email = @Email AND loggin_password = @Senha";
+            return (int)new SqlCommand(query, conn)
             {
-                conn.Open();
-                string query = "SELECT COUNT(*) FROM Leitor WHERE email = @Email AND loggin_password = @Senha";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-                    cmd.Parameters.AddWithValue("@Senha", senha);
-
-                    int count = (int)cmd.ExecuteScalar();
-                    return count > 0;
-                }
-            }
+                Parameters = { new("@Email", email), new("@Senha", senha) }
+            }.ExecuteScalar() > 0;
         }
-        public LoginModel ObterUsuarioPorEmail(string email, string senha)
+
+        public LoginModel? ObterUsuarioPorEmail(string email)
         {
-            using (SqlConnection conn = new SqlConnection(_connectionString))
+            using var conn = DB.Open(_connectionString);
+            string query = "SELECT email, loggin_password FROM Leitor WHERE email = @Email";
+
+            DataTable dt = DB.GetSQLRead(conn, query);
+            return dt.Rows.Count > 0 ? new LoginModel
             {
-                conn.Open();
-                string query = "SELECT email, loggin_password FROM Leitor WHERE email = @Email";
-
-                using (SqlCommand cmd = new SqlCommand(query, conn))
-                {
-                    cmd.Parameters.AddWithValue("@Email", email);
-
-                    using (SqlDataReader reader = cmd.ExecuteReader())
-                    {
-                        if (reader.Read())
-                        {
-                            return new LoginModel
-                            {
-                                Email = reader["email"].ToString(),
-                                Senha = reader["loggin_password"].ToString()
-                            };
-                        }
-                    }
-                }
-            }
-            return null;
+                Email = dt.Rows[0]["email"].ToString(),
+                Senha = dt.Rows[0]["loggin_password"].ToString()
+            } : null;
         }
     }
 }
