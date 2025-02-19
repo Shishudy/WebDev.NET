@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+01a49aa87b029a699760c5f7a638dfc12463cf18")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2807f045126881c7e519ab4b5e7e79ecf7673b2")]
 [assembly: System.Reflection.AssemblyProductAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

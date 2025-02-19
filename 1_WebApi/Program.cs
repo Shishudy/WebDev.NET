@@ -1,39 +1,49 @@
+using System.Security.Claims;
+using LibEF;
+using LibEF.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//builder.Services.AddAuthorization();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
-//ARGV method
-//app.MapPost("/items", (Dictionary<string, string> args) =>
-//{
-//    return Results.Json(args);
-//});
+app.UseHttpsRedirection();
 
-
-
-app.MapPost("/login", (string login, string password) =>
+var summaries = new[]
 {
-    if (login == "admin" && password == "admin")
-    {
-        return Results.Ok("You are logged in");
-    }
-    else
-    {
-        return Results.BadRequest("Incorrect login or password");
-    }
+	"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+};
+
+app.MapSwagger().RequireAuthorization();
+
+app.MapGet("/", () => "Hello, World!");
+app.MapGet("/secret", (ClaimsPrincipal user) => $"Hello {user.Identity?.Name}. My secret")
+	.RequireAuthorization();
+
+app.MapGet("/weatherforecast", () =>
+{
+	ProjectoContext context = new ProjectoContext();
+	EF_methods EF = new EF_methods(context);
+	var forecast = EF.available_copies(1, 1);
+	return ("resultado " + forecast);
 })
-.WithName("Login")
+.WithName("GetWeatherForecast")
 .WithOpenApi();
 
 app.Run();
+
+internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+{
+	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}

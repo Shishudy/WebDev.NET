@@ -72,6 +72,31 @@
 //     welcomeUser.appendChild(logoutButton);
 // });
 
+const loginModal = document.getElementById("loginModal");
+const overlay = document.getElementById("overlay");
+const loginForm = document.getElementById("loginForm");
+const welcomeUser = document.getElementById("welcomeUser");
+const loginButton = document.getElementById("loginButton");
+
+loginForm.addEventListener("submit", function(event) {
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+});
+
+let headers = new Headers();
+headers.append("Authorization", bearer);
+var options = {
+        method: "GET",
+        headers: headers
+};
+var graphEndpoint = "https://graph.microsoft.com/v1.0/me";
+
+fetch(graphEndpoint, options)
+    .then(function (response) {
+            //do something with response
+    })
+
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("loginModal").style.display = "flex";
     document.body.classList.add("blurred");
