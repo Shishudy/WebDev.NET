@@ -27,6 +27,12 @@ namespace LibEF
         {
             return context.NucleoObras.Sum(no => no.Quantidade);
         }
+
+
+        /////////////////////
+        //		2
+        /////////////////////
+
         public List<(string NomeGenero, int TotalQuantidade)> GetTotalObraPorGenero()
         {
             var result = from n in context.NucleoObras
@@ -41,10 +47,6 @@ namespace LibEF
             return result.ToList().Select(r => (r.NomeGenero, r.TotalQuantidade)).ToList();
         }
 
-        /////////////////////
-        //		2
-        /////////////////////
-        //
         /////////////////////
         //		3
         /////////////////////
@@ -218,11 +220,14 @@ namespace LibEF
                     var nucleoObra = context.NucleoObras.FirstOrDefault(no => no.PkObra == pkObra && no.PkNucleo == PkNucleo);
                     if (nucleoObra == null)
                         throw new Exception("Error: obra not found in given nucleo");
-                    int available_copies = available_copies(pkObra, PkNucleo);
-                    if (available_copies < quantidade)
+                    int existent_copies = available_copies(pkObra, PkNucleo);
+                    if (existent_copies < quantidade)
                         throw new Exception("Error: insufficient Obras for request in given nucleo");
                     nucleoObra.Quantidade -= quantidade;
                     context.SaveChanges();
+                    // if (nucleoObra.Quantidade == 0)
+                    //     context.NucleoObras.Remove(nucleoObra);
+                    //context.SaveChanges();
                     transaction.Commit();
                     return true;
                 }
