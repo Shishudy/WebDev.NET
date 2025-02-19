@@ -5,61 +5,58 @@
     "version": "1.0"
   },
   "paths": {
-    "/login": {
-      "post": {
+    "/": {
+      "get": {
         "tags": [
           "WebAPI"
-        ],
-        "operationId": "Login",
-        "parameters": [
-          {
-            "name": "login",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "password",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
         ],
         "responses": {
           "200": {
-            "description": "OK"
-          }
-        }
-      }
-    },
-    "/items": {
-      "post": {
-        "tags": [
-          "WebAPI"
-        ],
-        "operationId": "Items",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "additionalProperties": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
                   "type": "string"
                 }
               }
             }
           }
-        },
+        }
+      }
+    },
+    "/secret": {
+      "get": {
+        "tags": [
+          "WebAPI"
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "content": {
-              "application/json": {
-                "schema": { }
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/weatherforecast": {
+      "get": {
+        "tags": [
+          "WebAPI"
+        ],
+        "operationId": "GetWeatherForecast",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
               }
             }
           }
