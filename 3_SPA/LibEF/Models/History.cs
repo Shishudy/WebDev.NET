@@ -13,9 +13,9 @@ public partial class History
 
     public string? Nucleo { get; set; }
 
-    public DateOnly? DataRequisicao { get; set; }
+    public DateTime? DataRequisicao { get; set; }
 
-    public DateOnly? DataDevolucao { get; set; }
+    public DateTime? DataDevolucao { get; set; }
 
     public string? NomeLeitor { get; set; }
 

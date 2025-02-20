@@ -7,7 +7,7 @@ public partial class Leitor
 {
     public int PkLeitor { get; set; }
 
-    public DateOnly? DataInscricao { get; set; }
+    public DateTime? DataInscricao { get; set; }
 
     public string UserPassword { get; set; } = null!;
 

@@ -13,9 +13,9 @@ public partial class Requisicao
 
     public string? Stat { get; set; }
 
-    public DateOnly? DataLevantamento { get; set; }
+    public DateTime? DataLevantamento { get; set; }
 
-    public DateOnly? DataDevolucao { get; set; }
+    public DateTime? DataDevolucao { get; set; }
 
     public bool? AlreadySuspend { get; set; }
 
