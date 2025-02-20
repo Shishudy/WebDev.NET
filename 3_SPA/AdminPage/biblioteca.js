@@ -82,20 +82,28 @@ loginForm.addEventListener("submit", function(event) {
     event.preventDefault();
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
+    var options = {
+        method: "POST",
+        headers: {
+			'Content-Type': 'application/json',
+		},
+        body: JSON.stringify({username, password}),
+    };
+    var apiUrl = "http://localhost:5164/login";
+    fetch(apiUrl, options)
+  .then(response => {
+    // if (!response.ok) {
+    //   throw new Error('Network response was not ok');
+    // }
+    return response.json();
+  })
+  .then(data => {
+    console.log(data);
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
 });
-
-let headers = new Headers();
-headers.append("Authorization", bearer);
-var options = {
-        method: "GET",
-        headers: headers
-};
-var graphEndpoint = "https://graph.microsoft.com/v1.0/me";
-
-fetch(graphEndpoint, options)
-    .then(function (response) {
-            //do something with response
-    })
 
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("loginModal").style.display = "flex";

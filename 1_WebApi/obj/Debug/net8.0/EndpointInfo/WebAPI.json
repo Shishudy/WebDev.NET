@@ -5,30 +5,20 @@
     "version": "1.0"
   },
   "paths": {
-    "/": {
-      "get": {
+    "/login": {
+      "post": {
         "tags": [
           "WebAPI"
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
+        "operationId": "Login",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
             }
-          }
-        }
-      }
-    },
-    "/secret": {
-      "get": {
-        "tags": [
-          "WebAPI"
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -49,6 +39,16 @@
           "WebAPI"
         ],
         "operationId": "GetWeatherForecast",
+        "parameters": [
+          {
+            "name": "str",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",

@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using LibEF;
 using LibEF.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +10,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//builder.Services.AddAuthorization();
+
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAll",
+		policy => policy.AllowAnyOrigin()
+						.AllowAnyMethod()
+						.AllowAnyHeader());
+});
 
 var app = builder.Build();
 
@@ -18,32 +27,41 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-	"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapSwagger().RequireAuthorization();
-
-app.MapGet("/", () => "Hello, World!");
-app.MapGet("/secret", (ClaimsPrincipal user) => $"Hello {user.Identity?.Name}. My secret")
-	.RequireAuthorization();
-
-app.MapGet("/weatherforecast", () =>
+app.MapPost("/login", (Object response) =>
 {
 	ProjectoContext context = new ProjectoContext();
 	EF_methods EF = new EF_methods(context);
-	var forecast = EF.available_copies(1, 1);
-	return ("resultado " + forecast);
+	string jsonRes = JsonSerializer.Serialize(response);
+	Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
+	try
+	{
+		var forecast = EF.GetPassWordbyLogin(res.GetValueOrDefault("username"));
+		var obj = new { result = forecast};
+		var json = JsonSerializer.Serialize(obj);
+		return (json);
+	}
+	catch
+	{
+		var obj = new { result = "User not found."};
+		var json = JsonSerializer.Serialize(obj);
+		return (json);
+	}
+})
+.WithName("Login")
+.WithOpenApi();
+
+app.MapGet("/weatherforecast", (string str) =>
+{
+	ProjectoContext context = new ProjectoContext();
+	EF_methods EF = new EF_methods(context);
+	var forecast = EF.GetPassWordbyLogin(str);
+	var obj = new { result = forecast};
+	var json = JsonSerializer.Serialize(obj);
+	return (json);
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.Run();
+app.UseCors("AllowAll");
 
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.Run();
