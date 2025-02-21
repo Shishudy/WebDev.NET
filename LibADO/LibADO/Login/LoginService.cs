@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using LibADO.Login;
 using LibADO;
 
-namespace LibADO
+namespace LibADO.Login
 {
     public class LoginService
     {
@@ -18,6 +18,5 @@ namespace LibADO
 
         public LoginModel? ObterUsuario(string email) => _loginRepository.ObterUsuarioPorEmail(email);
     }
-}
 }
 

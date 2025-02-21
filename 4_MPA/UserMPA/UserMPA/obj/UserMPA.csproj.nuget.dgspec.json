@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\UserMPA\\UserMPA\\UserMPA.csproj": {}
+    "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\UserMPA.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\UserMPA\\UserMPA\\UserMPA.csproj": {
+    "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\UserMPA.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\UserMPA\\UserMPA\\UserMPA.csproj",
+        "projectUniqueName": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\UserMPA.csproj",
         "projectName": "UserMPA",
-        "projectPath": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\UserMPA\\UserMPA\\UserMPA.csproj",
-        "packagesPath": "C:\\Users\\rafae\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\UserMPA\\UserMPA\\obj\\",
+        "projectPath": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\UserMPA.csproj",
+        "packagesPath": "C:\\Users\\leand\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rafae\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\leand\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -25,7 +25,6 @@
           "net8.0"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -42,7 +41,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -53,20 +52,6 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[6.0.1, )"
-            },
-            "Microsoft.EntityFrameworkCore": {
-              "target": "Package",
-              "version": "[9.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.SqlServer": {
-              "target": "Package",
-              "version": "[9.0.2, )"
-            },
-            "Microsoft.EntityFrameworkCore.Tools": {
-              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
-              "suppressParent": "All",
-              "target": "Package",
-              "version": "[9.0.2, )"
             }
           },
           "imports": [
@@ -88,7 +73,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

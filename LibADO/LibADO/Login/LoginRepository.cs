@@ -3,7 +3,7 @@ using Microsoft.Data.SqlClient;
 using LibADO.Login;
 using LibDB;
 
-namespace LibADO
+namespace LibADO.Login
 {
     public interface LoginRepository
     {
