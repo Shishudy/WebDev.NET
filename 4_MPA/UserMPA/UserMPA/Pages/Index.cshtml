@@ -1,8 +1,10 @@
 ﻿@page
 @model IndexModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
 @{
-    ViewData["Title"] = "Biblioteca Virtual";
+    var nomeUsuario = HttpContextAccessor.HttpContext?.Session.GetString("NomeUsuario");
 }
+
 
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -12,13 +14,14 @@
     <title>Biblioteca Virtual</title>
     <link rel="stylesheet" href="loginmodelblur.css">
 </head>
-<body class="@(TempData["NomeUsuario"] != null ? "" : "blurred")">
+<body class="@(string.IsNullOrEmpty(nomeUsuario) ? "blurred" : "")">
     <header>
         <h1>Biblioteca Virtual</h1>
 
-        @if (TempData["NomeUsuario"] != null)
+        @if (!string.IsNullOrEmpty(nomeUsuario))
         {
-            <span>Bem-vindo, @TempData["NomeUsuario"]!</span>
+            <span>Bem-vindo, @nomeUsuario!</span>
+            <a href="/Logout">Sair</a>
         }
         else
         {
@@ -26,7 +29,12 @@
         }
     </header>
 
-    <div id="loginModal" class="modal" style="display:@(TempData["NomeUsuario"] == null ? "flex" : "none");">
+    @if (!string.IsNullOrEmpty(Model.MensagemErro))
+    {
+        <div class="alert alert-danger">@Model.MensagemErro</div>
+    }
+
+    <div id="loginModal" class="modal" style="display:@(string.IsNullOrEmpty(nomeUsuario) ? "flex" : "none");">
         <div class="modal-content">
             <span class="close" onclick="document.getElementById('loginModal').style.display = 'none'">&times;</span>
 
@@ -39,11 +47,6 @@
 
                 <button type="submit">Entrar</button>
             </form>
-
-            @if (!string.IsNullOrEmpty(Model.MensagemErro))
-            {
-                <p style="color: red;">@Model.MensagemErro</p>
-            }
         </div>
     </div>
 
@@ -60,4 +63,3 @@
     <div id="popup" class="popup"></div>
 </body>
 </html>
-

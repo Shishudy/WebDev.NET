@@ -2,6 +2,7 @@
 using Microsoft.Data.SqlClient;
 using LibADO.Login;
 using LibDB;
+using System;
 
 namespace LibADO.Login
 {
@@ -21,23 +22,44 @@ namespace LibADO.Login
         {
             using var conn = DB.Open(_connectionString);
             string query = "SELECT COUNT(*) FROM Leitor WHERE email = @Email AND loggin_password = @Senha";
-            return (int)new SqlCommand(query, conn)
+           using (var command = new SqlCommand(query, conn))
             {
-                Parameters = { new("@Email", email), new("@Senha", senha) }
-            }.ExecuteScalar() > 0;
-        }
-
+                command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
+                command.Parameters.Add(new SqlParameter("@Senha", SqlDbType.NVarChar) { Value = senha });
+                return (int)command.ExecuteScalar() > 0;
+            }
+           }
         public LoginModel? ObterUsuarioPorEmail(string email)
         {
-            using var conn = DB.Open(_connectionString);
-            string query = "SELECT email, loggin_password FROM Leitor WHERE email = @Email";
-
-            DataTable dt = DB.GetSQLRead(conn, query);
-            return dt.Rows.Count > 0 ? new LoginModel
+            using (var conn = new SqlConnection(_connectionString))
             {
-                Email = dt.Rows[0]["email"].ToString(),
-                Senha = dt.Rows[0]["loggin_password"].ToString()
-            } : null;
+                conn.Open();
+                string query = "SELECT pk_leitor, email, loggin_password, nome_leitor, user_role FROM Leitor WHERE email = @Email";
+
+                using (var command = new SqlCommand(query, conn))
+                {
+                    command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
+
+                    using (var reader = command.ExecuteReader())
+                    {
+                        if (!reader.HasRows) 
+                            return null;
+
+                        reader.Read();
+                        return new LoginModel
+                        {
+                            Id = reader["pk_leitor"] != DBNull.Value ? Convert.ToInt32(reader["pk_leitor"]) : 0,
+                            Email = reader["email"].ToString(),
+                            Senha = reader["loggin_password"].ToString(),
+                            Nome = reader["nome_leitor"] != DBNull.Value ? reader["nome_leitor"].ToString() : "Usuário",
+                            UserRole = reader["user_role"] != DBNull.Value ? reader["user_role"].ToString() : "User"
+                        };
+                    }
+                }
+            }
         }
+
+
+
     }
 }

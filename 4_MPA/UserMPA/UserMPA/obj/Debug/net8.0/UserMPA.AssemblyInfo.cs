@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("UserMPA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4c8490793e8b58098e5c29eb315851bd91c95ee8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7d882766695ec1aa167f19de7eeb2ccbb1914d69")]
 [assembly: System.Reflection.AssemblyProductAttribute("UserMPA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("UserMPA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -28,7 +28,7 @@ namespace UserMPA.Pages
                 var usuario = _loginService.ObterUsuario(Email);
                 if (usuario != null)
                 {
-                    TempData["NomeUsuario"] = usuario.Nome;
+                    HttpContext.Session.SetString("NomeUsuario", usuario.Nome);
                     return RedirectToPage("/Index");
                 }
             }
