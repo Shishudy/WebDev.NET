@@ -77,16 +77,15 @@ const overlay = document.getElementById("overlay");
 const loginForm = document.getElementById("loginForm");
 const welcomeUser = document.getElementById("welcomeUser");
 const loginButton = document.getElementById("loginButton");
+const apiUrl = "http://localhost:5164/";
 
 function getMethods() {
-	var apiUrl = "http://localhost:5164/methods";
-	fetch(apiUrl).then((response) => {
+	fetch(apiUrl + "methods").then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
 	}).then((data) => {
-		// console.log(data);
 		methods = data;
 		console.log(methods);
 		return (methods);
@@ -108,8 +107,7 @@ loginForm.addEventListener("submit", function (event) {
 		},
 		body: JSON.stringify({ username, password }),
 	};
-	var apiUrl = "http://localhost:5164/login";
-	fetch(apiUrl, options)
+	fetch(apiUrl + "login", options)
 		.then((response) => {
 			if (!response.ok) {
 			  throw new Error('Network response was not ok');
@@ -147,16 +145,13 @@ function buildCatSelector() {
 	catSelectorDiv.setAttribute("class", "select-cat-div");
 	const catSelector = document.createElement("select");
 	catSelector.setAttribute("id", "select-cat");
-	// let catOption;
-	// let i = 0;
-	// while (i < uniqueCats.length) {
-	// 	catOption = document.createElement("option");
-	// 	catOption.setAttribute("value", uniqueCats[i]);
-	// 	catOption.textContent =
-	// 		uniqueCats[i].charAt(0).toUpperCase() + uniqueCats[i].slice(1);
-	// 	catSelector.appendChild(catOption);
-	// 	i++;
-	// }
+	let catOption;
+	for (const key in methods) {
+		catOption = document.createElement("option");
+		catOption.setAttribute("value", key);
+		catOption.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+		catSelector.appendChild(catOption);
+	}
 	catSelectorDiv.appendChild(catSelector);
 	button = document.createElement("button");
 	button.setAttribute("id", "clear-filter-button");
