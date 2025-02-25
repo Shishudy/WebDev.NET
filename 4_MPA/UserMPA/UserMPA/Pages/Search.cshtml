@@ -5,29 +5,46 @@
     var nomeUsuario = HttpContextAccessor.HttpContext?.Session.GetString("NomeUsuario");
 }
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca Virtual</title>
-  
+    <link rel="stylesheet" href="styles.css"> 
 </head>
 <body>
     <header>
-        <h1>Biblioteca Virtual</h1> 
-    </header>  
+        <h1>Biblioteca Virtual</h1>
+    </header>
+
     <div id="search">
         <input type="text" id="buscador" placeholder="Buscar livros...">
         <button id="pesquisa">Pesquisar</button>
+        <button id="Categoria">Categorias</button>
+
     </div>
 
     <section id="lista-livros">
         <h2>Livros Disponíveis</h2>
-        <div id="book-container"></div>
+
+        <div id="book-container" class="cartas-container">
+            @foreach (var obra in Model.Obras)
+            {
+                <div class="card">
+                    <img src="@obra["image_path"]" alt="@obra["nome_obra"]">
+                    <div class="info-card">
+                        <h4>@obra["nome_obra"]</h4>
+                        <p><strong>Núcleo:</strong> @obra["nome_nucleo"]</p>
+                        <p><strong>Quantidade:</strong> @obra["quantidade"]</p>
+                    </div>
+                </div>
+            }
+
+        </div>
     </section>
 
     <div id="popup" class="popup"></div>
+
 </body>
 </html>

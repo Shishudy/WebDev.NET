@@ -9,7 +9,7 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<LoginRepository>(provider =>
     new LoginRepositoryADO("Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;"));
 builder.Services.AddSession();
-builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); // ?? Permite acessar HttpContext no Razor
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); 
 
 AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
 {
