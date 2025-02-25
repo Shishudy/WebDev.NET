@@ -20,9 +20,13 @@
 
         @if (!string.IsNullOrEmpty(nomeUsuario))
         {
-            <span>Bem-vindo, @nomeUsuario!</span>
-            <a href="/Logout">Sair</a>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span>Bem-vindo, <strong>@nomeUsuario</strong>!</span>
+                <a href="/Logout" style="color: red; font-weight: bold;">Sair</a>
+                <a href="/CancelarAD" style="color: darkblue; font-weight: bold;">Cancelar Adesão</a>
+            </div>
         }
+
         else
         {
             <button id="loginButton" onclick="document.getElementById('loginModal').style.display = 'flex'">Login</button>
