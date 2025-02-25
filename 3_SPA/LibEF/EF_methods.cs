@@ -103,24 +103,23 @@ namespace LibEF
         //		4
         /////////////////////
 
-        public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
-        {
-            var result = from r in context.Requisicaos
-                         join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
-                         select r;
-
-            if (startDate != null)
-                result = result.Where(r => r.DataLevantamento >= startDate);
-            if (endDate != null)
-                result = result.Where(r => r.DataLevantamento <= endDate);
-            result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
-                select new somethingsomething
-                {
-                    NomeNucleo = g.Key.NomeNucleo,
-                    TotalRequisicoes = g.Count()
-                };
-            return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
-        }
+        // public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
+        // {
+        //     var result = from r in context.Requisicaos
+        //                  join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+        //                  select r;
+        //     if (startDate != null)
+        //         result = result.Where(r => r.DataLevantamento >= startDate);
+        //     if (endDate != null)
+        //         result = result.Where(r => r.DataLevantamento <= endDate);
+        //     result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
+        //         select new somethingsomething
+        //         {
+        //             NomeNucleo = g.Key.NomeNucleo,
+        //             TotalRequisicoes = g.Count()
+        //         };
+        //     return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
+        // }
 
         /////////////////////
         //		5
@@ -337,7 +336,7 @@ namespace LibEF
                     var leitor = new Leitor
                     {
                         NomeLeitor = nome,
-                        DataInscricao = DateTime.FromDateTime(DateTime.Now),
+                        DataInscricao = DateTime.Now,
                         //DataInscricao = DateTime.Now,
                         Morada = morada,
                         Telefone = telefone,
@@ -373,7 +372,7 @@ namespace LibEF
                     if (leitor != null && leitor.Stat == "suspended")
                         throw new Exception("leitor is suspended");
                     var leitor_requesitions = context.Requisicaos.Where(r => r.PkLeitor == PkLeitor);
-                    var countLate = leitor_requesitions.Where(r => CheckOvertime(r.DataLevantamento, r.DataDevolucao.Value, 15)).Count();
+                    var countLate = leitor_requesitions.Where(r => CheckOvertime(r.DataLevantamento.Value, r.DataDevolucao.Value, 15)).Count();
                     // removed r.DataDevolucao.HasValue && 
                     if (countLate < 3)
                     {
@@ -385,7 +384,7 @@ namespace LibEF
                     foreach (var requisition in leitor_requesitions)
                     {
                         if (requisition.Stat == "returned")
-                            requisition.AlreadySuspend = 1;
+                            requisition.AlreadySuspend = true;
                     }
                     context.SaveChanges();
                     transaction.Commit();
@@ -453,7 +452,7 @@ namespace LibEF
                     if (requisition == null)
                         throw new Exception("requisition not found");
                     requisition.Stat = "returned";
-                    requisition.DataDevolucao = DateTime.FromDateTime(DateTime.Now);
+                    requisition.DataDevolucao = DateTime.Now;
                     context.SaveChanges();
                     return true;
                 }
@@ -495,7 +494,7 @@ namespace LibEF
                         PkLeitor = PkLeitor,
                         PkObra = pkObra,
                         PkNucleo = PkNucleo,
-                        DataLevantamento = DateTime.FromDateTime(DateTime.Now)
+                        DataLevantamento = DateTime.Now
                     };
                     context.Requisicaos.Add(requisition);
                     context.SaveChanges();
@@ -550,14 +549,17 @@ namespace LibEF
             {
                 try
                 {
+                    int days_since;
                     if (date_since == null)
-                        date_since = 365;
+                        days_since = 365;
+                    else
+                        days_since = DateTime.Now.Day;
                     // linq commands will be efficiently combined by the provider
                     var requesitions = context.Requisicaos
-                        .Where(r => DateTime.Now.Subtract(r.DataLevantamento).days > date_since
+                        .Where(r => DateTime.Now.Subtract(r.DataLevantamento.Value).Days > days_since)
                         .GroupBy(r => r.PkLeitor);
                     foreach (var leitores in requesitions)
-                        sp_del_leitor(leitores.PkLeitor);
+                        sp_del_leitor(leitores.Key);
                     transaction.Commit();
                     return true;
                 }
@@ -720,8 +722,8 @@ namespace LibEF
                             PkNucleo = n.PkNucleo,
                             NomeNucleo = n.NomeNucleo,
                             //DataLevantamento = r.DataLevantamento,
-                            DataLevantamento = r.DataLevantamento.HasValue ? r.DataLevantamento.Value.ToDateTime(TimeOnly.MinValue) : DateTime.MinValue,
-                            DataDevolucao = r.DataDevolucao,
+                            DataLevantamento = r.DataLevantamento.Value,
+                            DataDevolucao = r.DataDevolucao.Value,
                             StatusMessage = ""
                         };
 
