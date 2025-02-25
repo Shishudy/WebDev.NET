@@ -19,11 +19,29 @@
     </header>
 
     <div id="search">
-        <input type="text" id="buscador" placeholder="Buscar livros...">
-        <button id="pesquisa">Pesquisar</button>
-        <button id="Categoria">Categorias</button>
+        <form method="get">
+            <input type="text" name="obra" placeholder="Buscar obra ou núcleo..." value="@Model.Request.Query["obra"]">
+            <button type="submit">Pesquisar</button>
+        </form>
 
+        <form method="get">
+            <input type="hidden" name="exibirCategorias" value="true">
+            <button type="submit">Mostrar Categorias</button>
+        </form>
     </div>
+    @if (Model.Request.Query.ContainsKey("exibirCategorias"))
+    {
+        <div id="categorias">
+            <h3>Filtrar por Categoria:</h3>
+            @foreach (var categoria in Model.Categorias)
+            {
+                <form method="get">
+                    <input type="hidden" name="genre" value="@categoria">
+                    <button type="submit">@categoria</button>
+                </form>
+            }
+        </div>
+    }
 
     <section id="lista-livros">
         <h2>Livros Disponíveis</h2>
@@ -40,11 +58,8 @@
                     </div>
                 </div>
             }
-
         </div>
     </section>
-
-    <div id="popup" class="popup"></div>
 
 </body>
 </html>
