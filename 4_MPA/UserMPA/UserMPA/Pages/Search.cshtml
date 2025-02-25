@@ -1,0 +1,33 @@
+﻿@page
+@model SearchModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    var nomeUsuario = HttpContextAccessor.HttpContext?.Session.GetString("NomeUsuario");
+}
+
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Virtual</title>
+  
+</head>
+<body>
+    <header>
+        <h1>Biblioteca Virtual</h1> 
+    </header>  
+    <div id="search">
+        <input type="text" id="buscador" placeholder="Buscar livros...">
+        <button id="pesquisa">Pesquisar</button>
+    </div>
+
+    <section id="lista-livros">
+        <h2>Livros Disponíveis</h2>
+        <div id="book-container"></div>
+    </section>
+
+    <div id="popup" class="popup"></div>
+</body>
+</html>
