@@ -14,25 +14,14 @@ namespace WebAPI.Model
 		public Model(WebApplication AppBuilt)
 		{
 			App = AppBuilt;
-			Dictionary<string, object>MethodsList = new Dictionary<string, object>();
-			MethodsList["GetTotalObraPorGenero"] = { name = "Nome", "type": ""}
+			Dictionary<string, List<object>>MethodsList = new Dictionary<string, List<object>>();
+			MethodsList["GetTotalObra"] = null;
+			MethodsList["GetTotalObraPorGenero"] = null;
+			MethodsList["GetTopRequestedByTime"] = new List<object> { new { name = "Data início", type = "date", size = 0 }, new { name = "Data fim", type = "date", size = 0} };
+			//MethodsList["GetTotalObraPorGenero"] = new List<object> { new { name = "Nome", type = "string", size = 20 } };
 			Methods = JsonSerializer.Serialize(MethodsList);
 
 		}
-
-		//public List<(string NomeGenero, int TotalQuantidade)> GetTotalObraPorGenero()
-		//{
-		//	var result = from g in context.Generos
-		//				 from o in g.PkObras
-		//				 join no in context.NucleoObras on o.PkObra equals no.PkObra
-		//				 group no by g.NomeGenero into grouped
-		//				 select new
-		//				 {
-		//					 NomeGenero = grouped.Key,
-		//					 TotalQuantidade = grouped.Sum(n => n.Quantidade)
-		//				 };
-		//	return result.ToList().Select(r => (r.NomeGenero, r.TotalQuantidade)).ToList();
-		//}
 
 		public string Login(Object response)
 		{

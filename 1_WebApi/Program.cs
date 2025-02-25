@@ -40,7 +40,7 @@ app.MapPost("/login", (Object response) =>
 
 app.MapGet("/methods", () =>
 {
-	return (model.MethodsList);
+	return (model.Methods);
 }).WithName("Methods").WithOpenApi();
 
 app.MapGet("/weatherforecast", (string str) =>

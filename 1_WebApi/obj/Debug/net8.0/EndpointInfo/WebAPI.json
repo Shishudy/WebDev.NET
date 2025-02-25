@@ -33,6 +33,26 @@
         }
       }
     },
+    "/methods": {
+      "get": {
+        "tags": [
+          "WebAPI"
+        ],
+        "operationId": "Methods",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/weatherforecast": {
       "get": {
         "tags": [

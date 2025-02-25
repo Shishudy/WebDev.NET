@@ -80,14 +80,14 @@ const loginButton = document.getElementById("loginButton");
 
 function getMethods() {
 	var apiUrl = "http://localhost:5164/methods";
-	fetch(apiUrl, options).then((response) => {
+	fetch(apiUrl).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
 	}).then((data) => {
-		console.log(data);
-		methods = JSON.parse(data);
+		// console.log(data);
+		methods = data;
 		console.log(methods);
 		return (methods);
 	}).catch((error) => {
@@ -95,7 +95,7 @@ function getMethods() {
 	});
 }
 
-const methods = getMethods();
+let methods = getMethods();
 
 loginForm.addEventListener("submit", function (event) {
 	event.preventDefault();
