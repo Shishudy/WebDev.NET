@@ -82,6 +82,34 @@
           }
         }
       }
+    },
+    "/teste": {
+      "post": {
+        "tags": [
+          "WebAPI"
+        ],
+        "operationId": "Teste",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": { }

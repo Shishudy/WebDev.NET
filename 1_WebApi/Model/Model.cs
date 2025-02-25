@@ -17,7 +17,28 @@ namespace WebAPI.Model
 			Dictionary<string, List<object>>MethodsList = new Dictionary<string, List<object>>();
 			MethodsList["GetTotalObra"] = null;
 			MethodsList["GetTotalObraPorGenero"] = null;
-			MethodsList["GetTopRequestedByTime"] = new List<object> { new { name = "Data início", type = "date", size = 0 }, new { name = "Data fim", type = "date", size = 0} };
+			MethodsList["GetTopRequestedByTime"] = new List<object> { 
+				new { name = "Data início", type = "date", size = 0, mandatory = true}, 
+				new { name = "Data fim", type = "date", size = 0, mandatory = true} 
+			};
+			MethodsList["GetRequisicoesByNucleo"] = new List<object> { 
+				new { name = "Data início", type = "date", size = 0, mandatory = true}, 
+				new { name = "Data fim", type = "date", size = 0, mandatory = true}
+			};
+			MethodsList["InsertObra"] = new List<object> {
+				new { name = "Núcleo a adicionar (opcional)", type = "number", size = 5, mandatory = false},
+				new { name = "Nome da obra", type = "text", size = 50, mandatory = true},
+				new { name = "ISBN", type = "text", size = 50, mandatory = true},
+				new { name = "Autor", type = "text", size = 50, mandatory = true},
+				new { name = "Editora", type = "text", size = 50, mandatory = true},
+				new { name = "Ano", type = "text", size = 50, mandatory = true},
+				new { name = "Imagem", type = "file", size = 50, mandatory = true},
+				new { name = "Quantidade (opcional)", type = "number", size = 50, mandatory = false},
+
+
+			};
+			//MethodsList["InsertObra"] = null;
+
 			//MethodsList["GetTotalObraPorGenero"] = new List<object> { new { name = "Nome", type = "string", size = 20 } };
 			Methods = JsonSerializer.Serialize(MethodsList);
 

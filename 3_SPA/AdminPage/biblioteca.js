@@ -161,3 +161,55 @@ function buildCatSelector() {
 	catSelectorDiv.appendChild(button);
 	page.appendChild(catSelectorDiv);
 }
+
+const form = document.getElementById("form");
+const pdf = document.getElementById("file");
+
+
+
+// document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+// 	event.preventDefault(); // Prevent form submission
+
+// 	var formData = new FormData(event.target);
+// 	console.log(formData);
+// 	fetch(apiUrl + "teste", {
+// 		method: 'POST',
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 		},
+// 		body: JSON.stringify({ formData })
+// 	})
+// 	.then(response => response.json())
+// 	.then(data => {
+// 		console.log('Success:', data);
+// 	})
+// 	.catch((error) => {
+// 		console.error('Error:', error);
+// 	});
+// });
+
+// form.addEventListener("submit", function (event) {
+// 	event.preventDefault();
+// 	console.log(event);
+// 	console.log(pdf.value);
+// 	var options = {
+// 		method: "POST",
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 		},
+// 		body: JSON.stringify({ }),
+// 	};
+// 	fetch(apiUrl + "teste", options)
+// 		.then((response) => {
+// 			if (!response.ok) {
+// 			  throw new Error('Network response was not ok');
+// 			}
+// 			return response.json();
+// 		})
+// 		.then((data) => {
+// 			console.log(data);
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error:", error);
+// 		});
+// });

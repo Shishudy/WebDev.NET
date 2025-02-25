@@ -55,6 +55,15 @@ app.MapGet("/weatherforecast", (string str) =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
+app.MapPost("/teste", (Object response) =>
+{
+	Console.WriteLine(response);
+	var json = JsonSerializer.Serialize(response);
+	return (json);
+})
+.WithName("Teste")
+.WithOpenApi();
+
 app.UseCors("AllowAll");
 
 app.Run();

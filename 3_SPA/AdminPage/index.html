@@ -41,6 +41,53 @@
     <section id="lista-livros">
         <h2>Livros Disponíveis</h2>
         <div id="book-container"></div>
+        <!-- <form id="form">
+            <input type="file" id="file" required>
+            <button type="submit">Entrar</button>
+        </form> -->
+        <form id="imageUploadForm" enctype="multipart/form-data">
+            <label for="image">Upload Image:</label>
+            <input type="file" id="image" name="image" accept="image/*"><br><br>
+            <input type="submit" value="Upload">
+        </form>
+        <script>
+            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent form submission
+    
+                var formData = new FormData(event.target);
+                var fileInput = document.getElementById('image');
+                var file = fileInput.files[0];
+    
+                if (file) {
+                    var reader = new FileReader();
+                    reader.onload = function(e) {
+                        var binaryData = e.target.result;
+                        console.log('Binary Data:', binaryData);
+    
+                        // You can now send the binary data along with the form data
+                        formData.append('binaryData', new Blob([binaryData]));
+    
+                        fetch(apiUrl + "teste", {
+                            method: 'POST',
+                            headers: {
+			                    "Content-Type": "application/json",
+		                    },
+                            body: JSON.stringify( formData )
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log('Success:', data);
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                    };
+                    reader.readAsArrayBuffer(file);
+                }
+            });
+        </script>
+    </body>
+    </html>
     </section>
 
     <div id="popup" class="popup"></div>
