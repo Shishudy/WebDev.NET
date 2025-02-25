@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using LibEF;
 using LibEF.Models;
 using Microsoft.EntityFrameworkCore;
+using WebAPI.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,28 +29,19 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+Model model = new Model(app);
+
 app.MapPost("/login", (Object response) =>
 {
-	ProjectoContext context = new ProjectoContext();
-	EF_methods EF = new EF_methods(context);
-	string jsonRes = JsonSerializer.Serialize(response);
-	Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
-	try
-	{
-		var forecast = EF.GetPassWordbyLogin(res.GetValueOrDefault("username"));
-		var obj = new { result = forecast};
-		var json = JsonSerializer.Serialize(obj);
-		return (json);
-	}
-	catch
-	{
-		var obj = new { result = "User not found."};
-		var json = JsonSerializer.Serialize(obj);
-		return (json);
-	}
+	return model.Login(response);
 })
 .WithName("Login")
 .WithOpenApi();
+
+app.MapGet("/methods", () =>
+{
+	return (model.MethodsList);
+}).WithName("Methods").WithOpenApi();
 
 app.MapGet("/weatherforecast", (string str) =>
 {

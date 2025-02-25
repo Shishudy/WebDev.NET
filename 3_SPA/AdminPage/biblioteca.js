@@ -31,7 +31,7 @@
 //         // .then(response => response.json())
 //         // .then(data => console.log(data))
 //         // .catch(error => console.error("Error:", error));
-        
+
 //         // fetch("http://localhost:5000/login", {
 //         //     method: "POST",
 //         //     headers: {
@@ -78,39 +78,91 @@ const loginForm = document.getElementById("loginForm");
 const welcomeUser = document.getElementById("welcomeUser");
 const loginButton = document.getElementById("loginButton");
 
-loginForm.addEventListener("submit", function(event) {
-    event.preventDefault();
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-    var options = {
-        method: "POST",
-        headers: {
-			'Content-Type': 'application/json',
+function getMethods() {
+	var apiUrl = "http://localhost:5164/methods";
+	fetch(apiUrl, options).then((response) => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	}).then((data) => {
+		console.log(data);
+		methods = JSON.parse(data);
+		console.log(methods);
+		return (methods);
+	}).catch((error) => {
+		console.error("Error:", error);
+	});
+}
+
+const methods = getMethods();
+
+loginForm.addEventListener("submit", function (event) {
+	event.preventDefault();
+	const username = document.getElementById("username").value;
+	const password = document.getElementById("password").value;
+	var options = {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
 		},
-        body: JSON.stringify({username, password}),
-    };
-    var apiUrl = "http://localhost:5164/login";
-    fetch(apiUrl, options)
-  .then(response => {
-    // if (!response.ok) {
-    //   throw new Error('Network response was not ok');
-    // }
-    return response.json();
-  })
-  .then(data => {
-    console.log(data);
-  })
-  .catch(error => {
-    console.error('Error:', error);
-  });
+		body: JSON.stringify({ username, password }),
+	};
+	var apiUrl = "http://localhost:5164/login";
+	fetch(apiUrl, options)
+		.then((response) => {
+			if (!response.ok) {
+			  throw new Error('Network response was not ok');
+			}
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+			document.getElementById("loginModal").style.display = "none";
+			buildPage();
+		})
+		.catch((error) => {
+			console.error("Error:", error);
+		});
 });
 
 document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("loginModal").style.display = "flex";
-    document.body.classList.add("blurred");
+	document.getElementById("loginModal").style.display = "flex";
+	document.body.classList.add("blurred");
 });
 
 function closeLoginModal() {
-    document.getElementById("loginModal").style.display = "none";
-    document.body.classList.remove("blurred");
+	document.getElementById("loginModal").style.display = "none";
+	document.body.classList.remove("blurred");
+}
+
+function buildPage() {
+	buildCatSelector();
+}
+
+function buildCatSelector() {
+	const page = document.getElementById("lista-livros");
+	const catSelectorDiv = document.createElement("div");
+	catSelectorDiv.setAttribute("id", "select-cat-div");
+	catSelectorDiv.setAttribute("class", "select-cat-div");
+	const catSelector = document.createElement("select");
+	catSelector.setAttribute("id", "select-cat");
+	// let catOption;
+	// let i = 0;
+	// while (i < uniqueCats.length) {
+	// 	catOption = document.createElement("option");
+	// 	catOption.setAttribute("value", uniqueCats[i]);
+	// 	catOption.textContent =
+	// 		uniqueCats[i].charAt(0).toUpperCase() + uniqueCats[i].slice(1);
+	// 	catSelector.appendChild(catOption);
+	// 	i++;
+	// }
+	catSelectorDiv.appendChild(catSelector);
+	button = document.createElement("button");
+	button.setAttribute("id", "clear-filter-button");
+	// button.setAttribute("onclick", "clearFilter()");
+	button.setAttribute("style", "float: right");
+	button.textContent = "Limpar filtro";
+	catSelectorDiv.appendChild(button);
+	page.appendChild(catSelectorDiv);
 }
