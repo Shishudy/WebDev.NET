@@ -21,9 +21,11 @@ namespace UserMPA.Pages
             _loginService = loginService;
         }
 
-        public IActionResult OnPost()
+           public IActionResult OnPost()
         {
-            if (_loginService.ValidarLogin(Email, Senha))
+            string resultadoLogin = _loginService.TentarLogin(Email, Senha);
+
+            if (resultadoLogin == "OK")
             {
                 var usuario = _loginService.ObterUsuario(Email);
                 if (usuario != null)
@@ -34,8 +36,10 @@ namespace UserMPA.Pages
                 }
             }
 
-            MensagemErro = "Usuário ou senha inválidos.";
+            MensagemErro = resultadoLogin; 
             return Page();
         }
+
     }
 }
+

@@ -23,23 +23,28 @@ namespace LibADO.CancelAccount
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
                     int count = (int)cmd.ExecuteScalar();
                     if (count == 0)
-                        throw new Exception("Leitor not found");
+                        throw new Exception("Leitor não encontrado");
                 }
+
                 string updateRequisicoes = @"
-                UPDATE dbo.Requisicao
-                SET stat = 'returned', data_devolucao = GETDATE()
-                WHERE pk_leitor = @pk_leitor";
+        UPDATE dbo.Requisicao
+        SET stat = 'returned', data_devolucao = GETDATE()
+        WHERE pk_leitor = @pk_leitor";
                 using (var cmd = new SqlCommand(updateRequisicoes, cn, transaction))
                 {
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
                     cmd.ExecuteNonQuery();
                 }
-                string deleteLeitor = @"
-                DELETE FROM dbo.Leitor WHERE pk_leitor = @pk_leitor";
-                using (var cmd = new SqlCommand(deleteLeitor, cn, transaction))
+                string updateLeitor = @"
+        UPDATE dbo.Leitor 
+        SET stat = 'Inactive' 
+        WHERE pk_leitor = @pk_leitor";
+                using (var cmd = new SqlCommand(updateLeitor, cn, transaction))
                 {
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
-                    cmd.ExecuteNonQuery();
+                    int rowsAffected = cmd.ExecuteNonQuery();
+                    if (rowsAffected == 0)
+                        throw new Exception("Falha ao atualizar status do leitor");
                 }
 
                 transaction.Commit();
@@ -51,5 +56,6 @@ namespace LibADO.CancelAccount
                 return false;
             }
         }
+
     }
 }

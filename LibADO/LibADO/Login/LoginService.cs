@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 using LibADO.Login;
 using LibADO;
 
-namespace LibADO.Login
+public class LoginService
 {
-    public class LoginService
+    private readonly LoginRepository _loginRepository;
+
+    public LoginService(LoginRepository loginRepository) => _loginRepository = loginRepository;
+
+    public string TentarLogin(string email, string senha)
     {
-        private readonly LoginRepository _loginRepository;
-
-        public LoginService(LoginRepository loginRepository) => _loginRepository = loginRepository;
-
-        public bool ValidarLogin(string email, string senha) => _loginRepository.ValidarLogin(email, senha);
-
-        public LoginModel? ObterUsuario(string email) => _loginRepository.ObterUsuarioPorEmail(email);
+        return _loginRepository.ValidarLogin(email, senha);
     }
+
+    public LoginModel? ObterUsuario(string email) => _loginRepository.ObterUsuarioPorEmail(email);
 }
 
