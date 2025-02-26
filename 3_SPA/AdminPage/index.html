@@ -6,95 +6,88 @@
     <title>Biblioteca</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="LoginModalBlur.css">
-    
-    
 </head>
 <body>
-    <!-- <div>
-        <svg class="background" id="loginBackground">
-            <img src="bg.svg" alt="bg">
-        </svg>
-    </div> -->
     <header>
         <h1>Biblioteca Virtual</h1>
-        <button id="loginButton">Login</button>
         <span id="welcomeUser" style="display: none;"></span>
     </header>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
-            <form id="loginForm">
-                <label for="username">Usuário:</label>
-                <input type="text" id="username" required>
-                <label for="password">Senha:</label>
-                <input type="password" id="password" required>
-                <button type="submit">Entrar</button>
-            </form>
-        </div>
-    </div>
+<!-- Main div -->
+	<div id="main-div" class="div div--main">
+		<!-- Modal de login -->
+		<div id="login-modal-div" class="div div--modal">
+			<div id="login-modal-content-div" class="div div--modal-content">
+				<span class="span span--close" onclick="closeLoginModal()">&times;</span>
+				<form id="login-form">
+					<label for="username">Usuário:</label>
+					<input id="username-input" type="text" required>
+					<label for="password">Senha:</label>
+					<input id="password-input" type="password" required>
+					<button type="submit">Entrar</button>
+				</form>
+			</div>
+		</div>
+		<!-- Menu -->
+		<div id="menu-div" class="div div--menu">
+			<a href="#section1">Gestão de Leitores</a>
+			<a href="#section2">Gestão de Obras</a>
+			<a href="#section3">Gestão de Reservas</a>
+		</div>
+		<!-- Dropdown para escolher métodos -->
+		<div id="method-selector">
+		
+		</div>
+		<!-- Form para fornecer parâmetros aos métodos -->
+		<div id="form-input-div">
+			<form id="form-input">
+				<label for="username">Usuário:</label>
+				<input type="text" id="username-input" required>
+				<label for="password">Senha:</label>
+				<input type="password" id="password-input" required>
+				<button type="submit">Entrar</button>
+			</form>
+			<!-- <div id="book-container"></div> -->
+			<!-- <form id="form">
+				<input type="file" id="file" required>
+				<button type="submit">Entrar</button>
+			</form> -->
+			<!-- <form id="imageUploadForm" enctype="multipart/form-data">
+				<label for="image">Upload Image:</label>
+				<input type="file" id="image" name="image" accept="image/*"><br><br>
+				<input type="submit" value="Upload">
+			</form> -->
+		</div>
+		<!-- Div para mostrar resultados dos métodos -->
+		<div id="form-output-div">
+	
+		</div>
+	</div>
 
-    <div id="search">
+    <!-- <div id="search">
         <input type="text" id="buscador" placeholder="Buscar livros...">
         <button id="pesquisa">Pesquisar</button>
-    </div>
+    </div> -->
+	<footer>
+		<h1>hello</h1>
+	</footer>
+	<script>
+        // Function to highlight active menu item
+        document.addEventListener("scroll", function() {
+            let sections = document.querySelectorAll(".section");
+            let menuLinks = document.querySelectorAll(".menu a");
 
-    <section id="lista-livros">
-        <h2>Livros Disponíveis</h2>
-        <div id="book-container"></div>
-        <!-- <form id="form">
-            <input type="file" id="file" required>
-            <button type="submit">Entrar</button>
-        </form> -->
-        <div id="form-container"></div>
+            let fromTop = window.scrollY + 100; // Offset to detect section
 
-        <form id="imageUploadForm" enctype="multipart/form-data">
-            <label for="image">Upload Image:</label>
-            <input type="file" id="image" name="image" accept="image/*"><br><br>
-            <input type="submit" value="Upload">
-        </form>
-        <script>
-            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent form submission
-    
-                var formData = new FormData(event.target);
-                var fileInput = document.getElementById('image');
-                var file = fileInput.files[0];
-    
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        var binaryData = e.target.result;
-                        console.log('Binary Data:', binaryData);
-    
-                        // You can now send the binary data along with the form data
-                        formData.append('binaryData', new Blob([binaryData]));
-    
-                        fetch(apiUrl + "teste", {
-                            method: 'POST',
-                            headers: {
-			                    "Content-Type": "application/json",
-		                    },
-                            body: JSON.stringify( formData )
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Success:', data);
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
-                    };
-                    reader.readAsArrayBuffer(file);
+            sections.forEach((section, index) => {
+                if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
+                    menuLinks.forEach(link => link.classList.remove("active"));
+                    menuLinks[index].classList.add("active");
                 }
             });
-        </script>
-    </body>
-    </html>
-    </section>
-
-    <div id="popup" class="popup"></div>
-    
-    <script src="biblioteca.js"></script>
+        });
+    </script>
+    <script src="script.js"></script>
+    <!-- <script src="biblioteca.js"></script> -->
     <script src="biblioteca-evt.js"></script>
 </body>
 </html>

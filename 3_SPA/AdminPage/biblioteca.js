@@ -77,56 +77,56 @@ const overlay = document.getElementById("overlay");
 const loginForm = document.getElementById("loginForm");
 const welcomeUser = document.getElementById("welcomeUser");
 const loginButton = document.getElementById("loginButton");
-const apiUrl = "http://localhost:5164/";
+// const apiUrl = "http://localhost:5164/";
 
-function getMethods() {
-	fetch(apiUrl + "methods").then((response) => {
-		if (!response.ok) {
-			throw new Error('Network response was not ok');
-		}
-		return response.json();
-	}).then((data) => {
-		methods = data;
-		console.log(methods);
-		return (methods);
-	}).catch((error) => {
-		console.error("Error:", error);
-	});
-}
+// function getMethods() {
+// 	fetch(apiUrl + "methods").then((response) => {
+// 		if (!response.ok) {
+// 			throw new Error('Network response was not ok');
+// 		}
+// 		return response.json();
+// 	}).then((data) => {
+// 		methods = data;
+// 		console.log(methods);
+// 		return (methods);
+// 	}).catch((error) => {
+// 		console.error("Error:", error);
+// 	});
+// }
 
-let methods = getMethods();
+// let methods = getMethods();
 
-loginForm.addEventListener("submit", function (event) {
-	event.preventDefault();
-	const username = document.getElementById("username").value;
-	const password = document.getElementById("password").value;
-	var options = {
-		method: "POST",
-		headers: {
-			"Content-Type": "application/json",
-		},
-		body: JSON.stringify({ username, password }),
-	};
-	fetch(apiUrl + "login", options)
-		.then((response) => {
-			if (!response.ok) {
-			  throw new Error('Network response was not ok');
-			}
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			document.getElementById("loginModal").style.display = "none";
-			buildPage();
-		})
-		.catch((error) => {
-			console.error("Error:", error);
-		});
-});
+// loginForm.addEventListener("submit", function (event) {
+// 	event.preventDefault();
+// 	const username = document.getElementById("username").value;
+// 	const password = document.getElementById("password").value;
+// 	var options = {
+// 		method: "POST",
+// 		headers: {
+// 			"Content-Type": "application/json",
+// 		},
+// 		body: JSON.stringify({ username, password }),
+// 	};
+// 	fetch(apiUrl + "login", options)
+// 		.then((response) => {
+// 			if (!response.ok) {
+// 			  throw new Error('Network response was not ok');
+// 			}
+// 			return response.json();
+// 		})
+// 		.then((data) => {
+// 			console.log(data);
+// 			document.getElementById("loginModal").style.display = "none";
+// 			buildPage();
+// 		})
+// 		.catch((error) => {
+// 			console.error("Error:", error);
+// 		});
+// });
 
 document.addEventListener("DOMContentLoaded", function () {
 	document.getElementById("loginModal").style.display = "flex";
-	document.body.classList.add("blurred");
+	// document.body.classList.add("blurred");
 });
 
 function closeLoginModal() {
@@ -138,34 +138,69 @@ function buildPage() {
 	buildCatSelector();
 }
 
-function buildCatSelector() {
-	const page = document.getElementById("lista-livros");
-	const catSelectorDiv = document.createElement("div");
-	catSelectorDiv.setAttribute("id", "select-cat-div");
-	catSelectorDiv.setAttribute("class", "select-cat-div");
-	const catSelector = document.createElement("select");
-	catSelector.setAttribute("id", "select-cat");
-	let catOption;
-	for (const key in methods) {
-		catOption = document.createElement("option");
-		catOption.setAttribute("value", key);
-		catOption.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-		catSelector.appendChild(catOption);
-	}
-	catSelectorDiv.appendChild(catSelector);
-	button = document.createElement("button");
-	button.setAttribute("id", "clear-filter-button");
-	// button.setAttribute("onclick", "clearFilter()");
-	button.setAttribute("style", "float: right");
-	button.textContent = "Limpar filtro";
-	catSelectorDiv.appendChild(button);
-	page.appendChild(catSelectorDiv);
-	// Add event listener to the category selector
-	catSelector.addEventListener("change", function () {
-		const selectedMethod = catSelector.value;
-		fetchFormStructure(selectedMethod);
-	});
-}
+// function buildCatSelector() {
+// 	const page = document.getElementById("lista-livros");
+// 	const catSelectorDiv = document.createElement("div");
+// 	catSelectorDiv.setAttribute("id", "select-cat-div");
+// 	catSelectorDiv.setAttribute("class", "select-cat-div");
+// 	const catSelector = document.createElement("select");
+// 	catSelector.setAttribute("id", "select-cat");
+// 	let catOption;
+// 	for (const key in methods) {
+// 		catOption = document.createElement("option");
+// 		catOption.setAttribute("value", key);
+// 		catOption.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+// 		catSelector.appendChild(catOption);
+// 	}
+// 	catSelectorDiv.appendChild(catSelector);
+// 	button = document.createElement("button");
+// 	button.setAttribute("id", "clear-filter-button");
+// 	// button.setAttribute("onclick", "clearFilter()");
+// 	button.setAttribute("style", "float: right");
+// 	button.textContent = "Limpar filtro";
+// 	catSelectorDiv.appendChild(button);
+// 	page.appendChild(catSelectorDiv);
+// 	// Add event listener to the category selector
+// 	// catSelector.addEventListener("change", function () {
+// 	// 	const selectedMethod = catSelector.value;
+// 	// 	fetchFormStructure(selectedMethod);
+// 	// });
+// }
+
+
+// document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
+// 	event.preventDefault();
+// 	var formData = new FormData(event.target);
+// 	var fileInput = document.getElementById('image');
+// 	var file = fileInput.files[0];
+
+// 	if (file) {
+// 		var reader = new FileReader();
+// 		reader.onload = function(e) {
+// 			var binaryData = e.target.result;
+// 			console.log('Binary Data:', binaryData);
+
+// 			// You can now send the binary data along with the form data
+// 			formData.append('binaryData', new Blob([binaryData]));
+
+// 			fetch(apiUrl + "teste", {
+// 				method: 'POST',
+// 				headers: {
+// 					"Content-Type": "application/json",
+// 				},
+// 				body: JSON.stringify( formData )
+// 			})
+// 			.then(response => response.json())
+// 			.then(data => {
+// 				console.log('Success:', data);
+// 			})
+// 			.catch((error) => {
+// 				console.error('Error:', error);
+// 			});
+// 		};
+// 		reader.readAsArrayBuffer(file);
+// 	}
+// });
 
 function fetchFormStructure(method) {
     fetch(apiUrl + "ResolveMethod" + method)

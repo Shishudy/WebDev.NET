@@ -56,30 +56,30 @@ app.MapGet("/weatherforecast", (string str) =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] object param) =>
-{
-	try
-	{
-		var methods_dic = JsonSerializer.Deserialize<Dictionary<string, List<object>>>(model.Methods);
-		if (!methods_dic.ContainsKey(method))
-			throw new Exception("no such method listed");
-		if (param != null) // parameters are recieved and the method is ran.
-			return Results.Ok(model.ResolveMethod(method, param));
-		else if (methods_dic[method] == null)
-		{ // no need for parameters method is just run
-			model.ResolveMethod(method, null);
-			return Results.Ok(null);
-		}
-		else // sends the parameters back
-			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
-	}
-	catch (Exception ex)
-	{
-		return Results.BadRequest(null);
-	}
-})
-.WithName("ResolveMethod")
-.WithOpenApi();
+//app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] object param) =>
+//{
+//	try
+//	{
+//		var methods_dic = JsonSerializer.Deserialize<Dictionary<string, List<object>>>(model.MethodsJson);
+//		if (!methods_dic.ContainsKey(method))
+//			throw new Exception("no such method listed");
+//		if (param != null) // parameters are recieved and the method is ran.
+//			return Results.Ok(model.ResolveMethod(method, param));
+//		else if (methods_dic[method] == null)
+//		{ // no need for parameters method is just run
+//			model.ResolveMethod(method, null);
+//			return Results.Ok(null);
+//		}
+//		else // sends the parameters back
+//			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
+//	}
+//	catch (Exception ex)
+//	{
+//		return Results.BadRequest(null);
+//	}
+//})
+//.WithName("ResolveMethod")
+//.WithOpenApi();
 
 app.MapPost("/teste", (Object response) =>
 { 

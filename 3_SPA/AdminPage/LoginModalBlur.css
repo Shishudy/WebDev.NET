@@ -2,11 +2,14 @@
 	font-family: Arial, sans-serif;
 	margin: 0;
 	padding: 0;
-	background-color: #f4f4f4;
+	background-image: url('bg.jpg');
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+	background-size: cover;
 }
 
 #loginModal {
-	background-image: url('bg.jpg');
+	background-image: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcTVidTZ0NG9qamNkNzV1dTBsamR6dmE3M2JzbnpxYTR4c3lqbjFwdyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/dUZJYyO9rDksQOspWr/giphy.gif');
 	background-repeat: no-repeat;
 	background-attachment: fixed;
 	background-size: cover;
