@@ -130,6 +130,12 @@ namespace WebAPI.Model
 
 		}
 
+		public object ResolveMethod (string method, object response)
+		{
+			string val = method + " was called and recieved response, reflection still needed"
+			return val;
+		}
+
 		public string Login(Object response)
 		{
 			ProjectoContext context = new ProjectoContext();

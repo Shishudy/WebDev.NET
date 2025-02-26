@@ -160,10 +160,72 @@ function buildCatSelector() {
 	button.textContent = "Limpar filtro";
 	catSelectorDiv.appendChild(button);
 	page.appendChild(catSelectorDiv);
+	// Add event listener to the category selector
+	catSelector.addEventListener("change", function () {
+		const selectedMethod = catSelector.value;
+		fetchFormStructure(selectedMethod);
+	});
+}
+
+function fetchFormStructure(method) {
+    fetch(apiUrl + "ResolveMethod" + method)
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then((formStructure) => {
+            buildForm(formStructure);
+        })
+        .catch((error) => {
+            console.error("Error:", error);
+        });
 }
 
 const form = document.getElementById("form");
 const pdf = document.getElementById("file");
+
+function BuildFormByObject(obj) {
+	
+}
+function buildForm(formStructure) {
+	const formContainer = document.getElementById('form-container');
+	const form = document.createElement('form');
+	form.setAttribute('id', 'dynamicForm');
+
+	formStructure.forEach(field => {
+		const formGroup = document.createElement('div');
+		formGroup.setAttribute('class', 'form-group');
+
+		const label = document.createElement('label');
+		label.setAttribute('for', field.name);
+		label.textContent = field.name;
+
+		const input = document.createElement('input');
+		input.setAttribute('type', field.type);
+		input.setAttribute('id', field.name);
+		input.setAttribute('name', field.name);
+		input.setAttribute('size', field.size);
+		if (field.mandatory) {
+			input.setAttribute('required', 'required');
+		}
+
+		formGroup.appendChild(label);
+		formGroup.appendChild(input);
+		form.appendChild(formGroup);
+	});
+
+	const submitButton = document.createElement('button');
+	submitButton.setAttribute('type', 'submit');
+	submitButton.textContent = 'Submit';
+	form.appendChild(submitButton);
+
+	formContainer.appendChild(form);
+}
+
+
+
 
 
 
