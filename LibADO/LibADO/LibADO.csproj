@@ -162,6 +162,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelAccount\Functions.cs" />
+    <Compile Include="CancelAccount\Method.cs" />
     <Compile Include="Login\LoginModel.cs" />
     <Compile Include="Login\LoginRepository.cs" />
     <Compile Include="Login\LoginService.cs" />
@@ -169,6 +171,7 @@
     <Compile Include="Search\MethodesSearch.cs" />
     <Compile Include="Search\SearchSP.cs" />
     <Compile Include="SPS\Procedures.cs" />
+    <Compile Include="UserRequisitions\GetUserRequisitions.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

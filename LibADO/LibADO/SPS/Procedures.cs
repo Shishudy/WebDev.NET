@@ -11,47 +11,7 @@ namespace LibADO.SPS
 {
     public class Procedures
     {
-        public static bool sp_cancel_leitor(int pk_leitor, string connectionString)
-        {
-            using var cn = DB.Open(connectionString);
-            using var transaction = cn.BeginTransaction();
-
-            try
-            {
-                string checkLeitor = "SELECT COUNT(*) FROM dbo.Leitor WHERE pk_leitor = @pk_leitor";
-                using (var cmd = new SqlCommand(checkLeitor, cn, transaction))
-                {
-                    cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
-                    int count = (int)cmd.ExecuteScalar();
-                    if (count == 0)
-                        throw new Exception("Leitor not found");
-                }
-                string updateRequisicoes = @"
-                UPDATE dbo.Requisicao
-                SET stat = 'returned', data_devolucao = GETDATE()
-                WHERE pk_leitor = @pk_leitor";
-                using (var cmd = new SqlCommand(updateRequisicoes, cn, transaction))
-                {
-                    cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
-                    cmd.ExecuteNonQuery();
-                }
-                string deleteLeitor = @"
-                DELETE FROM dbo.Leitor WHERE pk_leitor = @pk_leitor";
-                using (var cmd = new SqlCommand(deleteLeitor, cn, transaction))
-                {
-                    cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
-                    cmd.ExecuteNonQuery();
-                }
-
-                transaction.Commit();
-                return true;
-            }
-            catch
-            {
-                transaction.Rollback();
-                return false;
-            }
-        } //Retorna todas as requisições e cancela a adesão
+       //Retorna todas as requisições e cancela a adesão
 
         public static List<Dictionary<string, object>> sp_requisicoes_by_nucleo(DateTime startDate, DateTime endDate, string connectionString)
         {

@@ -1,4 +1,4 @@
-using LibADO.SPS;
+using LibADO.CancelAccount;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -14,13 +14,13 @@ namespace UserMPA.Pages
 
         public void OnGet()
         {
-            int? pk_leitor = HttpContext.Session.GetInt32("UserId");
-
-            if (pk_leitor.HasValue)
+            int? userId = HttpContext.Session.GetInt32("IdUsuario");
+            if (userId.HasValue)
             {
-                bool resultado = Procedures.sp_cancel_leitor(pk_leitor.Value,connectionstring);
+                bool resultado = Method.sp_cancel_leitor(userId.Value, connectionstring);
                 if (resultado)
                 {
+
                     Mensagem = "Adesão cancelada com sucesso!";
 
                 }
@@ -30,11 +30,6 @@ namespace UserMPA.Pages
                     Sucesso = false;
 
                 }
-            }
-            else
-            {
-                Mensagem = "Erro: Usuário não autenticado.";
-                Sucesso = false;
             }
         }
     }

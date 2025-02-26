@@ -29,6 +29,7 @@ namespace UserMPA.Pages
                 if (usuario != null)
                 {
                     HttpContext.Session.SetString("NomeUsuario", usuario.Nome);
+                    HttpContext.Session.SetInt32("IdUsuario", usuario.Id);
                     return RedirectToPage("/Index");
                 }
             }

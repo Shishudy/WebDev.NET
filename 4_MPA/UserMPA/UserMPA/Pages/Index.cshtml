@@ -18,6 +18,14 @@
     <header>
         <h1>Biblioteca Virtual</h1>
 
+        @if (HttpContextAccessor.HttpContext.Session.GetInt32("IdUsuario") != null)
+        {
+            <p>ID do usuário: @HttpContextAccessor.HttpContext.Session.GetInt32("IdUsuario")</p>
+        }
+
+
+
+
         @if (!string.IsNullOrEmpty(nomeUsuario))
         {
             <div style="display: flex; align-items: center; gap: 15px;">
