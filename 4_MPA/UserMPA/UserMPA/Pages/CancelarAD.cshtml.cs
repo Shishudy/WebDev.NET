@@ -15,8 +15,6 @@ namespace UserMPA.Pages
         public void OnGet()
         {
             int? userId = HttpContext.Session.GetInt32("IdUsuario");
-            Console.WriteLine($"DEBUG: ID do usuário na sessão -> {userId}");
-
             if (userId.HasValue)
             {
                 bool resultado = Method.sp_cancel_leitor(userId.Value, connectionstring);
@@ -26,8 +24,6 @@ namespace UserMPA.Pages
                 {
                     Mensagem = "Adesão cancelada com sucesso!";
                     Sucesso = true;
-
-                    // Opcional: Remover sessão após cancelamento
                     HttpContext.Session.Clear();
                 }
                 else

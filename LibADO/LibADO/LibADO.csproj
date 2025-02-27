@@ -162,7 +162,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CancelAccount\Functions.cs" />
     <Compile Include="CancelAccount\Method.cs" />
     <Compile Include="Login\LoginModel.cs" />
     <Compile Include="Login\LoginRepository.cs" />

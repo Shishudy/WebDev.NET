@@ -202,3 +202,14 @@ header {
     justify-content: center;
     z-index: 2;
 }
+
+.alert {
+    background: #ffdddd;
+    color: #d8000c;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #d8000c;
+    margin-bottom: 15px;
+    text-align: center;
+    font-weight: bold;
+}
