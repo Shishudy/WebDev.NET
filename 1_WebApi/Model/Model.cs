@@ -140,6 +140,11 @@ namespace WebAPI.Model
 
 		public List <object> GetParamList (string method, JsonElement param)
 		{
+			if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
+			{
+				// Return an empty list if the JSON input is empty
+				return new List<object>();
+			}
             var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
             var paramList = new List<object>();
             foreach (var item in MethodsDict[method])
@@ -163,15 +168,16 @@ namespace WebAPI.Model
                         case "date":
                             paramList.Add(paramDict[paramName].GetDateTime());
                             break;
-                        case "file":
-                            // Handle file type if necessary
-                            break;
                         default:
                             paramList.Add(paramDict[paramName].ToString());
                             break;
                     }
                 }
+				else
+					paramList.Add(null);
             }
+			foreach (var val in paramList)
+				Console.WriteLine(val ?? "null");
 			return paramList;
         }
 
@@ -180,25 +186,29 @@ namespace WebAPI.Model
             ProjectoContext context = new ProjectoContext();
             EF_methods ef = new EF_methods(context);
             Type type = typeof(EF_methods);
-            //Type type = LibEF.GetType();
-			
 			MethodInfo? method_fun = type.GetMethod(method);
-            if (method_fun != null)
+			try
 			{
-				if (response != null)
+				if (method_fun != null)
 				{
-					return method_fun.Invoke(ef, response.ToArray());  // Call the method with multiple arguments
+					if (response != null)
+						return method_fun.Invoke(ef, response.ToArray());  // Call the method with multiple arguments
+					else
+						return method_fun.Invoke(ef, null);
 				}
-				else
-					return method_fun.Invoke(ef, null);
-				//return JsonSerializer.Deserialize<object>(result);
-				// return result;
-				//return result;
+				else 
+					throw new Exception("failed, no such method");
 			}
-			else 
-				return "failed, no such method";
-				// throw new Exception ("no such method listed");
+			catch (TargetInvocationException ex)
+			{
+				throw new Exception(ex.InnerException?.Message ?? ex.Message);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception(ex.Message);
+			}
 		}
+
 
 		public string Login(Object response)
 		{
