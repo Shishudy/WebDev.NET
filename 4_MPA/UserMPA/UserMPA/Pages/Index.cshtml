@@ -41,13 +41,16 @@
         }
     </header>
 
-    @if (!string.IsNullOrEmpty(Model.MensagemErro))
-    {
-        <div class="alert alert-danger">@Model.MensagemErro</div>
-    }
-
     <div id="loginModal" class="modal" style="display:@(string.IsNullOrEmpty(nomeUsuario) ? "flex" : "none");">
         <div class="modal-content">
+
+            @if (!string.IsNullOrEmpty(Model.MensagemErro))
+        {
+            <div class="alert">
+                @Model.MensagemErro
+            </div>
+        }
+
             <span class="close" onclick="document.getElementById('loginModal').style.display = 'none'">&times;</span>
 
             <form method="post">
@@ -61,6 +64,5 @@
             </form>
         </div>
     </div>
-    <div id="popup" class="popup"></div>
 </body>
 </html>

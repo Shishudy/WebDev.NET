@@ -3,7 +3,6 @@
     public class LoginModalBlur
 {
     body
-
 {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -56,5 +55,6 @@ body.blurred {
         .modal-content button:hover {
             background: #005f73;
         }
-    }
 }
+}
+
