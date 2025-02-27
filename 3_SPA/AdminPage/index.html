@@ -19,33 +19,25 @@
 			<div id="login-modal-content-div" class="div div--modal-content">
 				<span class="span span--close" onclick="closeLoginModal()">&times;</span>
 				<form id="login-form">
-					<label for="username">Usuário:</label>
-					<input id="username-input" type="text" required>
-					<label for="password">Senha:</label>
-					<input id="password-input" type="password" required>
-					<button type="submit">Entrar</button>
+					<label for="login-form-username-input">Usuário:</label>
+					<input id="login-form-username-input" type="text" required>
+					<label for="login-form-password-input">Senha:</label>
+					<input id="login-form-password-input" type="password" required>
+					<button id="login-form-submit-button" type="submit">Entrar</button>
 				</form>
 			</div>
 		</div>
 		<!-- Menu -->
-		<div id="menu-div" class="div div--menu">
-			<a href="#section1">Gestão de Leitores</a>
-			<a href="#section2">Gestão de Obras</a>
-			<a href="#section3">Gestão de Reservas</a>
+		<div id="menu-div" class="div div--menu-2">
+			<a href="">Gestão de Leitores</a>
+			<a href="">Gestão de Obras</a>
+			<a href="">Gestão de Reservas</a>
 		</div>
 		<!-- Dropdown para escolher métodos -->
-		<div id="method-selector">
-		
+		<div id="method-selector-div">
 		</div>
 		<!-- Form para fornecer parâmetros aos métodos -->
 		<div id="form-input-div">
-			<form id="form-input">
-				<label for="username">Usuário:</label>
-				<input type="text" id="username-input" required>
-				<label for="password">Senha:</label>
-				<input type="password" id="password-input" required>
-				<button type="submit">Entrar</button>
-			</form>
 			<!-- <div id="book-container"></div> -->
 			<!-- <form id="form">
 				<input type="file" id="file" required>
@@ -68,7 +60,7 @@
         <button id="pesquisa">Pesquisar</button>
     </div> -->
 	<footer>
-		<h1>hello</h1>
+		
 	</footer>
 	<script>
         // Function to highlight active menu item
