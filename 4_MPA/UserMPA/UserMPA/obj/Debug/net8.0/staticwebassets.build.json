@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "HztILKUhsWzlO820uBf0hB44MDfbroW/EmD3z36p3KU=",
+  "Hash": "eWjn/oGVXwK1M5mpjItpiuJDc3WuFH4k0C/7/YuDa60=",
   "Source": "UserMPA",
   "BasePath": "_content/UserMPA",
   "Mode": "Default",
@@ -73,8 +73,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "yjarrh9ycv",
-      "Integrity": "0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw=",
+      "Fingerprint": "7xs4rzeo7g",
+      "Integrity": "lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\LoginModalBlur.css"
@@ -115,8 +115,8 @@
       "RelatedAsset": "",
       "AssetTraitName": "",
       "AssetTraitValue": "",
-      "Fingerprint": "kxvi2nyilv",
-      "Integrity": "KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ=",
+      "Fingerprint": "bujuph2ls9",
+      "Integrity": "DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc=",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\css\\styles2.css"
@@ -1363,6 +1363,51 @@
   ],
   "Endpoints": [
     {
+      "Route": "css/LoginModalBlur.7xs4rzeo7g.css",
+      "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\LoginModalBlur.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "1267"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Feb 2025 21:21:36 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "7xs4rzeo7g"
+        },
+        {
+          "Name": "label",
+          "Value": "css/LoginModalBlur.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to="
+        }
+      ]
+    },
+    {
       "Route": "css/LoginModalBlur.css",
       "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\LoginModalBlur.css",
       "Selectors": [],
@@ -1373,7 +1418,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "1104"
+          "Value": "1267"
         },
         {
           "Name": "Content-Type",
@@ -1381,11 +1426,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw=\""
+          "Value": "\"lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 18 Feb 2025 12:46:55 GMT"
+          "Value": "Thu, 27 Feb 2025 21:21:36 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1395,52 +1440,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw="
-        }
-      ]
-    },
-    {
-      "Route": "css/LoginModalBlur.yjarrh9ycv.css",
-      "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\LoginModalBlur.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "1104"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 18 Feb 2025 12:46:55 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "yjarrh9ycv"
-        },
-        {
-          "Name": "label",
-          "Value": "css/LoginModalBlur.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw="
+          "Value": "sha256-lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to="
         }
       ]
     },
@@ -1527,6 +1527,51 @@
       ]
     },
     {
+      "Route": "css/styles2.bujuph2ls9.css",
+      "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\styles2.css",
+      "Selectors": [],
+      "ResponseHeaders": [
+        {
+          "Name": "Accept-Ranges",
+          "Value": "bytes"
+        },
+        {
+          "Name": "Content-Length",
+          "Value": "4670"
+        },
+        {
+          "Name": "Content-Type",
+          "Value": "text/css"
+        },
+        {
+          "Name": "ETag",
+          "Value": "\"DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc=\""
+        },
+        {
+          "Name": "Last-Modified",
+          "Value": "Thu, 27 Feb 2025 21:07:31 GMT"
+        },
+        {
+          "Name": "Cache-Control",
+          "Value": "max-age=31536000, immutable"
+        }
+      ],
+      "EndpointProperties": [
+        {
+          "Name": "fingerprint",
+          "Value": "bujuph2ls9"
+        },
+        {
+          "Name": "label",
+          "Value": "css/styles2.css"
+        },
+        {
+          "Name": "integrity",
+          "Value": "sha256-DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc="
+        }
+      ]
+    },
+    {
       "Route": "css/styles2.css",
       "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\styles2.css",
       "Selectors": [],
@@ -1537,7 +1582,7 @@
         },
         {
           "Name": "Content-Length",
-          "Value": "3970"
+          "Value": "4670"
         },
         {
           "Name": "Content-Type",
@@ -1545,11 +1590,11 @@
         },
         {
           "Name": "ETag",
-          "Value": "\"KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ=\""
+          "Value": "\"DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc=\""
         },
         {
           "Name": "Last-Modified",
-          "Value": "Tue, 25 Feb 2025 14:21:33 GMT"
+          "Value": "Thu, 27 Feb 2025 21:07:31 GMT"
         },
         {
           "Name": "Cache-Control",
@@ -1559,52 +1604,7 @@
       "EndpointProperties": [
         {
           "Name": "integrity",
-          "Value": "sha256-KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ="
-        }
-      ]
-    },
-    {
-      "Route": "css/styles2.kxvi2nyilv.css",
-      "AssetFile": "C:\\Users\\leand\\OneDrive\\Área de Trabalho\\teste\\WebDev.NET\\4_MPA\\UserMPA\\UserMPA\\wwwroot\\css\\styles2.css",
-      "Selectors": [],
-      "ResponseHeaders": [
-        {
-          "Name": "Accept-Ranges",
-          "Value": "bytes"
-        },
-        {
-          "Name": "Content-Length",
-          "Value": "3970"
-        },
-        {
-          "Name": "Content-Type",
-          "Value": "text/css"
-        },
-        {
-          "Name": "ETag",
-          "Value": "\"KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ=\""
-        },
-        {
-          "Name": "Last-Modified",
-          "Value": "Tue, 25 Feb 2025 14:21:33 GMT"
-        },
-        {
-          "Name": "Cache-Control",
-          "Value": "max-age=31536000, immutable"
-        }
-      ],
-      "EndpointProperties": [
-        {
-          "Name": "fingerprint",
-          "Value": "kxvi2nyilv"
-        },
-        {
-          "Name": "label",
-          "Value": "css/styles2.css"
-        },
-        {
-          "Name": "integrity",
-          "Value": "sha256-KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ="
+          "Value": "sha256-DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc="
         }
       ]
     },

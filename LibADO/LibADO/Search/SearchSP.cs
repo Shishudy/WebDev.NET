@@ -19,7 +19,7 @@ string? obra, string? genre, string? nucleo, string connectionString)
             string filtroNucleo = string.IsNullOrEmpty(nucleo) ? "" : $"AND no.pk_nucleo IN (SELECT pk_nucleo FROM dbo.fn_search_nucleo('{nucleo}'))";
 
             string query = $@"
-    SELECT o.nome_obra, n.nome_nucleo, no.quantidade, 
+    SELECT no.pk_obra, o.nome_obra, n.nome_nucleo, no.quantidade, 
            COALESCE(ir.image_path, '/images/default.jpg') AS image_path
     FROM dbo.NucleoObra no
         INNER JOIN dbo.Obra o ON no.pk_obra = o.pk_obra

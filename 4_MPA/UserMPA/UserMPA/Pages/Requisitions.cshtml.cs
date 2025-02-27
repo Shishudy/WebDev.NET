@@ -25,10 +25,16 @@ namespace UserMPA.Pages
                 int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
                 if (idUsuario == null)
                 {
+                    Console.WriteLine("ID do Usuário não encontrado na sessão.");
                     return RedirectToPage("/Login");
                 }
 
+                Console.WriteLine($"ID do Usuário: {idUsuario.Value}");
+
                 ObrasRequisitadas = _requisicaoRepository.GetObrasRequisitadas(idUsuario.Value);
+
+                Console.WriteLine($"Quantidade de obras retornadas: {ObrasRequisitadas.Count}");
+
                 return Page();
             }
         }

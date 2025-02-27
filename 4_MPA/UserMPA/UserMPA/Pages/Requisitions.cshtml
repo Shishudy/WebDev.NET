@@ -16,13 +16,6 @@
         <h1>Biblioteca Virtual</h1>
     </header>
 
-    <section id="search">
-        <form method="get">
-            <input type="text" name="searchTerm" placeholder="Pesquisar livro..." />
-            <button type="submit">Pesquisar</button>
-        </form>
-    </section>
-
     <section id="lista-livros">
         <h2>Livros Requisitados</h2>
 
@@ -32,14 +25,23 @@
                 @foreach (var obra in Model.ObrasRequisitadas)
                 {
                     <div class="card">
-                        <img src="@obra["image_path"]" alt="@obra["nome_obra"]">
+                        <img src="~/images/@obra["fk_imagem"].ToString()" alt="@obra["nome_obra"]">
                         <div class="info-card">
                             <h4>@obra["nome_obra"]</h4>
                             <p><strong>Núcleo:</strong> @obra["nome_nucleo"]</p>
-                            <p><strong>Quantidade:</strong> @obra["quantidade"]</p>
+                            <p>
+                                <strong>Status de Entrega:</strong>
+                                <span class="status status-@obra["status_entrega"].ToString().Replace(' ', '-')">
+                                    @obra["status_entrega"]
+                                </span>
+                            </p>
                         </div>
                     </div>
                 }
+
+
+
+
             }
             else
             {

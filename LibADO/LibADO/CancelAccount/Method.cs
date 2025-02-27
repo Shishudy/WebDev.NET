@@ -23,39 +23,38 @@ namespace LibADO.CancelAccount
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
                     int count = (int)cmd.ExecuteScalar();
                     if (count == 0)
-                        throw new Exception("Leitor não encontrado");
+                        throw new Exception("Leitor não encontrado.");
                 }
 
-                string updateRequisicoes = @"
-        UPDATE dbo.Requisicao
-        SET stat = 'returned', data_devolucao = GETDATE()
-        WHERE pk_leitor = @pk_leitor";
-                using (var cmd = new SqlCommand(updateRequisicoes, cn, transaction))
+                string checkPendingBooks = @"
+            SELECT COUNT(*) FROM dbo.Requisicao 
+            WHERE pk_leitor = @pk_leitor AND stat = 'borrowed'";
+                using (var cmd = new SqlCommand(checkPendingBooks, cn, transaction))
                 {
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
-                    cmd.ExecuteNonQuery();
+                    int borrowedCount = (int)cmd.ExecuteScalar();
+                    if (borrowedCount > 0)
+                        throw new Exception("Não é possível cancelar a adesão. Existem obras em posse do leitor.");
                 }
-                string updateLeitor = @"
-        UPDATE dbo.Leitor 
-        SET stat = 'Inactive' 
-        WHERE pk_leitor = @pk_leitor";
+
+
+                string updateLeitor = "UPDATE dbo.Leitor SET stat = 'Inactive' WHERE pk_leitor = @pk_leitor";
                 using (var cmd = new SqlCommand(updateLeitor, cn, transaction))
                 {
                     cmd.Parameters.AddWithValue("@pk_leitor", pk_leitor);
                     int rowsAffected = cmd.ExecuteNonQuery();
                     if (rowsAffected == 0)
-                        throw new Exception("Falha ao atualizar status do leitor");
+                        throw new Exception("Falha ao atualizar status do leitor.");
                 }
 
                 transaction.Commit();
                 return true;
             }
-            catch
+            catch (Exception ex)
             {
                 transaction.Rollback();
-                return false;
+                throw new Exception(ex.Message); 
             }
         }
-
     }
-}
+    }

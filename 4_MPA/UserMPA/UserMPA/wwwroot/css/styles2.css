@@ -213,3 +213,37 @@ header {
     text-align: center;
     font-weight: bold;
 }
+
+.status {
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 5px;
+    display: inline-block;
+    text-transform: uppercase;
+}
+
+
+.status-ATRASO {
+    color: white;
+    background-color: red;
+}
+
+.status-Devolução-URGENTE {
+    color: white;
+    background-color: orange;
+}
+
+.status-Devolver-em-breve {
+    color: black;
+    background-color: yellow;
+}
+
+
+.status-Aguardando-devolução {
+    color: white;
+    background-color: gray;
+}
+
+
+
+

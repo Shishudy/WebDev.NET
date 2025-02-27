@@ -12,9 +12,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca Virtual</title>
-    <link rel="stylesheet" href="loginmodelblur.css">
+    <link rel="stylesheet" href="~/css/loginModalBlur.css" asp-append-version="true" />
+
 </head>
-<body class="@(string.IsNullOrEmpty(nomeUsuario) ? "blurred" : "")">
+<body>
     <header>
         <h1>Biblioteca Virtual</h1>
 
@@ -22,9 +23,6 @@
         {
             <p>ID do usuário: @HttpContextAccessor.HttpContext.Session.GetInt32("IdUsuario")</p>
         }
-
-
-
 
         @if (!string.IsNullOrEmpty(nomeUsuario))
         {
@@ -34,22 +32,27 @@
                 <a href="/CancelarAD" style="color: darkblue; font-weight: bold;">Cancelar Adesão</a>
             </div>
         }
-
         else
         {
             <button id="loginButton" onclick="document.getElementById('loginModal').style.display = 'flex'">Login</button>
         }
     </header>
 
+    <div class="main-content @(string.IsNullOrEmpty(nomeUsuario) ? "blurred" : "")">
+        <section>
+            <h2>Bem-vindo à Biblioteca Virtual</h2>
+            <p>Aqui você pode requisitar livros e acompanhar suas requisições.</p>
+        </section>
+    </div>
+
     <div id="loginModal" class="modal" style="display:@(string.IsNullOrEmpty(nomeUsuario) ? "flex" : "none");">
         <div class="modal-content">
-
             @if (!string.IsNullOrEmpty(Model.MensagemErro))
-        {
-            <div class="alert">
-                @Model.MensagemErro
-            </div>
-        }
+            {
+                <div class="alert">
+                    @Model.MensagemErro
+                </div>
+            }
 
             <span class="close" onclick="document.getElementById('loginModal').style.display = 'none'">&times;</span>
 

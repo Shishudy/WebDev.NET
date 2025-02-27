@@ -12,8 +12,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>yjarrh9ycv</Fingerprint>
-      <Integrity>0qIvabxyHerAzXr6trrgcDzR1jEMLIqkrqAkNoDUCZw=</Integrity>
+      <Fingerprint>7xs4rzeo7g</Fingerprint>
+      <Integrity>lU10WqUScc74Oc/Bc8MskKa53HWMdH40TDuW8Ycq7to=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\LoginModalBlur.css'))</OriginalItemSpec>
@@ -48,8 +48,8 @@
       <RelatedAsset></RelatedAsset>
       <AssetTraitName></AssetTraitName>
       <AssetTraitValue></AssetTraitValue>
-      <Fingerprint>kxvi2nyilv</Fingerprint>
-      <Integrity>KBDHLGkXYyp/IzS+AcSdRQ0d1ctrQXz2tHkyUy0A8jQ=</Integrity>
+      <Fingerprint>bujuph2ls9</Fingerprint>
+      <Integrity>DUO7R1w0Hs2kQ96+CM7L3+0F/OzPuVVLL9veWDUCFKc=</Integrity>
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
       <OriginalItemSpec>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\staticwebassets\css\styles2.css'))</OriginalItemSpec>

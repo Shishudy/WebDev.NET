@@ -7,37 +7,36 @@ namespace UserMPA.Pages
 {
     public class CancelarADModel : PageModel
     {
-        private readonly string connectionstring = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
-        public string Mensagem { get; set; } = "";
-        public bool Sucesso { get; set; } = false;
+        private readonly string _connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
 
+        public string Mensagem { get; set; }
+        public bool Sucesso { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            int? userId = HttpContext.Session.GetInt32("IdUsuario");
-            if (userId.HasValue)
+            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
+            if (idUsuario == null)
             {
-                bool resultado = Method.sp_cancel_leitor(userId.Value, connectionstring);
-                Console.WriteLine($"DEBUG: Resultado de sp_cancel_leitor -> {resultado}");
+                return RedirectToPage("/Login");
+            }
 
-                if (resultado)
+            try
+            {
+                bool cancelado = Method.sp_cancel_leitor(idUsuario.Value, _connectionString);
+                if (cancelado)
                 {
-                    Mensagem = "Adesão cancelada com sucesso!";
+                    HttpContext.Session.Clear(); 
                     Sucesso = true;
-                    HttpContext.Session.Clear();
-                }
-                else
-                {
-                    Mensagem = "Erro ao cancelar a adesão. Tente novamente";
-                    Sucesso = false;
+                    Mensagem = "Adesão cancelada com sucesso.";
                 }
             }
-            else
+            catch (Exception ex)
             {
-                Mensagem = "Erro: Usuário não autenticado.";
                 Sucesso = false;
+                Mensagem = ex.Message; 
             }
-        }
 
+            return Page();
+        }
     }
 }

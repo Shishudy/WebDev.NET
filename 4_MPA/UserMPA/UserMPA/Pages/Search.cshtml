@@ -55,10 +55,15 @@
                         <h4>@obra["nome_obra"]</h4>
                         <p><strong>Núcleo:</strong> @obra["nome_nucleo"]</p>
                         <p><strong>Quantidade:</strong> @obra["quantidade"]</p>
+                        <form method="post" asp-page-handler="Requisitar">
+                            <input type="hidden" name="pk_obra" value="@obra["pk_obra"]" />
+                            <button type="submit" class="btn-requisitar">Requisitar</button>
+                        </form>
                     </div>
                 </div>
             }
         </div>
+
     </section>
 
 </body>
