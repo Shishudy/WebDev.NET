@@ -1,14 +1,25 @@
 const apiUrl = "http://localhost:5164/";
-let methods;
 
 document.addEventListener("DOMContentLoaded", function () {
-	document.getElementById("loginModal").style.display = "flex";
+	document.getElementById("login-modal-div").style.display = "flex";
 });
 
-loginForm.addEventListener("submit", function (event) {
+document.body.addEventListener("submit", function (event) {
 	event.preventDefault();
-	const username = document.getElementById("username").value;
-	const password = document.getElementById("password").value;
+	if (event.target.id === "login-form")
+		login();
+	else if (event.target.id === "form-submit-button")
+		submitForm();
+	else if (event.target.id === "form-clear-button")
+		buildForm();
+});
+
+let methods;
+
+function login()
+{
+	const username = document.getElementById("login-form-username-input").value;
+	const password = document.getElementById("login-form-password-input").value;
 	var options = {
 		method: "POST",
 		headers: {
@@ -24,14 +35,13 @@ loginForm.addEventListener("submit", function (event) {
 		return response.json();
 	})
 	.then((data) => {
-		console.log(data);
-		initPage();
-		document.getElementById("loginModal").style.display = "none";
+		document.getElementById("login-modal-div").style.display = "none";
+		getMethods();
 	})
 	.catch((error) => {
 		console.error("Error:", error);
 	});
-});
+}
 
 function getMethods() {
 	fetch(apiUrl + "methods").then((response) => {
@@ -41,39 +51,75 @@ function getMethods() {
 		return response.json();
 	}).then((data) => {
 		methods = data;
-		console.log(methods);
-		return (methods);
+		buildMethodSelector();
 	}).catch((error) => {
 		console.error("Error:", error);
 	});
 }
 
-function initPage() {
-	methods = getMethods();
-	buildMethodSelector();
-}
-
 function buildMethodSelector() {
-	const selectorDiv = document.getElementById("method-selector");
+	const selectorDiv = document.getElementById("method-selector-div");
 	const selector = document.createElement("select");
-	let catOption;
+	selector.setAttribute("id", "method-selector");
+	selector.setAttribute("onchange", "buildForm()");
+	let option;
 	for (const key in methods) {
-		catOption = document.createElement("option");
-		catOption.setAttribute("value", key);
-		// catOption.textContent = key.charAt(0).toUpperCase() + key.slice(1);
-		selector.appendChild(catOption);
+		option = document.createElement("option");
+		option.setAttribute("value", key);
+		option.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+		selector.appendChild(option);
 	}
-	selectorDiv.appendChild(selector);
 	// button = document.createElement("button");
-	// button.setAttribute("id", "clear-filter-button");
+	// button.setAttribute("id", "method-selector-button");
 	// button.setAttribute("onclick", "clearFilter()");
 	// button.setAttribute("style", "float: right");
 	// button.textContent = "Limpar filtro";
 	// selectorDiv.appendChild(button);
 	selectorDiv.appendChild(selector);
-	// Add event listener to the category selector
-	// catSelector.addEventListener("change", function () {
-	// 	const selectedMethod = catSelector.value;
-	// 	fetchFormStructure(selectedMethod);
-	// });
 }
+
+function buildForm() {
+	console.log("called");
+	const selector = document.getElementById('method-selector');
+	const formInputDiv = document.getElementById('form-input-div');
+	if (formInputDiv.firstElementChild)
+		formInputDiv.removeChild(formInputDiv.firstElementChild);
+	const formInput = document.createElement('form-input');
+	formInput.setAttribute('id', 'form-input');
+	let formStructure = methods[selector.value];
+	if (formStructure)
+	{
+		formStructure.forEach(field => {
+			const label = document.createElement('label');
+			label.setAttribute('for', field.name);
+			label.textContent = field.name;
+	
+			const input = document.createElement('input');
+			input.setAttribute('id', field.name);
+			input.setAttribute('type', field.type);
+			if (field.size)
+				input.setAttribute('size', field.size);
+			if (field.mandatory) {
+				input.setAttribute('required', 'required');
+			}
+			formInput.appendChild(label);
+			formInput.appendChild(input);
+		});
+	}
+	const clearButton = document.createElement('button');
+	clearButton.setAttribute('id', 'form-clear-button');
+	clearButton.setAttribute('type', 'submit');
+	clearButton.textContent = 'Clear';
+	formInput.appendChild(clearButton);
+	const submitButton = document.createElement('button');
+	submitButton.setAttribute('id', 'form-submit-button');
+	submitButton.setAttribute('type', 'submit');
+	submitButton.textContent = 'Submit';
+	formInput.appendChild(submitButton);
+	formInputDiv.appendChild(formInput);
+}
+
+function submitForm() {
+
+}
+
