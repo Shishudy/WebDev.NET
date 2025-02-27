@@ -2,127 +2,135 @@
 using LibEF.Models;
 using LibEF;
 using System.Text.Json;
+using System.Reflection;
 
 namespace WebAPI.Model
 {
+	public class MethodParameter
+	{
+		public string name { get; set; }
+		public string type { get; set; }
+		public int? size { get; set; }
+		public bool mandatory { get; set; }
+	}
+
 	public class Model
 	{
 		public WebApplication App { get; set; }
 
 		public readonly string MethodsJson;
 
-		public readonly Dictionary<string, List<object>> MethodsDict;
+		public readonly Dictionary<string, List<MethodParameter>> MethodsDict;
 
 		public Model(WebApplication AppBuilt)
 		{
 			App = AppBuilt;
-			Dictionary<string, List<object>>MethodsList = new Dictionary<string, List<object>>();
+			Dictionary<string, List<MethodParameter>>MethodsList = new Dictionary<string, List<MethodParameter>>();
 			MethodsList["GetTotalObra"] = null;
 			MethodsList["GetTotalObraPorGenero"] = null;
-			MethodsList["GetTopRequestedByTime"] = new List<object> { 
-				new { name = "Data início", type = "date", size = 0, mandatory = true}, 
-				new { name = "Data fim", type = "date", size = 0, mandatory = true} 
+			MethodsList["GetTopRequestedByTime"] = new List<MethodParameter> { 
+				new MethodParameter { name = "Data início", type = "date", size = 0, mandatory = true}, 
+				new MethodParameter { name = "Data fim", type = "date", size = 0, mandatory = true} 
 			};
-			MethodsList["GetRequisicoesByNucleo"] = new List<object> { 
-				new { name = "Data início", type = "date", size = 0, mandatory = true}, 
-				new { name = "Data fim", type = "date", size = 0, mandatory = true}
+			MethodsList["GetRequisicoesByNucleo"] = new List<MethodParameter> { 
+				new MethodParameter { name = "Data início", type = "date", size = 0, mandatory = true}, 
+				new MethodParameter { name = "Data fim", type = "date", size = 0, mandatory = true}
 			};
-			MethodsList["InsertObra"] = new List<object> {
-				new { name = "Núcleo a adicionar (opcional)", type = "number", mandatory = false},
-				new { name = "Nome da obra", type = "text", size = 50, mandatory = true},
-				new { name = "ISBN", type = "text", size = 50, mandatory = true},
-				new { name = "Autor", type = "text", size = 50, mandatory = true},
-				new { name = "Editora", type = "text", size = 50, mandatory = true},
-				new { name = "Ano", type = "text", size = 50, mandatory = true},
-				new { name = "Imagem", type = "file", mandatory = true},
-				new { name = "Quantidade (opcional)", type = "number", mandatory = false},
+			MethodsList["InsertObra"] = new List<MethodParameter> {
+				new MethodParameter { name = "Núcleo a adicionar (opcional)", type = "number", mandatory = false},
+				new MethodParameter { name = "Nome da obra", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "ISBN", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Autor", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Editora", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Ano", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Imagem", type = "file", mandatory = true},
+				new MethodParameter { name = "Quantidade (opcional)", type = "number", mandatory = false},
 
-
 			};
-			MethodsList["UpdateImage"] = new List<object> {
-				new { name = "ID da obra a adicionar", type = "number", mandatory = true},
-				new { name = "Imagem", type = "file", mandatory = true},
-				new { name = "ISBN", type = "text", size = 50, mandatory = true}
+			MethodsList["UpdateImage"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID da obra a adicionar", type = "number", mandatory = true},
+				new MethodParameter { name = "Imagem", type = "file", mandatory = true},
+				new MethodParameter { name = "ISBN", type = "text", size = 50, mandatory = true}
 			};
 			MethodsList["GetCentralNucleo"] = null;
-			MethodsList["AddObraInNucleo"] = new List<object> {
-				new { name = "ID da obra", type = "number", mandatory = true},
-				new { name = "Núcleo a adicionar", type = "number", mandatory = true},
-				new { name = "Quantidade", type = "number", mandatory = true},
+			MethodsList["AddObraInNucleo"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID da obra", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo a adicionar", type = "number", mandatory = true},
+				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 			};
-			MethodsList["RemoveObra"] = new List<object> {
-				new { name = "ID da obra a remover", type = "number", mandatory = true},
-				new { name = "Núcleo a remover", type = "number", mandatory = true},
-				new { name = "Quantidade", type = "number", mandatory = true},
+			MethodsList["RemoveObra"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID da obra a remover", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo a remover", type = "number", mandatory = true},
+				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 			};
-			MethodsList["TransferObra"] = new List<object> {
-				new { name = "ID da obra a transferir", type = "number", mandatory = true},
-				new { name = "Núcleo de origem", type = "number", mandatory = true},
-				new { name = "Núcleo de destino", type = "number", mandatory = true},
-				new { name = "Quantidade", type = "number", mandatory = true},
+			MethodsList["TransferObra"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID da obra a transferir", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo de origem", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo de destino", type = "number", mandatory = true},
+				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 
 			};
-			MethodsList["InsertLeitor"] = new List<object> {
-				new { name = "Nome do utilizador", type = "text", size = 50, mandatory = true},
-				new { name = "Morada", type = "text", size = 50, mandatory = true},
-				new { name = "Telemóvel", type = "number", size = 9, mandatory = true},
-				new { name = "Email", type = "email", size = 50, mandatory = true},
-				new { name = "Password", type = "password", size = 50, mandatory = true},
-				new { name = "Tipo de utilizador", type = "radio", mandatory = true},
+			MethodsList["InsertLeitor"] = new List<MethodParameter> {
+				new MethodParameter { name = "Nome do utilizador", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Morada", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Telemóvel", type = "number", size = 9, mandatory = true},
+				new MethodParameter { name = "Email", type = "email", size = 50, mandatory = true},
+				new MethodParameter { name = "Password", type = "password", size = 50, mandatory = true},
+				new MethodParameter { name = "Tipo de utilizador", type = "radio", mandatory = true},
 			};
-			MethodsList["SuspendLateLeitor"] = new List<object> {
-				new { name = "ID do leitor", type = "number", mandatory = true},
+			MethodsList["SuspendLateLeitor"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["GetRequisicoesLeitor"] = new List<object> {
-				new { name = "ID do leitor", type = "number", mandatory = true},
+			MethodsList["GetRequisicoesLeitor"] = new List<MethodParameter> {
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["Devolution"] = new List<object>
+			MethodsList["Devolution"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
-				new { name = "ID da obra a devolver", type = "number", mandatory = true},
-				new { name = "Núcleo", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID da obra a devolver", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo", type = "number", mandatory = true},
 			};
-			MethodsList["Requisition"] = new List<object>
+			MethodsList["Requisition"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
-				new { name = "ID da obra a devolver", type = "number", mandatory = true},
-				new { name = "Núcleo", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID da obra a devolver", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo", type = "number", mandatory = true},
 			};
-			MethodsList["sp_leitor_reactivate"] = new List<object>
+			MethodsList["sp_leitor_reactivate"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 
 			};
-			MethodsList["sp_delete_inactive_Leitor"] = new List<object>
+			MethodsList["sp_delete_inactive_Leitor"] = new List<MethodParameter>
 			{
 				//NOT DONE, NEEDS CLARIFICATION
 			};
-			MethodsList["sp_del_leitor"] = new List<object>
+			MethodsList["sp_del_leitor"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_save_leitor_history"] = new List<object>
+			MethodsList["sp_save_leitor_history"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_cancel_leitor"] = new List<object>
+			MethodsList["sp_cancel_leitor"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_search_Obra"] = new List<object>
+			MethodsList["sp_search_Obra"] = new List<MethodParameter>
 			{
-				new { name = "Obra a pesquisar", type = "text", size = 50, mandatory = true},
-			};
-
-			MethodsList["sp_search_Obra_genero"] = new List<object>
-			{
-				new { name = "Género a pesquisar", type = "text", size = 50, mandatory = true},
+				new MethodParameter { name = "Obra a pesquisar", type = "text", size = 50, mandatory = true},
 			};
 
-			MethodsList["requesicao_status"] = new List<object>
+			MethodsList["sp_search_Obra_genero"] = new List<MethodParameter>
 			{
-				new { name = "ID do leitor", type = "number", mandatory = true},
-				new { name = "Núcleo", type = "number", mandatory = false},
+				new MethodParameter { name = "Género a pesquisar", type = "text", size = 50, mandatory = true},
+			};
+
+			MethodsList["requesicao_status"] = new List<MethodParameter>
+			{
+				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
+				new MethodParameter { name = "Núcleo", type = "number", mandatory = false},
 
 			};
 			MethodsDict = MethodsList;
@@ -130,10 +138,66 @@ namespace WebAPI.Model
 
 		}
 
-		public object ResolveMethod (string method, object response)
+		public List <object> GetParamList (string method, JsonElement param)
 		{
-			string val = method + " was called and recieved response, reflection still needed"
-			return val;
+            var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
+            var paramList = new List<object>();
+            foreach (var item in MethodsDict[method])
+            {
+                var paramName = item.GetType().GetProperty("name")?.GetValue(item)?.ToString();
+                var paramType = item.GetType().GetProperty("type")?.GetValue(item)?.ToString();
+
+                if (paramName != null && paramDict.ContainsKey(paramName))
+                {
+                    switch (paramType)
+                    {
+                        case "number":
+                            paramList.Add(paramDict[paramName].GetInt32());
+                            break;
+                        case "text":
+                        case "email":
+                        case "password":
+                        case "radio":
+                            paramList.Add(paramDict[paramName].GetString());
+                            break;
+                        case "date":
+                            paramList.Add(paramDict[paramName].GetDateTime());
+                            break;
+                        case "file":
+                            // Handle file type if necessary
+                            break;
+                        default:
+                            paramList.Add(paramDict[paramName].ToString());
+                            break;
+                    }
+                }
+            }
+			return paramList;
+        }
+
+        public object ResolveMethod (string method, List <object>? response)
+		{
+            ProjectoContext context = new ProjectoContext();
+            EF_methods ef = new EF_methods(context);
+            Type type = typeof(EF_methods);
+            //Type type = LibEF.GetType();
+			
+			MethodInfo? method_fun = type.GetMethod(method);
+            if (method_fun != null)
+			{
+				if (response != null)
+				{
+					return method_fun.Invoke(ef, response.ToArray());  // Call the method with multiple arguments
+				}
+				else
+					return method_fun.Invoke(ef, null);
+				//return JsonSerializer.Deserialize<object>(result);
+				// return result;
+				//return result;
+			}
+			else 
+				return "failed, no such method";
+				// throw new Exception ("no such method listed");
 		}
 
 		public string Login(Object response)

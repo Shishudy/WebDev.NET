@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using Azure;
 using LibEF;
 using LibEF.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -41,8 +42,11 @@ app.MapPost("/login", (Object response) =>
 
 app.MapGet("/methods", () =>
 {
-	return (model.MethodsJson);
-}).WithName("Methods").WithOpenApi();
+	return (model.MethodsJson);//this should only pass method names not everything
+	//return (model.Methods.keys);
+})
+.WithName("Methods")
+.WithOpenApi();
 
 app.MapGet("/weatherforecast", (string str) =>
 {
@@ -56,30 +60,36 @@ app.MapGet("/weatherforecast", (string str) =>
 .WithName("GetWeatherForecast")
 .WithOpenApi();
 
-app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] object param) =>
+app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement param) =>
 {
 	try
 	{
-		var methods_dic = JsonSerializer.Deserialize<Dictionary<string, List<object>>>(model.Methods);
+		var methods_dic = model.MethodsDict;
+		var ParamList = model.GetParamList(method, param);
+		//return Results.Ok(ParamList); //at this point we dio get [1]
 		if (!methods_dic.ContainsKey(method))
 			throw new Exception("no such method listed");
-		if (param != null) // parameters are recieved and the method is ran.
-			return Results.Ok(model.ResolveMethod(method, param));
+		if (ParamList != null) // parameters are recieved and the method is ran.
+		{
+            return Results.Ok((model.ResolveMethod(method, ParamList)));
+		}
 		else if (methods_dic[method] == null)
 		{ // no need for parameters method is just run
-			model.ResolveMethod(method, null);
-			return Results.Ok(null);
+			return Results.Ok((model.ResolveMethod(method, null)));
 		}
 		else // sends the parameters back
+		{
 			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
+		}
 	}
 	catch (Exception ex)
 	{
-		return Results.BadRequest(null);
+		return Results.BadRequest(ex.Message);
 	}
 })
 .WithName("ResolveMethod")
 .WithOpenApi();
+
 
 app.MapPost("/teste", (Object response) =>
 { 
