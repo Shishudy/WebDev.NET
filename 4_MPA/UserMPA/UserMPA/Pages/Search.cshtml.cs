@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using LibADO.Search;
+using LibADO.Search.LibADO.Search;
 
 namespace UserMPA.Pages
 {

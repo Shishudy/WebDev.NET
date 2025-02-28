@@ -2,38 +2,46 @@ using LibADO.CancelAccount;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-
 namespace UserMPA.Pages
 {
     public class CancelarADModel : PageModel
     {
         private readonly string _connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
 
-        public string Mensagem { get; set; }
+        public string Mensagem { get; set; } = string.Empty;
         public bool Sucesso { get; set; }
 
         public IActionResult OnGet()
         {
-            int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
-            if (idUsuario == null)
+            int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor");
+
+            if (pkLeitor == null)
             {
-                return RedirectToPage("/Login");
+                Console.WriteLine(" ERRO: PkLeitor não encontrado na sessão. Redirecionando para Index.");
+                return RedirectToPage("/Index");
             }
+
+            Console.WriteLine($"PkLeitor encontrado na sessão: {pkLeitor.Value}");
 
             try
             {
-                bool cancelado = Method.sp_cancel_leitor(idUsuario.Value, _connectionString);
+                bool cancelado = Method.sp_cancel_leitor(pkLeitor.Value, _connectionString);
                 if (cancelado)
                 {
-                    HttpContext.Session.Clear(); 
+                    HttpContext.Session.Clear();
                     Sucesso = true;
-                    Mensagem = "Adesão cancelada com sucesso.";
+                    Mensagem = " Adesão cancelada com sucesso.";
+                }
+                else
+                {
+                    Sucesso = false;
+                    Mensagem = " Falha ao cancelar adesão.";
                 }
             }
             catch (Exception ex)
             {
                 Sucesso = false;
-                Mensagem = ex.Message; 
+                Mensagem = $" Erro ao cancelar adesão: {ex.Message}";
             }
 
             return Page();

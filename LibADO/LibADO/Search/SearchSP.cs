@@ -7,18 +7,27 @@ using LibDB;
 
 namespace LibADO.Search
 {
-    public class SearchSP
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using LibDB;
+
+    namespace LibADO.Search
     {
-        public static List<Dictionary<string, object>> sp_search_obras_com_imagem(
-string? obra, string? genre, string? nucleo, string connectionString)
+        public class SearchSP
         {
-            using var cn = DB.Open(connectionString);
+            public static List<Dictionary<string, object>> sp_search_obras_com_imagem(
+    string? obra, string? genre, string? nucleo, string connectionString)
+            {
+                using var cn = DB.Open(connectionString);
 
-            string filtroObra = string.IsNullOrEmpty(obra) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras('{obra}'))";
-            string filtroGenero = string.IsNullOrEmpty(genre) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras_genre('{genre}'))";
-            string filtroNucleo = string.IsNullOrEmpty(nucleo) ? "" : $"AND no.pk_nucleo IN (SELECT pk_nucleo FROM dbo.fn_search_nucleo('{nucleo}'))";
+                string filtroObra = string.IsNullOrEmpty(obra) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras('{obra}'))";
+                string filtroGenero = string.IsNullOrEmpty(genre) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras_genre('{genre}'))";
+                string filtroNucleo = string.IsNullOrEmpty(nucleo) ? "" : $"AND no.pk_nucleo IN (SELECT pk_nucleo FROM dbo.fn_search_nucleo('{nucleo}'))";
 
-            string query = $@"
+                string query = $@"
     SELECT no.pk_obra, o.nome_obra, n.nome_nucleo, no.quantidade, 
            COALESCE(ir.image_path, '/images/default.jpg') AS image_path
     FROM dbo.NucleoObra no
@@ -27,10 +36,13 @@ string? obra, string? genre, string? nucleo, string connectionString)
         LEFT JOIN dbo.ImageReferences ir ON o.fk_imagem = ir.pk_image
     WHERE 1=1 {filtroObra} {filtroGenero} {filtroNucleo}";
 
-            var dt = DB.GetSQLRead(cn, query);
-            return DB.ToDictionary(dt);
-        }
+                var dt = DB.GetSQLRead(cn, query);
+                return DB.ToDictionary(dt);
+            }
 
+        }
     }
+
+
 }
 

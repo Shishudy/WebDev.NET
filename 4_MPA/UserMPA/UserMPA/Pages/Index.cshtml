@@ -5,7 +5,6 @@
     var nomeUsuario = HttpContextAccessor.HttpContext?.Session.GetString("NomeUsuario");
 }
 
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -13,15 +12,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca Virtual</title>
     <link rel="stylesheet" href="~/css/loginModalBlur.css" asp-append-version="true" />
-
 </head>
 <body>
     <header>
         <h1>Biblioteca Virtual</h1>
 
-        @if (HttpContextAccessor.HttpContext.Session.GetInt32("IdUsuario") != null)
+        @if (HttpContextAccessor.HttpContext.Session.GetInt32("PkLeitor") != null)
         {
-            <p>ID do usuário: @HttpContextAccessor.HttpContext.Session.GetInt32("IdUsuario")</p>
+            <p>ID do leitor: @HttpContextAccessor.HttpContext.Session.GetInt32("PkLeitor")</p>
         }
 
         @if (!string.IsNullOrEmpty(nomeUsuario))

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using LibADO.Login; 
+using LibADO.Login;
 
 namespace UserMPA.Pages
 {
@@ -21,7 +21,7 @@ namespace UserMPA.Pages
             _loginService = loginService;
         }
 
-           public IActionResult OnPost()
+        public IActionResult OnPost()
         {
             string resultadoLogin = _loginService.TentarLogin(Email, Senha);
 
@@ -31,15 +31,14 @@ namespace UserMPA.Pages
                 if (usuario != null)
                 {
                     HttpContext.Session.SetString("NomeUsuario", usuario.Nome);
-                    HttpContext.Session.SetInt32("IdUsuario", usuario.Id);
+                    HttpContext.Session.SetInt32("PkLeitor", usuario.Id); 
+                    Console.WriteLine($" PkLeitor salvo na sessão: {usuario.Id}");
                     return RedirectToPage("/Index");
                 }
             }
 
-            MensagemErro = resultadoLogin; 
+            MensagemErro = resultadoLogin;
             return Page();
         }
-
     }
 }
-

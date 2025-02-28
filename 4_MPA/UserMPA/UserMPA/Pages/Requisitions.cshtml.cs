@@ -5,38 +5,36 @@ using LibADO.UserRequisitions;
 
 namespace UserMPA.Pages
 {
-    namespace UserMPA.Pages
+    public class RequisitionsModel : PageModel
     {
-        public class RequisitionsModel : PageModel
+        private readonly GetUserRequisitions _requisicaoRepository;
+
+        public List<Dictionary<string, object>> ObrasRequisitadas { get; set; } = new();
+
+        public RequisitionsModel()
         {
-            private readonly GetUserRequisitions _requisicaoRepository;
+            string connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
+            _requisicaoRepository = new GetUserRequisitions(connectionString);
+        }
 
-            public List<Dictionary<string, object>> ObrasRequisitadas { get; set; }
+        public IActionResult OnGet()
+        {
+            int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor"); 
 
-            public RequisitionsModel()
+            if (pkLeitor == null)
             {
-                string connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
-
-                _requisicaoRepository = new GetUserRequisitions(connectionString);
+                Console.WriteLine(" ERRO: PkLeitor não encontrado na sessão.");
+                return RedirectToPage("/Index");
             }
 
-            public IActionResult OnGet()
-            {
-                int? idUsuario = HttpContext.Session.GetInt32("IdUsuario");
-                if (idUsuario == null)
-                {
-                    Console.WriteLine("ID do Usuário não encontrado na sessão.");
-                    return RedirectToPage("/Login");
-                }
+            Console.WriteLine($" PkLeitor encontrado na sessão: {pkLeitor.Value}");
 
-                Console.WriteLine($"ID do Usuário: {idUsuario.Value}");
+            ObrasRequisitadas = _requisicaoRepository.GetObrasRequisitadas(pkLeitor.Value);
 
-                ObrasRequisitadas = _requisicaoRepository.GetObrasRequisitadas(idUsuario.Value);
+            Console.WriteLine($" Quantidade de obras retornadas: {ObrasRequisitadas.Count}");
 
-                Console.WriteLine($"Quantidade de obras retornadas: {ObrasRequisitadas.Count}");
-
-                return Page();
-            }
+            return Page();
         }
     }
 }
+

@@ -1,0 +1,44 @@
+﻿@page
+@model RequisitarModel
+@{
+    ViewData["Title"] = "Confirmar Requisição";
+}
+
+<h2>Confirmar Requisição</h2>
+
+@if (Model.Obra != null)
+{
+    <div class="card">
+        <img src="@Model.Obra["image_path"]" alt="@Model.Obra["nome_obra"]">
+        <div class="info-card">
+            <h4>@Model.Obra["nome_obra"]</h4>
+            <p><strong>ISBN:</strong> @Model.Obra["ISBN"]</p>
+            <p><strong>Editora:</strong> @Model.Obra["editora"]</p>
+            <p><strong>Núcleo:</strong> @Model.Obra["nome_nucleo"]</p>
+            <p><strong>Quantidade Disponível:</strong> @Model.Obra["quantidade"]</p>
+        </div>
+    </div>
+
+    <form method="post">
+        <input type="hidden" name="pk_obra" value="@Model.Obra["pk_obra"]" />
+        <input type="hidden" name="pk_leitor" value="@Model.PkLeitor" />
+        <input type="hidden" name="pk_nucleo" value="@Model.Obra["pk_nucleo"]" />
+        <button type="submit" class="btn-confirmar">Confirmar Requisição</button>
+    </form>
+}
+else
+{
+    <p>Erro: Não foi possível carregar os detalhes do livro.</p>
+}
+
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+}
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+

@@ -167,6 +167,7 @@
     <Compile Include="Login\LoginRepository.cs" />
     <Compile Include="Login\LoginService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequisitionMake\Method.cs" />
     <Compile Include="Search\MethodesSearch.cs" />
     <Compile Include="Search\SearchSP.cs" />
     <Compile Include="SPS\Procedures.cs" />
