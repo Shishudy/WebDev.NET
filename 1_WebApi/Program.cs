@@ -69,13 +69,9 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 		//return Results.Ok(ParamList); //at this point we dio get [1]
 		if (!methods_dic.ContainsKey(method))
 			throw new Exception("no such method listed");
-		if (ParamList != null) // parameters are recieved and the method is ran.
-		{
+		if (ParamList != null && ParamList.Count > 0)
+		{//param is an dict {} or {K:V}
             return Results.Ok((model.ResolveMethod(method, ParamList)));
-		}
-		else if (methods_dic[method] == null)
-		{ // no need for parameters method is just ran
-			return Results.Ok((model.ResolveMethod(method, null)));
 		}
 		else // sends the parameters back
 		{

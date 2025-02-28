@@ -140,12 +140,12 @@ namespace WebAPI.Model
 
 		public List <object> GetParamList (string method, JsonElement param)
 		{
-			//if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
-			//{
-			//	// Return an empty list if the JSON input is empty
-			//	return new List<object>();
-			//}
-            var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
+			if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
+			{
+				// Return an empty list if the JSON input is empty
+				return new List<object>();
+			}
+			var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
             var paramList = new List<object>();
             foreach (var item in MethodsDict[method])
             {
@@ -181,7 +181,7 @@ namespace WebAPI.Model
 			return paramList;
         }
 
-        public object ResolveMethod (string method, List <object>? response)
+        public object ResolveMethod (string method, List <object>? ParamList)
 		{
             ProjectoContext context = new ProjectoContext();
             EF_methods ef = new EF_methods(context);
@@ -191,8 +191,8 @@ namespace WebAPI.Model
 			{
 				if (method_fun != null)
 				{
-					if (response != null)
-						return method_fun.Invoke(ef, response.ToArray());  // Call the method with multiple arguments
+					if (ParamList != null && ParamList.Count > 0)
+						return method_fun.Invoke(ef, ParamList.ToArray());  // Call the method with multiple arguments
 					else
 						return method_fun.Invoke(ef, null);
 				}
