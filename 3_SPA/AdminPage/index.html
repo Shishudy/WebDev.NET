@@ -34,6 +34,12 @@
     </div>
 
     <div id="search">
+        <span id="categoryButtons">
+            <button class="categoryButton" data-category="overall">Overall</button>
+            <button class="categoryButton" data-category="leitores">Leitores</button>
+            <button class="categoryButton" data-category="nucleo">Nucleo</button>
+            <button class="categoryButton" data-category="obras">Obras</button>
+        </span>
         <input type="text" id="buscador" placeholder="Buscar livros...">
         <button id="pesquisa">Pesquisar</button>
     </div>
@@ -52,6 +58,7 @@
             <input type="file" id="image" name="image" accept="image/*"><br><br>
             <input type="submit" value="Upload">
         </form>
+        <table id="ShowTable" border="1">
         <script>
             document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
                 event.preventDefault(); // Prevent form submission
@@ -94,7 +101,7 @@
 
     <div id="popup" class="popup"></div>
     
-    <script src="biblioteca.js"></script>
     <script src="biblioteca-evt.js"></script>
+    <script src="biblioteca.js"></script>
 </body>
 </html>

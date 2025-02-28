@@ -69,3 +69,66 @@
 // 	bookList.firstElementChild.textContent = "Pesquisa por: " + searchInput.value;
 // 	searchInput.value = "";
 // }
+
+
+// Sample datadocument.addEventListener("DOMContentLoaded", function() {
+  // Sample data
+document.addEventListener("DOMContentLoaded", function() {
+  // Sample data
+  const data = [
+    { "nomeObra": "1984", "timesRequested": 6 },
+    { "nomeObra": "The Great Gatsby", "timesRequested": 4 },
+    { "nomeObra": "To Kill a Mockingbird", "timesRequested": 4 },
+    { "nomeObra": "The Hobbit", "timesRequested": 4 },
+    { "nomeObra": "The Odyssey", "timesRequested": 4 },
+    { "nomeObra": "Moby-Dick", "timesRequested": 3 },
+    { "nomeObra": "War and Peace", "timesRequested": 3 },
+    { "nomeObra": "Pride and Prejudice", "timesRequested": 3 },
+    { "nomeObra": "The Catcher in the Rye", "timesRequested": 3 },
+    { "nomeObra": "The Divine Comedy", "timesRequested": 3 }
+  ];
+
+  // Function to populate the table
+  function populateTable(data) {
+    const table = document.querySelector("#ShowTable");
+
+    // Clear existing content (if any)
+    table.innerHTML = '';
+
+    // Create table headers dynamically
+    const headers = Object.keys(data[0]); // Get keys from the first object in the data array
+    const tableHeader = document.createElement('thead');
+    const tableHeaderRow = document.createElement('tr');
+    headers.forEach(header => {
+      const th = document.createElement('th');
+      th.textContent = header; // Set header text to the key
+      tableHeaderRow.appendChild(th);
+    });
+    tableHeader.appendChild(tableHeaderRow);
+    table.appendChild(tableHeader);
+
+    // Create table body dynamically
+    const tableBody = document.createElement('tbody');
+    data.forEach(item => {
+      const row = document.createElement('tr');
+      headers.forEach(header => {
+        const td = document.createElement('td');
+        td.textContent = item[header]; // Populate cell with corresponding value from the data
+        row.appendChild(td);
+      });
+	//   row.addEventListener('click', function() {
+    //     // Highlight the selected row
+    //     document.querySelectorAll('#ShowTable tbody tr').forEach(tr => tr.classList.remove('selected'));
+    //     row.classList.add('selected');
+
+    //     // Send selected row data to web API
+    //     sendDataToAPI(item);
+    //   });
+      tableBody.appendChild(row);
+    });
+    table.appendChild(tableBody);
+  }
+
+  // Call the function to populate the table with data
+  populateTable(data);
+});

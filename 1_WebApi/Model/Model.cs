@@ -4,6 +4,13 @@ using LibEF;
 using System.Text.Json;
 using System.Reflection;
 
+//TODO make overall / Utilizadores / nucleos / obras pages
+//each will auto show all values and will have an search bar // bonus maybe search from what is shown?
+
+//TODO add JWT token auth
+//TODO Seperate stuff into classes
+//TODO list EF_methods really needed
+
 namespace WebAPI.Model
 {
 	public class MethodParameter
@@ -138,12 +145,11 @@ namespace WebAPI.Model
 
 		}
 
-		public List <object> GetParamList (string method, JsonElement param)
+		public List <object>? GetParamList (string method, JsonElement param)
 		{
 			if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
 			{
-				// Return an empty list if the JSON input is empty
-				return new List<object>();
+				return null;
 			}
 			var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
             var paramList = new List<object>();

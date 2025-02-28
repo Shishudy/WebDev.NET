@@ -69,11 +69,11 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 		//return Results.Ok(ParamList); //at this point we dio get [1]
 		if (!methods_dic.ContainsKey(method))
 			throw new Exception("no such method listed");
-		if (ParamList != null && ParamList.Count > 0)
+		if (ParamList != null && ParamList.Count > 0 || methods_dic[method] == null)
 		{//param is an dict {} or {K:V}
             return Results.Ok((model.ResolveMethod(method, ParamList)));
 		}
-		else // sends the parameters back
+        else // sends the parameters back
 		{
 			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
 		}
