@@ -9,42 +9,42 @@ using LibEF.Models;
 
 namespace LibEF
 {
-	public class EF_methods
-	{
-		private readonly ProjectoContext context;
+    public class EF_methods
+    {
+        private readonly ProjectoContext context;
 
-		public EF_methods(ProjectoContext dbContext)
-		{
-			context = dbContext;
-		}
+        public EF_methods(ProjectoContext dbContext)
+        {
+            context = dbContext;
+        }
 
-		public int available_copies(int PkObra, int PkNucleo)
-		{
-			int count_in_nucleo = context.NucleoObras
-						.Where(n => n.PkObra == PkObra && n.PkNucleo == PkNucleo)
-						.Select(n => n.Quantidade)
-						.FirstOrDefault();
-			int count_in_requisitions = context.Requisicaos
-						.Where(r => r.PkObra == PkObra && r.PkNucleo == PkNucleo && r.Stat == "borrowed")
-						.Count();
-			int available_copies = count_in_nucleo - count_in_requisitions;
-			return available_copies;
-		}
+        public int available_copies(int PkObra, int PkNucleo)
+        {
+            int count_in_nucleo = context.NucleoObras
+                        .Where(n => n.PkObra == PkObra && n.PkNucleo == PkNucleo)
+                        .Select(n => n.Quantidade)
+                        .FirstOrDefault();
+            int count_in_requisitions = context.Requisicaos
+                        .Where(r => r.PkObra == PkObra && r.PkNucleo == PkNucleo && r.Stat == "borrowed")
+                        .Count();
+            int available_copies = count_in_nucleo - count_in_requisitions;
+            return available_copies;
+        }
 
-		public string GetPassWordbyLogin(string name)
-		{
-			try
-			{
-				var leitor = context.Leitors.FirstOrDefault(l => l.NomeLeitor == name);
-				if (leitor == null)
-					throw new Exception("leitor not found");
-				return leitor.UserPassword;
-			}
-			catch (Exception)
-			{
-				throw;
-			}
-		}
+        public string GetPassWordbyLogin(string name)
+        {
+            try
+            {
+                var leitor = context.Leitors.FirstOrDefault(l => l.NomeLeitor == name);
+                if (leitor == null)
+                    throw new Exception("leitor not found");
+                return leitor.UserPassword;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
 
 
@@ -62,25 +62,36 @@ namespace LibEF
         //		2
         /////////////////////
 
-        public List<(string NomeGenero, int TotalQuantidade)> GetTotalObraPorGenero()
+        public List<dynamic> GetTotalObraPorGenero()
         {
-            var result = from g in context.Generos
-                        from o in g.PkObras
-                        join no in context.NucleoObras on o.PkObra equals no.PkObra
-                        group no by g.NomeGenero into grouped
-                        select new
-                        {
-                            NomeGenero = grouped.Key,
-                            TotalQuantidade = grouped.Sum(n => n.Quantidade)
-                        };
-            return result.ToList().Select(r => (r.NomeGenero, r.TotalQuantidade)).ToList();
+          var result = from g in context.Generos
+                       from o in g.PkObras
+                       join no in context.NucleoObras on o.PkObra equals no.PkObra
+                       group no by g.NomeGenero into grouped
+                       select new
+                       {
+                           NomeGenero = grouped.Key,
+                           TotalQuantidade = grouped.Sum(n => n.Quantidade)
+                       };
+          return result.ToList<dynamic>();
         }
+
+        // public Dictionary<string, int> GetTotalObraPorGenero()
+        // {
+        //     var result = from g in context.Generos
+        //                  from o in g.PkObras
+        //                  join no in context.NucleoObras on o.PkObra equals no.PkObra
+        //                  group no by g.NomeGenero into grouped
+        //                  select new KeyValuePair<string, int>(grouped.Key, grouped.Sum(n => n.Quantidade));
+        //     return result.ToDictionary(kv => kv.Key, kv => kv.Value);
+        // }
+
 
         /////////////////////
         //		3
         /////////////////////
 
-        public List<(string NomeObra, int TimesRequested)> GetTopRequestedByTime(DateTime? startDate = null, DateTime? endDate = null)
+        public List<dynamic> GetTopRequestedByTime(DateTime? startDate = null, DateTime? endDate = null)
         {
             var query = context.Requisicaos.Include(r => r.PkObraNavigation).AsQueryable();
 
@@ -96,30 +107,30 @@ namespace LibEF
                     })
                     .OrderByDescending(o => o.TimesRequested)
                     .Take(10);
-            return result.ToList().Select(r => (r.NomeObra, r.TimesRequested)).ToList();
+            return result.ToList<dynamic>();
         }
 
         /////////////////////
         //		4
         /////////////////////
 
-        // public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
-        // {
-        //     var result = from r in context.Requisicaos
-        //                  join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
-        //                  select r;
-        //     if (startDate != null)
-        //         result = result.Where(r => r.DataLevantamento >= startDate);
-        //     if (endDate != null)
-        //         result = result.Where(r => r.DataLevantamento <= endDate);
-        //     result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
-        //         select new somethingsomething
-        //         {
-        //             NomeNucleo = g.Key.NomeNucleo,
-        //             TotalRequisicoes = g.Count()
-        //         };
-        //     return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
-        // }
+        //public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
+        //{
+        //    var result = from r in context.Requisicaos
+        //                 join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+        //                 select r;
+        //    if (startDate != null)
+        //        result = result.Where(r => r.DataLevantamento >= startDate);
+        //    if (endDate != null)
+        //        result = result.Where(r => r.DataLevantamento <= endDate);
+        //    result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
+        //        select new 
+        //        {
+        //            NomeNucleo = g.Key.NomeNucleo,
+        //            TotalRequisicoes = g.Count()
+        //        };
+        //    return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
+        //}
 
         /////////////////////
         //		5
@@ -702,7 +713,7 @@ namespace LibEF
             public string StatusMessage { get; set; }
         }
 
-        public List<Requisicaotatus> requesicao_status(int PkLeitor, int? PkNucleo = null)
+        public List<Requisicaotatus> requesicao_status(int PkLeitor, int? PkNucleo)
         {
             var leitoresFiltradas = from l in context.Leitors
                                     where l.PkLeitor == PkLeitor

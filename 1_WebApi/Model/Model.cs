@@ -140,11 +140,11 @@ namespace WebAPI.Model
 
 		public List <object> GetParamList (string method, JsonElement param)
 		{
-			if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
-			{
-				// Return an empty list if the JSON input is empty
-				return new List<object>();
-			}
+			//if (param.ValueKind == JsonValueKind.Undefined || param.ValueKind == JsonValueKind.Null)
+			//{
+			//	// Return an empty list if the JSON input is empty
+			//	return new List<object>();
+			//}
             var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
             var paramList = new List<object>();
             foreach (var item in MethodsDict[method])

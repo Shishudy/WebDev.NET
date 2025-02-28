@@ -74,7 +74,7 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
             return Results.Ok((model.ResolveMethod(method, ParamList)));
 		}
 		else if (methods_dic[method] == null)
-		{ // no need for parameters method is just run
+		{ // no need for parameters method is just ran
 			return Results.Ok((model.ResolveMethod(method, null)));
 		}
 		else // sends the parameters back
