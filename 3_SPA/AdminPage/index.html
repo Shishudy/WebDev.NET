@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="LoginModalBlur.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
     <header>
@@ -14,15 +13,25 @@
     </header>
 <!-- Main div -->
 	<div id="main-div" class="div div--main">
+		<!-- Modal de loading -->
+		<div id="loading-modal-div" class="div div--modal-loading">
+			<div id="loading-modal-content" class="div div--modal-content-loading">
+				<div class="loading-spinner"></div>
+				<div>Loading</div>
+			</div>
+		</div>
 		<!-- Modal de login -->
-		<div id="login-modal-div" class="div div--modal">
-			<div id="login-modal-content-div" class="div div--modal-content">
-				<span class="span span--close" onclick="closeLoginModal()">&times;</span>
-				<form id="login-form">
-					<label for="login-form-username-input">Usuário:</label>
-					<input id="login-form-username-input" type="text" required>
-					<label for="login-form-password-input">Senha:</label>
-					<input id="login-form-password-input" type="password" required>
+		<div id="login-modal-div" class="div div--modal-login">
+			<div id="login-modal-content-div" class="div div--modal-content-login">
+				<p id="login-message" style="text-align: center; display: none;">Login inválido!</p>
+				<form id="login-form" class="form form--login">
+					<label for="login-form-username-input" class="label label--login">Email:</label>
+					<input id="login-form-username-input" class="input input--login" type="text" required>
+					<div id="login-modal-password-div" class="div div--modal-login-password">
+						<label for="login-form-password-input" class="label label--login">Senha:</label>
+						<input id="login-form-password-input" class="input input--login" type="password" required>
+						<span id="login-modal-toggle-password" onclick="togglePassword()">👁️</span>
+					</div>
 					<button id="login-form-submit-button" type="submit">Entrar</button>
 				</form>
 			</div>
@@ -34,10 +43,11 @@
 			<a href="">Gestão de Reservas</a>
 		</div>
 		<!-- Dropdown para escolher métodos -->
-		<div id="method-selector-div">
+		<div id="method-selector-div" class="div div--method-selector">
+
 		</div>
 		<!-- Form para fornecer parâmetros aos métodos -->
-		<div id="form-input-div">
+		<div id="form-input-div" class="div div--form-input">
 			<!-- <div id="book-container"></div> -->
 			<!-- <form id="form">
 				<input type="file" id="file" required>
@@ -50,7 +60,7 @@
 			</form> -->
 		</div>
 		<!-- Div para mostrar resultados dos métodos -->
-		<div id="form-output-div">
+		<div id="form-output-div" class="div div--form-output">
 	
 		</div>
 	</div>
@@ -62,22 +72,6 @@
 	<footer>
 		
 	</footer>
-	<script>
-        // Function to highlight active menu item
-        document.addEventListener("scroll", function() {
-            let sections = document.querySelectorAll(".section");
-            let menuLinks = document.querySelectorAll(".menu a");
-
-            let fromTop = window.scrollY + 100; // Offset to detect section
-
-            sections.forEach((section, index) => {
-                if (section.offsetTop <= fromTop && section.offsetTop + section.offsetHeight > fromTop) {
-                    menuLinks.forEach(link => link.classList.remove("active"));
-                    menuLinks[index].classList.add("active");
-                }
-            });
-        });
-    </script>
     <script src="script.js"></script>
     <!-- <script src="biblioteca.js"></script> -->
     <script src="biblioteca-evt.js"></script>
