@@ -10,6 +10,11 @@
     <header>
         <h1>Biblioteca Virtual</h1>
         <span id="welcomeUser" style="display: none;"></span>
+		<!-- <div id="menu-div" class="div div--menu-2">
+			<a href="">Gestão de Leitores</a>
+			<a href="">Gestão de Obras</a>
+			<a href="">Gestão de Reservas</a>
+		</div> -->
     </header>
 <!-- Main div -->
 	<div id="main-div" class="div div--main">
@@ -36,11 +41,43 @@
 				</form>
 			</div>
 		</div>
-		<!-- Menu -->
-		<div id="menu-div" class="div div--menu-2">
-			<a href="">Gestão de Leitores</a>
-			<a href="">Gestão de Obras</a>
-			<a href="">Gestão de Reservas</a>
+		<!-- Div da opção escolhida -->
+		<div id="tab-div" class="div div--tab">
+			<h1 id="tab-title">Tab</h1>
+			<div id="search-filter-div" class="div div--search-filter">
+				<div id="search-box-div" class="div div--search-box">
+					<input id="search-box-input" type="text" placeholder="Pesquisar..." />
+					<button onclick="search(document.getElementById('search-box-input').value)">Search</button>
+				</div>
+				<div id="filter-box-div" class="div div--filter-box">
+					<!-- EXAMPLE of dropdown - remove this -->
+					<select name="" id="">
+						<option value="">dummy1</option>
+						<option value="">dummy2</option>
+					</select>
+					<!-- END OF EXAMPLE -->
+				</div>
+			</div>
+
+			<div id="results-list-div" class="div div--results-list">
+				<!-- EXAMPLE of result - remove this -->
+				<div id="result-div" class="div div--result">
+					<span>Dados da reserva</span>
+					<div id="result-actions-div" class="div div--result-actions">
+						<select name="" id="">
+							<option value="">dummy1</option>
+							<option value="">dummy2</option>
+						</select>
+						<!-- dropdown or button -->
+						<button>Botões/dropdown de ação</button>
+					</div>
+				</div>
+				<!-- END OF EXAMPLE -->
+			</div>
+
+			<div id="result-list-pagination-div" class="div div--result-list-pagination">
+
+			</div>
 		</div>
 		<!-- Dropdown para escolher métodos -->
 		<div id="method-selector-div" class="div div--method-selector">
@@ -72,7 +109,10 @@
 	<footer>
 		
 	</footer>
-    <script src="script.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/methods.js"></script>
+    <script src="js/form.js"></script>
     <!-- <script src="biblioteca.js"></script> -->
     <script src="biblioteca-evt.js"></script>
 </body>
