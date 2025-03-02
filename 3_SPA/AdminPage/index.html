@@ -10,11 +10,17 @@
     <header>
         <h1>Biblioteca Virtual</h1>
         <span id="welcomeUser" style="display: none;"></span>
-		<!-- <div id="menu-div" class="div div--menu-2">
-			<a href="">Gestão de Leitores</a>
-			<a href="">Gestão de Obras</a>
-			<a href="">Gestão de Reservas</a>
-		</div> -->
+		<div id="menu-div" class="div div--menu">
+			<span id="categoryButtons">
+				<button class="categoryButton" data-category="overall" onclick="changeTab(1)">Reservas</button>
+				<button class="categoryButton" data-category="leitores" onclick="changeTab(2)">Obras</button>
+				<button class="categoryButton" data-category="nucleo" onclick="changeTab(3)">Núcleos</button>
+				<button class="categoryButton" data-category="obras" onclick="changeTab(4)">Gestão de Utilizadores</button>
+			</span>
+			<input type="text" id="buscador" placeholder="Buscar livros...">
+			<button id="pesquisa">Pesquisar</button>
+		</div>
+	<button onclick="logout()">Logout</button>
     </header>
 <!-- Main div -->
 	<div id="main-div" class="div div--main">
@@ -41,13 +47,14 @@
 				</form>
 			</div>
 		</div>
+		
 		<!-- Div da opção escolhida -->
-		<div id="tab-div" class="div div--tab">
+		<div id="tab-div" class="div div--tab" data-tab="1">
 			<h1 id="tab-title">Tab</h1>
 			<div id="search-filter-div" class="div div--search-filter">
 				<div id="search-box-div" class="div div--search-box">
 					<input id="search-box-input" type="text" placeholder="Pesquisar..." />
-					<button onclick="search(document.getElementById('search-box-input').value)">Search</button>
+					<button onclick="search()">Search</button>
 				</div>
 				<div id="filter-box-div" class="div div--filter-box">
 					<!-- EXAMPLE of dropdown - remove this -->
@@ -101,17 +108,6 @@
 	
 		</div>
 	</div>
-
-    <div id="search">
-        <span id="categoryButtons">
-            <button class="categoryButton" data-category="overall">Overall</button>
-            <button class="categoryButton" data-category="leitores">Leitores</button>
-            <button class="categoryButton" data-category="nucleo">Nucleo</button>
-            <button class="categoryButton" data-category="obras">Obras</button>
-        </span>
-        <input type="text" id="buscador" placeholder="Buscar livros...">
-        <button id="pesquisa">Pesquisar</button>
-    </div>
 	<footer>
 		
 	</footer>

@@ -19,12 +19,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\3_SPA\LibEF\LibEF.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="LibDB">
-      <HintPath>..\..\ProjDemo\LibDB\LibDB\bin\Debug\net8.0\LibDB.dll</HintPath>
+    <Reference Include="LibEF">
+      <HintPath>..\3_SPA\LibEF\bin\Debug\net8.0\LibEF.dll</HintPath>
     </Reference>
   </ItemGroup>
 

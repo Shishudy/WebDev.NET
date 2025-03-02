@@ -14,19 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+096d7dd3e8064f91583ba1eee4343e551fa07121")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18f1be37175cedb924c3f3cc12453e5088a119f5")]
->>>>>>> b7bcc23 (Changes to HTML and implemented naming conventions)
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b7bcc23d8afe1c792f61292f66d4e6b17316eeab")]
->>>>>>> 454ae4a (method dropdown done, working on form)
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+454ae4ad3378d2d9b3e02bf4001caaec7af64c87")]
->>>>>>> 259f4b0 (Login page almost finished, organized css, JS related to forms)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b07d30083c61cfe4b952e1dde5d6fa88430a9951")]
 [assembly: System.Reflection.AssemblyProductAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

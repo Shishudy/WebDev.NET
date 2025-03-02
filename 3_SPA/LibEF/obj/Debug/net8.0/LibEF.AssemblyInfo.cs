@@ -14,11 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+096d7dd3e8064f91583ba1eee4343e551fa07121")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+454ae4ad3378d2d9b3e02bf4001caaec7af64c87")]
->>>>>>> 259f4b0 (Login page almost finished, organized css, JS related to forms)
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b07d30083c61cfe4b952e1dde5d6fa88430a9951")]
 [assembly: System.Reflection.AssemblyProductAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LibEF")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

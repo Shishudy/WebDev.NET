@@ -83,6 +83,37 @@
         }
       }
     },
+    "/ResolveMethod/{method}": {
+      "post": {
+        "tags": [
+          "WebAPI"
+        ],
+        "operationId": "ResolveMethod",
+        "parameters": [
+          {
+            "name": "method",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/teste": {
       "post": {
         "tags": [
