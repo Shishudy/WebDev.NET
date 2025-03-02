@@ -4,34 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biblioteca</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="LoginModalBlur.css">
-    
-    
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <!-- <div>
-        <svg class="background" id="loginBackground">
-            <img src="bg.svg" alt="bg">
-        </svg>
-    </div> -->
     <header>
         <h1>Biblioteca Virtual</h1>
-        <button id="loginButton">Login</button>
         <span id="welcomeUser" style="display: none;"></span>
+		<!-- <div id="menu-div" class="div div--menu-2">
+			<a href="">Gestão de Leitores</a>
+			<a href="">Gestão de Obras</a>
+			<a href="">Gestão de Reservas</a>
+		</div> -->
     </header>
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeLoginModal()">&times;</span>
-            <form id="loginForm">
-                <label for="username">Usuário:</label>
-                <input type="text" id="username" required>
-                <label for="password">Senha:</label>
-                <input type="password" id="password" required>
-                <button type="submit">Entrar</button>
-            </form>
-        </div>
-    </div>
+<!-- Main div -->
+	<div id="main-div" class="div div--main">
+		<!-- Modal de loading -->
+		<div id="loading-modal-div" class="div div--modal-loading">
+			<div id="loading-modal-content" class="div div--modal-content-loading">
+				<div class="loading-spinner"></div>
+				<div>Loading</div>
+			</div>
+		</div>
+		<!-- Modal de login -->
+		<div id="login-modal-div" class="div div--modal-login">
+			<div id="login-modal-content-div" class="div div--modal-content-login">
+				<p id="login-message" style="text-align: center; display: none;">Login inválido!</p>
+				<form id="login-form" class="form form--login">
+					<label for="login-form-username-input" class="label label--login">Email:</label>
+					<input id="login-form-username-input" class="input input--login" type="text" required>
+					<div id="login-modal-password-div" class="div div--modal-login-password">
+						<label for="login-form-password-input" class="label label--login">Senha:</label>
+						<input id="login-form-password-input" class="input input--login" type="password" required>
+						<span id="login-modal-toggle-password" onclick="togglePassword()">👁️</span>
+					</div>
+					<button id="login-form-submit-button" type="submit">Entrar</button>
+				</form>
+			</div>
+		</div>
+		<!-- Div da opção escolhida -->
+		<div id="tab-div" class="div div--tab">
+			<h1 id="tab-title">Tab</h1>
+			<div id="search-filter-div" class="div div--search-filter">
+				<div id="search-box-div" class="div div--search-box">
+					<input id="search-box-input" type="text" placeholder="Pesquisar..." />
+					<button onclick="search(document.getElementById('search-box-input').value)">Search</button>
+				</div>
+				<div id="filter-box-div" class="div div--filter-box">
+					<!-- EXAMPLE of dropdown - remove this -->
+					<select name="" id="">
+						<option value="">dummy1</option>
+						<option value="">dummy2</option>
+					</select>
+					<!-- END OF EXAMPLE -->
+				</div>
+			</div>
+
+			<div id="results-list-div" class="div div--results-list">
+				<!-- EXAMPLE of result - remove this -->
+				<div id="result-div" class="div div--result">
+					<span>Dados da reserva</span>
+					<div id="result-actions-div" class="div div--result-actions">
+						<select name="" id="">
+							<option value="">dummy1</option>
+							<option value="">dummy2</option>
+						</select>
+						<!-- dropdown or button -->
+						<button>Botões/dropdown de ação</button>
+					</div>
+				</div>
+				<!-- END OF EXAMPLE -->
+			</div>
+
+			<div id="result-list-pagination-div" class="div div--result-list-pagination">
+
+			</div>
+		</div>
+		<!-- Dropdown para escolher métodos -->
+		<div id="method-selector-div" class="div div--method-selector">
+
+		</div>
+		<!-- Form para fornecer parâmetros aos métodos -->
+		<div id="form-input-div" class="div div--form-input">
+			<!-- <div id="book-container"></div> -->
+			<!-- <form id="form">
+				<input type="file" id="file" required>
+				<button type="submit">Entrar</button>
+			</form> -->
+			<!-- <form id="imageUploadForm" enctype="multipart/form-data">
+				<label for="image">Upload Image:</label>
+				<input type="file" id="image" name="image" accept="image/*"><br><br>
+				<input type="submit" value="Upload">
+			</form> -->
+		</div>
+		<!-- Div para mostrar resultados dos métodos -->
+		<div id="form-output-div" class="div div--form-output">
+	
+		</div>
+	</div>
 
     <div id="search">
         <span id="categoryButtons">
@@ -43,65 +112,14 @@
         <input type="text" id="buscador" placeholder="Buscar livros...">
         <button id="pesquisa">Pesquisar</button>
     </div>
-
-    <section id="lista-livros">
-        <h2>Livros Disponíveis</h2>
-        <div id="book-container"></div>
-        <!-- <form id="form">
-            <input type="file" id="file" required>
-            <button type="submit">Entrar</button>
-        </form> -->
-        <div id="form-container"></div>
-
-        <form id="imageUploadForm" enctype="multipart/form-data">
-            <label for="image">Upload Image:</label>
-            <input type="file" id="image" name="image" accept="image/*"><br><br>
-            <input type="submit" value="Upload">
-        </form>
-        <table id="ShowTable" border="1">
-        <script>
-            document.getElementById('imageUploadForm').addEventListener('submit', function(event) {
-                event.preventDefault(); // Prevent form submission
-    
-                var formData = new FormData(event.target);
-                var fileInput = document.getElementById('image');
-                var file = fileInput.files[0];
-    
-                if (file) {
-                    var reader = new FileReader();
-                    reader.onload = function(e) {
-                        var binaryData = e.target.result;
-                        console.log('Binary Data:', binaryData);
-    
-                        // You can now send the binary data along with the form data
-                        formData.append('binaryData', new Blob([binaryData]));
-    
-                        fetch(apiUrl + "teste", {
-                            method: 'POST',
-                            headers: {
-			                    "Content-Type": "application/json",
-		                    },
-                            body: JSON.stringify( formData )
-                        })
-                        .then(response => response.json())
-                        .then(data => {
-                            console.log('Success:', data);
-                        })
-                        .catch((error) => {
-                            console.error('Error:', error);
-                        });
-                    };
-                    reader.readAsArrayBuffer(file);
-                }
-            });
-        </script>
-    </body>
-    </html>
-    </section>
-
-    <div id="popup" class="popup"></div>
-    
+	<footer>
+		
+	</footer>
+    <script src="js/script.js"></script>
+    <script src="js/login.js"></script>
+    <script src="js/methods.js"></script>
+    <script src="js/form.js"></script>
+    <!-- <script src="biblioteca.js"></script> -->
     <script src="biblioteca-evt.js"></script>
-    <script src="biblioteca.js"></script>
 </body>
 </html>

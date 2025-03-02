@@ -1,4 +1,4 @@
-﻿using Azure;
+using Azure;
 using LibEF.Models;
 using LibEF;
 using System.Text.Json;

@@ -14,8 +14,7 @@
           "Microsoft.EntityFrameworkCore": "8.0.13",
           "Microsoft.EntityFrameworkCore.SqlServer": "8.0.13",
           "Microsoft.EntityFrameworkCore.Tools": "8.0.13",
-          "Swashbuckle.AspNetCore": "7.2.0",
-          "LibDB": "1.0.0.0"
+          "Swashbuckle.AspNetCore": "7.2.0"
         },
         "runtime": {
           "WebAPI.dll": {}
@@ -834,14 +833,7 @@
           }
         }
       },
-      "System.Formats.Asn1/8.0.2": {
-        "runtime": {
-          "lib/net8.0/System.Formats.Asn1.dll": {
-            "assemblyVersion": "8.0.0.0",
-            "fileVersion": "8.0.1325.6609"
-          }
-        }
-      },
+      "System.Formats.Asn1/8.0.2": {},
       "System.IdentityModel.Tokens.Jwt/7.5.0": {
         "dependencies": {
           "Microsoft.IdentityModel.JsonWebTokens": "7.5.0",
@@ -915,14 +907,6 @@
         },
         "runtime": {
           "LibEF.dll": {
-            "assemblyVersion": "1.0.0",
-            "fileVersion": "1.0.0.0"
-          }
-        }
-      },
-      "LibDB/1.0.0.0": {
-        "runtime": {
-          "LibDB.dll": {
             "assemblyVersion": "1.0.0.0",
             "fileVersion": "1.0.0.0"
           }
@@ -1449,11 +1433,6 @@
     },
     "LibEF/1.0.0": {
       "type": "project",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "LibDB/1.0.0.0": {
-      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }
