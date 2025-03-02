@@ -19,17 +19,25 @@ namespace LibADO.RequisitionMake
                 SqlTransaction transaction = conn.BeginTransaction();
                 try
                 {
-                    int totalRequisicoes = Convert.ToInt32(GetScalarValue(conn, @"
+                    object result = GetScalarValue(conn, @"
                 SELECT COUNT(*) FROM dbo.Requisicao 
-                WHERE pk_leitor = @pk_leitor",
-                        "@pk_leitor", pkLeitor, transaction));
+                WHERE pk_leitor = @pk_leitor 
+                AND stat NOT IN ('returned')",
+                        "@pk_leitor", pkLeitor, transaction);
+
+                    int totalRequisicoes = result != null ? Convert.ToInt32(result) : 0;
+                    Console.WriteLine($"Usuário {pkLeitor} tem {totalRequisicoes} requisições ativas antes da validação.");
 
                     if (totalRequisicoes >= 4)
                         throw new Exception("Usuário já possui 4 requisições ativas.");
 
-                    if (RecordExists(conn, "SELECT 1 FROM dbo.Requisicao WHERE pk_leitor = @pk_leitor AND pk_obra = @pk_obra",
-                        new Dictionary<string, object> { { "@pk_leitor", pkLeitor }, { "@pk_obra", pkObra } }, transaction))
-                        throw new Exception("Usuário já requisitou este livro.");
+                    if (RecordExists(conn,
+                    "SELECT 1 FROM dbo.Requisicao WHERE pk_leitor = @pk_leitor AND pk_obra = @pk_obra AND pk_nucleo = @pk_nucleo AND stat NOT IN ('returned')",
+                     new Dictionary<string, object> { { "@pk_leitor", pkLeitor }, { "@pk_obra", pkObra }, { "@pk_nucleo", pkNucleo } }, transaction))
+                    {
+                        throw new Exception("Usuário já requisitou este livro neste núcleo e ainda não devolveu.");
+                    }
+
 
                     int availableCopies = Convert.ToInt32(GetScalarValue(conn,
                         "SELECT dbo.fn_available_copies(@pk_obra, @pk_nucleo)",
@@ -38,7 +46,7 @@ namespace LibADO.RequisitionMake
                     if (availableCopies < 2)
                         throw new Exception("Não há cópias disponíveis para requisição.");
 
-                    string insertQuery = "INSERT INTO dbo.Requisicao (pk_leitor, pk_obra, pk_nucleo, data_levantamento) VALUES (@pk_leitor, @pk_obra, @pk_nucleo, GETDATE())";
+                    string insertQuery = "INSERT INTO dbo.Requisicao (pk_leitor, pk_obra, pk_nucleo, data_levantamento, stat) VALUES (@pk_leitor, @pk_obra, @pk_nucleo, GETDATE(), 'borrowed')";
                     ExecuteNonQuery(conn, insertQuery, new Dictionary<string, object> { { "@pk_leitor", pkLeitor }, { "@pk_obra", pkObra }, { "@pk_nucleo", pkNucleo } }, transaction);
 
                     transaction.Commit();
@@ -104,34 +112,31 @@ namespace LibADO.RequisitionMake
             }
         }
 
-        public static Dictionary<string, object>? GetBookDetails(string connectionString, int pk_obra)
+        public static List<Dictionary<string, object>> GetBookDetails(string connectionString, int pk_obra)
         {
+            List<Dictionary<string, object>> results = new();
+
             using (SqlConnection conn = DB.Open(connectionString))
             {
                 string query = @"
-        SELECT 
-            o.pk_obra, 
-            o.nome_obra, 
-            o.ISBN, 
-            o.editora, 
-            COALESCE(img.image_path, '/img/default.jpg') AS image_path, 
-            n.nome_nucleo, 
-            n.pk_nucleo, 
-            dbo.fn_available_copies(o.pk_obra, n.pk_nucleo) AS quantidade
-        FROM dbo.Obra o
-        LEFT JOIN dbo.ImageReferences img ON o.fk_imagem = img.pk_image  -- ✅ Corrigido
-        JOIN dbo.NucleoObra no ON o.pk_obra = no.pk_obra  -- ✅ Corrigido
-        JOIN dbo.Nucleo n ON no.pk_nucleo = n.pk_nucleo  -- ✅ Corrigido
-        WHERE o.pk_obra = @pk_obra";
+            SELECT o.pk_obra, o.nome_obra, o.ISBN, o.editora, 
+                   COALESCE(img.image_path, '/img/default.jpg') AS image_path, 
+                   n.nome_nucleo, n.pk_nucleo, 
+                   dbo.fn_available_copies(o.pk_obra, n.pk_nucleo) AS quantidade
+            FROM dbo.Obra o
+            LEFT JOIN dbo.ImageReferences img ON o.fk_imagem = img.pk_image
+            JOIN dbo.NucleoObra no ON o.pk_obra = no.pk_obra
+            JOIN dbo.Nucleo n ON no.pk_nucleo = n.pk_nucleo
+            WHERE o.pk_obra = @pk_obra";
 
                 using (SqlCommand cmd = new SqlCommand(query, conn))
                 {
                     cmd.Parameters.AddWithValue("@pk_obra", pk_obra);
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        if (reader.Read())
+                        while (reader.Read())
                         {
-                            return new Dictionary<string, object>
+                            var obra = new Dictionary<string, object>
                     {
                         { "pk_obra", reader["pk_obra"] },
                         { "nome_obra", reader["nome_obra"] },
@@ -142,12 +147,18 @@ namespace LibADO.RequisitionMake
                         { "pk_nucleo", reader["pk_nucleo"] },
                         { "quantidade", reader["quantidade"] }
                     };
+                            results.Add(obra);
                         }
                     }
                 }
             }
 
-            return null;
+            if (results.Count == 0)
+            {
+                Console.WriteLine($"ERRO: Nenhuma obra encontrada para ID {pk_obra}");
+            }
+
+            return results;
         }
 
     }

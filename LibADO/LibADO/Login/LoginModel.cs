@@ -14,5 +14,6 @@ namespace LibADO.Login
         public string Senha { get; set; }
         public string Nome { get; set; }
         public string UserRole { get; set; }
+        public string? Status { get; set; }
     }
 }

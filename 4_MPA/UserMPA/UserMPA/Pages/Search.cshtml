@@ -54,8 +54,6 @@
                         <img src="@obra["image_path"]" alt="@obra["nome_obra"]">
                         <div class="info-card">
                             <h4>@obra["nome_obra"]</h4>
-                            <p><strong>Núcleo:</strong> @obra["nome_nucleo"]</p>
-                            <p><strong>Quantidade:</strong> @obra["quantidade"]</p>
                             <form method="get" asp-page="/Requisitar">
                                 <input type="hidden" name="pk_obra" value="@obra["pk_obra"]?.ToString()" />
                                 <button type="submit" class="btn-requisitar">Requisitar</button>

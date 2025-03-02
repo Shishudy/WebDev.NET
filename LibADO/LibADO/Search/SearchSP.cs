@@ -19,30 +19,25 @@ namespace LibADO.Search
         public class SearchSP
         {
             public static List<Dictionary<string, object>> sp_search_obras_com_imagem(
-    string? obra, string? genre, string? nucleo, string connectionString)
+                string? obra, string? genre, string connectionString)
             {
                 using var cn = DB.Open(connectionString);
 
-                string filtroObra = string.IsNullOrEmpty(obra) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras('{obra}'))";
-                string filtroGenero = string.IsNullOrEmpty(genre) ? "" : $"AND no.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras_genre('{genre}'))";
-                string filtroNucleo = string.IsNullOrEmpty(nucleo) ? "" : $"AND no.pk_nucleo IN (SELECT pk_nucleo FROM dbo.fn_search_nucleo('{nucleo}'))";
+                string filtroObra = string.IsNullOrEmpty(obra) ? "" : $"AND o.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras('{obra}'))";
+                string filtroGenero = string.IsNullOrEmpty(genre) ? "" : $"AND o.pk_obra IN (SELECT pk_obra FROM dbo.fn_search_obras_genre('{genre}'))";
 
                 string query = $@"
-    SELECT no.pk_obra, o.nome_obra, n.nome_nucleo, no.quantidade, 
-           COALESCE(ir.image_path, '/images/default.jpg') AS image_path
-    FROM dbo.NucleoObra no
-        INNER JOIN dbo.Obra o ON no.pk_obra = o.pk_obra
-        INNER JOIN dbo.Nucleo n ON no.pk_nucleo = n.pk_nucleo
-        LEFT JOIN dbo.ImageReferences ir ON o.fk_imagem = ir.pk_image
-    WHERE 1=1 {filtroObra} {filtroGenero} {filtroNucleo}";
+                SELECT o.pk_obra, o.nome_obra, 
+                    COALESCE(ir.image_path, '/images/default.jpg') AS image_path
+                FROM dbo.Obra o
+                LEFT JOIN dbo.ImageReferences ir ON o.fk_imagem = ir.pk_image
+                WHERE 1=1 {filtroObra} {filtroGenero}
+                GROUP BY o.pk_obra, o.nome_obra, ir.image_path";
 
                 var dt = DB.GetSQLRead(cn, query);
                 return DB.ToDictionary(dt);
             }
-
         }
     }
-
-
 }
 

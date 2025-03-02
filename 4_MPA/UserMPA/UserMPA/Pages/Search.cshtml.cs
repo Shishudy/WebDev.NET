@@ -14,7 +14,7 @@ namespace UserMPA.Pages
         {
             MethodesSearch searchMethods = new();
             Categorias = searchMethods.ObterCategorias(connectionString);
-            Obras = SearchSP.sp_search_obras_com_imagem(obra, genre, nucleo, connectionString);
+            Obras = SearchSP.sp_search_obras_com_imagem(obra, genre, connectionString);
         }
 
 

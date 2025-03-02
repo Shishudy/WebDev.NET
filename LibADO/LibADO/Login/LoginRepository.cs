@@ -22,6 +22,7 @@ namespace LibADO.Login
         {
             using var conn = DB.Open(_connectionString);
 
+
             string checkUserQuery = "SELECT stat FROM Leitor WHERE email = @Email";
             using (var checkCmd = new SqlCommand(checkUserQuery, conn))
             {
@@ -30,54 +31,113 @@ namespace LibADO.Login
                 var status = checkCmd.ExecuteScalar()?.ToString();
 
                 if (status == "Inactive")
-                {
                     return "Sua conta está inativa e não pode ser acessada.";
-                }
+
+                if (status == "inactive")
+                    return "Sua conta está suspensa devido a múltiplos atrasos nas devoluções.";
+            }
+
+            if (VerificarESuspenderLeitor(email, conn))
+            {
+                return "Sua conta foi suspensa por excesso de devoluções atrasadas.";
             }
 
             string loginQuery = @"
-                SELECT COUNT(*) 
-                FROM Leitor 
-                WHERE email = @Email 
-                AND loggin_password = @Senha 
-                AND stat = 'active'";
+            SELECT pk_leitor
+            FROM Leitor
+            WHERE email = @Email
+            AND loggin_password = @Senha
+            AND stat = 'active'";
 
             using (var command = new SqlCommand(loginQuery, conn))
             {
                 command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
                 command.Parameters.Add(new SqlParameter("@Senha", SqlDbType.NVarChar) { Value = senha });
 
-                bool loginValido = (int)command.ExecuteScalar() > 0;
-                return loginValido ? "OK" : "Usuário ou senha inválidos.";
+                var result = command.ExecuteScalar();
+                return result != null ? "OK" : "Usuário ou senha inválidos.";
             }
         }
 
         public LoginModel? ObterUsuarioPorEmail(string email)
         {
-            using var conn = new SqlConnection(_connectionString);
-            conn.Open();
+            using var conn = DB.Open(_connectionString);
             string query = @"
-                SELECT pk_leitor, email, loggin_password, nome_leitor, user_role, stat 
-                FROM Leitor 
-                WHERE email = @Email
-                AND stat = 'active'";
+            SELECT pk_leitor, email, loggin_password, nome_leitor, user_role, stat 
+            FROM Leitor 
+            WHERE email = @Email
+            AND stat = 'active'";
 
             using var command = new SqlCommand(query, conn);
             command.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
 
             using var reader = command.ExecuteReader();
-            if (!reader.HasRows)
-                return null;
+            if (!reader.Read()) return null;
 
-            reader.Read();
             return new LoginModel
             {
                 Id = reader["pk_leitor"] != DBNull.Value ? Convert.ToInt32(reader["pk_leitor"]) : 0,
                 Email = reader["email"].ToString(),
                 Senha = reader["loggin_password"].ToString(),
-                Nome = reader["nome_leitor"] != DBNull.Value ? reader["nome_leitor"].ToString() : "Usuário",
-                UserRole = reader["user_role"] != DBNull.Value ? reader["user_role"].ToString() : "User"
+                Nome = reader["nome_leitor"]?.ToString() ?? "Usuário",
+                UserRole = reader["user_role"]?.ToString() ?? "User",
+                Status = reader["stat"]?.ToString() ?? "active"
             };
+        }
+
+        private bool VerificarESuspenderLeitor(string email, SqlConnection conn)
+        {
+            using var transaction = conn.BeginTransaction();
+
+            try
+            {
+                
+                string getUserQuery = "SELECT pk_leitor FROM Leitor WHERE email = @Email";
+                int pkLeitor;
+
+                using (var cmd = new SqlCommand(getUserQuery, conn, transaction))
+                {
+                    cmd.Parameters.Add(new SqlParameter("@Email", SqlDbType.NVarChar) { Value = email });
+                    pkLeitor = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+                }
+
+                if (pkLeitor == 0)
+                    return false; 
+
+               
+                string countLateReturnsQuery = @"
+                SELECT COUNT(*) 
+                FROM dbo.Requisicao 
+                WHERE pk_leitor = @pk_leitor
+                AND dbo.fn_check_overtime(data_levantamento, data_devolucao, 15) = 1";
+
+                int lateReturns;
+                using (var cmd = new SqlCommand(countLateReturnsQuery, conn, transaction))
+                {
+                    cmd.Parameters.Add(new SqlParameter("@pk_leitor", SqlDbType.Int) { Value = pkLeitor });
+                    lateReturns = Convert.ToInt32(cmd.ExecuteScalar() ?? 0);
+                }
+
+                
+                if (lateReturns > 3)
+                {
+                    string suspendUserQuery = "UPDATE Leitor SET stat = 'inactive' WHERE pk_leitor = @pk_leitor";
+                    using var suspendCmd = new SqlCommand(suspendUserQuery, conn, transaction);
+                    suspendCmd.Parameters.Add(new SqlParameter("@pk_leitor", SqlDbType.Int) { Value = pkLeitor });
+                    suspendCmd.ExecuteNonQuery();
+
+                    transaction.Commit();
+                    return true; 
+                }
+
+                transaction.Commit();
+                return false; 
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw;
+            }
         }
     }
 }

@@ -9,16 +9,25 @@ namespace UserMPA.Pages
         private readonly LoginService _loginService;
 
         [BindProperty]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [BindProperty]
-        public string Senha { get; set; }
+        public string Senha { get; set; } = string.Empty;
 
-        public string MensagemErro { get; set; }
+        public string MensagemErro { get; set; } = string.Empty;
 
         public IndexModel(LoginService loginService)
         {
             _loginService = loginService;
+        }
+
+        public void OnGet()
+        {
+            if (!string.IsNullOrEmpty(HttpContext.Session.GetString("MensagemErro")))
+            {
+                MensagemErro = HttpContext.Session.GetString("MensagemErro")!;
+                HttpContext.Session.Remove("MensagemErro");
+            }
         }
 
         public IActionResult OnPost()
@@ -31,14 +40,13 @@ namespace UserMPA.Pages
                 if (usuario != null)
                 {
                     HttpContext.Session.SetString("NomeUsuario", usuario.Nome);
-                    HttpContext.Session.SetInt32("PkLeitor", usuario.Id); 
-                    Console.WriteLine($" PkLeitor salvo na sessão: {usuario.Id}");
+                    HttpContext.Session.SetInt32("PkLeitor", usuario.Id);
                     return RedirectToPage("/Index");
                 }
             }
 
-            MensagemErro = resultadoLogin;
-            return Page();
+            HttpContext.Session.SetString("MensagemErro", resultadoLogin);
+            return RedirectToPage("/Index");
         }
     }
 }

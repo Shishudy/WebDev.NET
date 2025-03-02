@@ -10,31 +10,33 @@ namespace UserMPA.Pages
     {
         private readonly string _connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
 
-        public Dictionary<string, object>? Obra { get; set; }
+        public List<Dictionary<string, object>> ObrasNosNucleos { get; set; } = new();
         public int PkLeitor { get; set; }
 
         public IActionResult OnGet(int pk_obra)
         {
+            Console.WriteLine($"DEBUG: Tentando carregar detalhes da obra com ID {pk_obra}");
+
             int? idUsuario = HttpContext.Session.GetInt32("PkLeitor");
 
             if (idUsuario == null)
             {
-                Console.WriteLine(" ERRO: PkLeitor não encontrado na sessão. Redirecionando para Index.");
+                Console.WriteLine("ERRO: PkLeitor não encontrado na sessão. Redirecionando...");
                 return RedirectToPage("/Index");
             }
 
-            Console.WriteLine($" PkLeitor encontrado na sessão: {idUsuario.Value}");
-
             PkLeitor = idUsuario.Value;
-            Obra = Method.GetBookDetails(_connectionString, pk_obra);
+            ObrasNosNucleos = Method.GetBookDetails(_connectionString, pk_obra);
 
-            if (Obra == null)
+            if (ObrasNosNucleos == null || ObrasNosNucleos.Count == 0)
             {
+                Console.WriteLine($"ERRO: Nenhuma obra encontrada para pk_obra = {pk_obra}");
                 return NotFound();
             }
 
             return Page();
         }
+
 
         public IActionResult OnPost(int pk_obra, int pk_leitor, int pk_nucleo)
         {
@@ -43,7 +45,7 @@ namespace UserMPA.Pages
                 Console.WriteLine($"?? Tentando realizar requisição: PkLeitor={pk_leitor}, PkObra={pk_obra}, PkNucleo={pk_nucleo}");
 
                 Method.ProcessRequisition(_connectionString, pk_leitor, pk_obra, pk_nucleo);
-                TempData["SuccessMessage"] = " Requisição realizada com sucesso!";
+                TempData["SuccessMessage"] = "Requisição realizada com sucesso!";
 
                 Console.WriteLine("Requisição concluída com sucesso!");
 
@@ -51,11 +53,18 @@ namespace UserMPA.Pages
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $" Erro ao requisitar livro: {ex.Message}";
-                Console.WriteLine($" ERRO: {ex.Message}");
+                if (ex.Message.Contains("usuário já possui 4 requisições")) 
+                {
+                    TempData["ErrorMessage"] = "Você já atingiu o limite de 4 requisições!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = $"Erro ao requisitar livro: {ex.Message}";
+                }
+
+                Console.WriteLine($"ERRO:{ex.Message}");
                 return Page();
             }
         }
-
     }
 }
