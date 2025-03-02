@@ -17,6 +17,7 @@ using System.Reflection;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+096d7dd3e8064f91583ba1eee4343e551fa07121")]
 =======
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+18f1be37175cedb924c3f3cc12453e5088a119f5")]
@@ -27,6 +28,9 @@ using System.Reflection;
 =======
 [assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+454ae4ad3378d2d9b3e02bf4001caaec7af64c87")]
 >>>>>>> 259f4b0 (Login page almost finished, organized css, JS related to forms)
+=======
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+454ae4ad3378d2d9b3e02bf4001caaec7af64c87")]
+>>>>>>> origin/rafa
 [assembly: System.Reflection.AssemblyProductAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
