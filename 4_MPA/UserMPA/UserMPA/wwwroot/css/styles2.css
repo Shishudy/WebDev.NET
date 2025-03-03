@@ -244,6 +244,37 @@ header {
     background-color: gray;
 }
 
+/* ======== PAGINAÇÃO ======== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+    .pagination a {
+        background: linear-gradient(to right, #007bff, #0056b3);
+        color: white;
+        padding: 10px 15px;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: bold;
+        transition: 0.3s ease-in-out;
+    }
+
+        .pagination a:hover {
+            background: linear-gradient(to right, #0056b3, #003d82);
+            transform: scale(1.05);
+        }
+
+    .pagination span {
+        font-size: 16px;
+        font-weight: bold;
+        color: #333;
+    }
+
+
 
 
 
