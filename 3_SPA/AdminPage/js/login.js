@@ -8,7 +8,7 @@ function login(inputs)
 		headers: {
 			"Content-Type": "application/json",
 		},
-		body: JSON.stringify({ username : inputs[0].value, password : inputs[1].value }),
+		body: JSON.stringify({ email : inputs[0].value, password : inputs[1].value }),
 	};
 	fetch(apiUrl + "login", options).then((response) => {
 		document.getElementById("loading-modal-div").style.display = "none";

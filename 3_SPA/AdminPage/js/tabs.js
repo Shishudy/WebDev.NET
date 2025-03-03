@@ -1,37 +1,124 @@
 function search() {
-	let data = document.getElementById('search-box-input').value;
+	let data = document.getElementById("search-box-input").value;
 	console.log(data);
 }
 
-function changeTab(i) {
-	if (i == 1)
+function changeTab(tab) {
+	document.getElementById("loading-modal-div").style.display = "flex";
+	if (tab === "reservas")
 		reservas();
-	else if (i == 2)
+	else if (tab === "obras")
 		obras();
-	else if (i == 3)
+	else if (tab === "nucleos")
 		nucleos();
-	else if (i == 4)
+	else if (tab === "gestao")
 		gestaoDeUsers();
+	// let tabMethods;
+	// fetch(apiUrl + `methods/${tab}`).then((response) => {
+	// 	if (!response.ok) {
+	// 		throw new Error('Network response was not ok');
+	// 	}
+	// 	return response.json();
+	// }).then((data) => {
+	// 	tabMethods = data;
+	// }).catch((error) => {
+	// 	console.error("Error:", error);
+	// });
+	// //document.getElementById("tab-div").style.display = "flex";
+	buildResultsList(tab);
+	document.getElementById("loading-modal-div").style.display = "none";
+}
+
+function buildResultsList(tab) {
+	let resultsList = document.getElementById("results-list-div");
+	let package;
+	fetch(apiUrl + `/${tab}`).then((response) => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	}).then((data) => {
+		package = data;
+	}).catch((error) => {
+		console.error("Error:", error);
+	});
+	let i = 0;
+	while (i < package.items.length)
+	{
+		let newResult = document.createElement("div");
+		newResult.setAttribute("id", `result-${i}-div`);
+		newResult.setAttribute("class", "div div--result");
+		newResult.setAttribute("data-result", `${i}`);
+		// titulo/id ou wtv TODO
+		let resultData = document.createElement("h1");
+		resultData.innerHTML = "Nome/ID/Wtv";
+		newResult.appendChild(resultData);
+		// outros dados TODO
+		resultData = document.createElement("p");
+		resultData.innerHTML = "wtv other info";
+		newResult.appendChild(resultData);
+		// imagem se for aplicável TODO
+		resultData = document.createElement("img");
+		resultData.setAttribute("img", "src da imagem");
+		newResult.appendChild(resultData);
+		// methods to be called on this item - if 1, button, else, dropdown
+		let resultActions = document.createElement("div");
+		resultActions.setAttribute("id", `result-${i}-actions-div`);
+		resultActions.setAttribute("class", "div div--result-actions");
+		if (package.methods.length == 1)
+		{
+			let button = document.createElement("button");
+			button.setAttribute("value", package.methods[0]);
+			resultActions.appendChild(button);
+		}
+		else
+		{
+			let select = document.createElement("select");
+			select.setAttribute("id", `result-${i}-actions-select`);
+			let n = 0;
+			while (n < package.methods.length)
+			{
+				let option = document.createElement("option");
+				option.setAttribute("value", package.methods[n].key);
+				n++;
+				select.appendChild(option);
+			}
+			resultActions.appendChild(select);
+		}
+		newResult.appendChild(resultActions);
+		resultsList.appendChild(newResult);
+		i++;
+	}
+	
 }
 
 function reservas() {
-	
+	let title = document.getElementById("tab-title");
+	title.innerHTML = "Reservas";
+	buildPagination();
 }
 
 function obras() {
-	
+	let title = document.getElementById("tab-title");
+	title.innerHTML = "Obras";
+	buildPagination();
 }
 
 function nucleos() {
-	
+	let title = document.getElementById("tab-title");
+	title.innerHTML = "Núcleos";
+	buildPagination();
 }
 
 function gestaoDeUsers() {
-	
+	let title = document.getElementById("tab-title");
+	title.innerHTML = "Gestão de Utilizadores";
+	buildPagination();
 }
 
 function buildPagination() {
-	const page = document.getElementById("lista-cursos");
+	return ;
+	const page = document.getElementById("tab-div");
 	let pagination = document.createElement("div");
 	pagination.setAttribute("id", "pagination");
 	pagination.classList.add("pagination");

@@ -11,11 +11,12 @@
         <h1>Biblioteca Virtual</h1>
         <span id="welcomeUser" style="display: none;"></span>
 		<div id="menu-div" class="div div--menu">
+			<!-- CSS por tratar, nomes de classes/id têm de ser mudados -->
 			<span id="categoryButtons">
-				<button class="categoryButton" data-category="overall" onclick="changeTab(1)">Reservas</button>
-				<button class="categoryButton" data-category="leitores" onclick="changeTab(2)">Obras</button>
-				<button class="categoryButton" data-category="nucleo" onclick="changeTab(3)">Núcleos</button>
-				<button class="categoryButton" data-category="obras" onclick="changeTab(4)">Gestão de Utilizadores</button>
+				<button class="categoryButton" onclick="changeTab('reservas')">Reservas</button>
+				<button class="categoryButton" onclick="changeTab('obras')">Obras</button>
+				<button class="categoryButton" onclick="changeTab('nucleos')">Núcleos</button>
+				<button class="categoryButton" onclick="changeTab('gestao')">Gestão de Utilizadores</button>
 			</span>
 			<input type="text" id="buscador" placeholder="Buscar livros...">
 			<button id="pesquisa">Pesquisar</button>
@@ -37,7 +38,7 @@
 				<p id="login-message" style="text-align: center; display: none;">Login inválido!</p>
 				<form id="login-form" class="form form--login">
 					<label for="login-form-username-input" class="label label--login">Email:</label>
-					<input id="login-form-username-input" class="input input--login" type="text" required>
+					<input id="login-form-username-input" class="input input--login" type="email" required>
 					<div id="login-modal-password-div" class="div div--modal-login-password">
 						<label for="login-form-password-input" class="label label--login">Senha:</label>
 						<input id="login-form-password-input" class="input input--login" type="password" required>
@@ -68,9 +69,9 @@
 
 			<div id="results-list-div" class="div div--results-list">
 				<!-- EXAMPLE of result - remove this -->
-				<div id="result-div" class="div div--result">
+				<div id="result-${i}-div" class="div div--result" data-result="i">
 					<span>Dados da reserva</span>
-					<div id="result-actions-div" class="div div--result-actions">
+					<div id="result-${i}-actions-div" class="div div--result-actions">
 						<select name="" id="">
 							<option value="">dummy1</option>
 							<option value="">dummy2</option>
@@ -115,6 +116,7 @@
     <script src="js/login.js"></script>
     <script src="js/methods.js"></script>
     <script src="js/form.js"></script>
+    <script src="js/tabs.js"></script>
     <!-- <script src="biblioteca.js"></script> -->
     <script src="biblioteca-evt.js"></script>
 </body>
