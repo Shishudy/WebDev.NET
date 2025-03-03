@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.IdentityModel.Tokens;
 using LibADO.UserRequisitions;
 
 namespace UserMPA.Pages
@@ -10,22 +9,18 @@ namespace UserMPA.Pages
         private readonly GetUserRequisitions _requisicaoRepository;
 
         public List<Dictionary<string, object>> ObrasRequisitadas { get; set; } = new();
-
-        public RequisitionsModel()
+        public RequisitionsModel(string connectionString)
         {
-            string connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
             _requisicaoRepository = new GetUserRequisitions(connectionString);
         }
-
         public IActionResult OnGet()
         {
-            int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor"); 
+            int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor");
 
             if (pkLeitor == null)
             {
                 return RedirectToPage("/Index");
             }
-
             Console.WriteLine($" PkLeitor encontrado na sessão: {pkLeitor.Value}");
 
             ObrasRequisitadas = _requisicaoRepository.GetObrasRequisitadas(pkLeitor.Value);
@@ -33,4 +28,3 @@ namespace UserMPA.Pages
         }
     }
 }
-
