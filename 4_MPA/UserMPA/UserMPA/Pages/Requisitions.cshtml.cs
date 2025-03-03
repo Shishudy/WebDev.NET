@@ -23,16 +23,12 @@ namespace UserMPA.Pages
 
             if (pkLeitor == null)
             {
-                Console.WriteLine(" ERRO: PkLeitor não encontrado na sessão.");
                 return RedirectToPage("/Index");
             }
 
             Console.WriteLine($" PkLeitor encontrado na sessão: {pkLeitor.Value}");
 
             ObrasRequisitadas = _requisicaoRepository.GetObrasRequisitadas(pkLeitor.Value);
-
-            Console.WriteLine($" Quantidade de obras retornadas: {ObrasRequisitadas.Count}");
-
             return Page();
         }
     }

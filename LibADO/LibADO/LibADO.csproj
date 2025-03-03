@@ -170,7 +170,6 @@
     <Compile Include="RequisitionMake\Method.cs" />
     <Compile Include="Search\MethodesSearch.cs" />
     <Compile Include="Search\SearchSP.cs" />
-    <Compile Include="SPS\Procedures.cs" />
     <Compile Include="UserRequisitions\GetUserRequisitions.cs" />
   </ItemGroup>
   <ItemGroup>

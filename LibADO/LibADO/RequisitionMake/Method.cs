@@ -26,7 +26,6 @@ namespace LibADO.RequisitionMake
                         "@pk_leitor", pkLeitor, transaction);
 
                     int totalRequisicoes = result != null ? Convert.ToInt32(result) : 0;
-                    Console.WriteLine($"Usuário {pkLeitor} tem {totalRequisicoes} requisições ativas antes da validação.");
 
                     if (totalRequisicoes >= 4)
                         throw new Exception("Usuário já possui 4 requisições ativas.");
@@ -153,11 +152,7 @@ namespace LibADO.RequisitionMake
                 }
             }
 
-            if (results.Count == 0)
-            {
-                Console.WriteLine($"ERRO: Nenhuma obra encontrada para ID {pk_obra}");
-            }
-
+            
             return results;
         }
 

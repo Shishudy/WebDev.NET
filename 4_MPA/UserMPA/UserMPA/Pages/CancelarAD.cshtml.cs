@@ -17,11 +17,8 @@ namespace UserMPA.Pages
 
             if (pkLeitor == null)
             {
-                Console.WriteLine(" ERRO: PkLeitor não encontrado na sessão. Redirecionando para Index.");
                 return RedirectToPage("/Index");
             }
-
-            Console.WriteLine($"PkLeitor encontrado na sessão: {pkLeitor.Value}");
 
             try
             {

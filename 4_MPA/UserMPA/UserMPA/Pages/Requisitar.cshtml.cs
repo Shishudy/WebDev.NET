@@ -15,13 +15,11 @@ namespace UserMPA.Pages
 
         public IActionResult OnGet(int pk_obra)
         {
-            Console.WriteLine($"DEBUG: Tentando carregar detalhes da obra com ID {pk_obra}");
 
             int? idUsuario = HttpContext.Session.GetInt32("PkLeitor");
 
             if (idUsuario == null)
             {
-                Console.WriteLine("ERRO: PkLeitor não encontrado na sessão. Redirecionando...");
                 return RedirectToPage("/Index");
             }
 
@@ -30,7 +28,6 @@ namespace UserMPA.Pages
 
             if (ObrasNosNucleos == null || ObrasNosNucleos.Count == 0)
             {
-                Console.WriteLine($"ERRO: Nenhuma obra encontrada para pk_obra = {pk_obra}");
                 return NotFound();
             }
 
@@ -42,12 +39,10 @@ namespace UserMPA.Pages
         {
             try
             {
-                Console.WriteLine($"?? Tentando realizar requisição: PkLeitor={pk_leitor}, PkObra={pk_obra}, PkNucleo={pk_nucleo}");
 
                 Method.ProcessRequisition(_connectionString, pk_leitor, pk_obra, pk_nucleo);
                 TempData["SuccessMessage"] = "Requisição realizada com sucesso!";
 
-                Console.WriteLine("Requisição concluída com sucesso!");
 
                 return RedirectToPage("/Requisitions");
             }
@@ -62,7 +57,6 @@ namespace UserMPA.Pages
                     TempData["ErrorMessage"] = $"Erro ao requisitar livro: {ex.Message}";
                 }
 
-                Console.WriteLine($"ERRO:{ex.Message}");
                 return Page();
             }
         }
