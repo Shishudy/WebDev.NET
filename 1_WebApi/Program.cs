@@ -1,13 +1,12 @@
-using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Azure;
-using LibEF;
-using LibEF.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using WebAPI.Model;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +21,35 @@ builder.Services.AddCors(options =>
 						.AllowAnyHeader());
 });
 
+builder.Services.AddAuthorization(); // Add this line
+
+// Read settings from appsettings.json
+var configuration = builder.Configuration;
+var connectionString = configuration.GetConnectionString("DefaultConnection");
+var jwtSettings = configuration.GetSection("JwtSettings");
+
+/////// ++++++++++ /////
+var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]); // Replace with your secret key
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+	options.TokenValidationParameters = new TokenValidationParameters
+	{
+		ValidateIssuer = true,
+		ValidateAudience = true,
+		ValidateLifetime = true,
+		ValidateIssuerSigningKey = true,
+		ValidIssuer = jwtSettings["Issuer"],  // Local development (http://localhost:5000) or production (https://mywebsite.com)
+        ValidAudience = jwtSettings["Audience"], // the audience that the token is intended for ( the URL of the API)
+		IssuerSigningKey = new SymmetricSecurityKey(key)
+	};
+});
+/////// ++++++++++ /////
+
 var app = builder.Build(); 
 
 if (app.Environment.IsDevelopment())
@@ -30,30 +58,80 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-Model model = new Model(app);
+app.UseCors("AllowAll"); //
+app.UseAuthentication(); // Add this line
+app.UseAuthorization(); // Add this line
+
+Model model = new Model(connectionString);
 
 app.MapPost("/login", (JsonElement jsonRes) =>
 {
 	try
 	{
-		return Results.Ok(model.Login(jsonRes));
+		// Authenticate the user and generate a JWT token
+		var isAuthenticated = model.Login(jsonRes);
+		if (isAuthenticated)
+		{
+			var tokenHandler = new JwtSecurityTokenHandler();
+			var tokenDescriptor = new SecurityTokenDescriptor
+			{
+				Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "admin") }),
+				Expires = DateTime.UtcNow.AddHours(1),
+				Issuer = jwtSettings["Issuer"], // Replace with your issuer
+				Audience = jwtSettings["Audience"], // Replace with your audience
+				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+			};
+			var token = tokenHandler.CreateToken(tokenDescriptor);
+			var tokenString = tokenHandler.WriteToken(token);
+
+			return Results.Ok(new { Token = tokenString });
+		}
+		else
+		{
+			return Results.BadRequest("Invalid login attempt.");
+		}
 	}
 	catch (Exception ex)
 	{
-		//return Results.BadRequest(ex.Message);
-        return Results.BadRequest(false);
-    }
+		return Results.BadRequest(ex.Message);
+	}
 })
 .WithName("Login")
 .WithOpenApi();
 
-app.MapGet("/methods", () =>
+//app.MapPost("/login", (JsonElement jsonRes) =>
+//{
+//	try
+//	{
+//		return Results.Ok(model.Login(jsonRes));
+//	}
+//	catch (Exception ex)
+//	{
+//		//return Results.BadRequest(ex.Message);
+//		return Results.BadRequest(false);
+//	}
+//})
+//.WithName("Login")
+//.WithOpenApi();
+
+app.MapGet("/methods/{category}", (string cat) =>
 {
-	return (model.MethodsJson);//this should only pass method names not everything
+	try
+	{
+		if (cat == "all")
+			return Results.Ok(model.MethodsJson);
+		else
+			return Results.Ok(model.GetMethods(cat));
+	}
+	catch (Exception ex)
+	{
+		return Results.BadRequest(ex.Message);
+	}
 	//return (model.Methods.keys);
 })
 .WithName("Methods")
 .WithOpenApi();
+// .WithAuthorization();
 
 app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement param) =>
 {
@@ -66,9 +144,9 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 			throw new Exception("no such method listed");
 		if (ParamList != null && ParamList.Count > 0 || methods_dic[method] == null)
 		{//param is an dict {} or {K:V}
-            return Results.Ok((model.ResolveMethod(method, ParamList)));
+			return Results.Ok((model.ResolveMethod(method, ParamList)));
 		}
-        else // sends the parameters back
+		else // sends the parameters back for form creation
 		{
 			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
 		}
@@ -80,6 +158,7 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 })
 .WithName("ResolveMethod")
 .WithOpenApi();
+// .WithAuthorization();
 
 
 //app.MapPost("/teste", (Object response) =>
@@ -91,18 +170,19 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 //.WithName("Teste")
 //.WithOpenApi();
 
-//app.MapGet("/weatherforecast", (string str) =>
-//{
+// app.MapGet("/weatherforecast", (string str) =>
+// {
 //    ProjectoContext context = new ProjectoContext();
 //    EF_methods EF = new EF_methods(context);
 //    var forecast = EF.GetPassWordbyLogin(str);
 //    var obj = new { result = forecast };
 //    var json = JsonSerializer.Serialize(obj);
 //    return (json);
-//})
-//.WithName("GetWeatherForecast")
-//.WithOpenApi();
+// })
+// .WithName("GetWeatherForecast")
+// .WithOpenApi();
+// .WithAuthorization();
+
 
 app.UseCors("AllowAll");
-
 app.Run();

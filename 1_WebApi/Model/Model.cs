@@ -1,8 +1,9 @@
-using Azure;
+﻿using Azure;
 using LibEF.Models;
 using LibEF;
 using System.Text.Json;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 
 //TODO make overall / Utilizadores / nucleos / obras pages
 //each will auto show all values and will have an search bar // bonus maybe search from what is shown?
@@ -21,29 +22,183 @@ namespace WebAPI.Model
 		public bool mandatory { get; set; }
 	}
 
+	public class MethodDetails
+    {
+        public string Description { get; set; }
+        public string MethodName { get; set; }
+    }
+
 	public class Model
 	{
-		public WebApplication App { get; set; }
-
-		public readonly string MethodsJson;
-
-		public readonly Dictionary<string, List<MethodParameter>> MethodsDict;
-
-		public Model(WebApplication AppBuilt)
+		private readonly ProjectoContext _context;
+		public readonly Dictionary<string, Dictionary<string, MethodDetails>> method_category = new Dictionary<string, Dictionary<string, MethodDetails>>();
+        public Dictionary<string, List<MethodParameter>> MethodsDict = new Dictionary<string, List<MethodParameter>>();
+        public readonly string MethodsJson;
+		public void MethodCategory ()
 		{
-			App = AppBuilt;
-			Dictionary<string, List<MethodParameter>>MethodsList = new Dictionary<string, List<MethodParameter>>();
-			MethodsList["GetTotalObra"] = null;
-			MethodsList["GetTotalObraPorGenero"] = null;
-			MethodsList["GetTopRequestedByTime"] = new List<MethodParameter> { 
+			method_category["Obras"] = new Dictionary<string, MethodDetails>
+			{
+				["get"] = new MethodDetails{
+					Description = "Numero total de obras", 
+					MethodName = "GetTotalObra",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Obras by genre", 
+					MethodName = "GetTotalObraPorGenero",
+				},
+				["add"] = new MethodDetails{
+					Description = "Insert Obra", 
+					MethodName = "InsertObra",
+				},
+				["update"] = new MethodDetails{
+					Description = "Update Obra", 
+					MethodName = "UpdateObra",
+				
+				},
+				["delete"] = new MethodDetails{
+					Description = "Delete Obra", 
+					MethodName = "DeleteObra",
+					
+				},
+				["search"] = new MethodDetails{
+					Description = "Search Obra", 
+					MethodName = "sp_search_Obra_genero",
+					
+				},
+			};
+			method_category["Nucleos"] = new Dictionary<string, MethodDetails>
+			{
+				["get"] = new MethodDetails{
+					Description = "Get all Nucleos", 
+					MethodName = "GetAllNucleos",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Nucleo by ID", 
+					MethodName = "GetNucleoByID",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Nucleo by Name", 
+					MethodName = "GetNucleoByName",
+				},
+				["add"] = new MethodDetails{
+					Description = "Insert Núcleo", 
+					MethodName = "InsertNucleo",
+				},
+				["add"] = new MethodDetails{
+					Description = "Add Obra to Núcleo", 
+					MethodName = "AddObraInNucleo",
+
+				},
+				["remove"] = new MethodDetails{
+					Description = "Remove Obra from Núcleo", 
+					MethodName = "RemoveObra",
+				},
+				["transfer"] = new MethodDetails{
+					Description = "Transfer Obra", 
+					MethodName = "TransferObra",
+				},
+			};
+
+			method_category["Reservas"] = new Dictionary<string, MethodDetails>
+			{
+				["get"] = new MethodDetails{
+					Description = "Get all Reservas", 
+					MethodName = "GetAllReservas",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Reservas by Leitor", 
+					MethodName = "GetReservasByLeitor",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Reservas by nucleo", 
+					MethodName = "GetRequisicoesByNucleo",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Reservas by Obra", 
+					MethodName = "GetReservasByObra",
+				},
+				["add"] = new MethodDetails{
+					Description = "Insert Reserva", 
+					MethodName = "InsertReserva",
+				},
+				["delete"] = new MethodDetails{
+					Description = "Delete Reserva", 
+					MethodName = "DeleteReserva",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get Reservas by Time", 
+					MethodName = "GetReservasByTime",
+				},
+				["update"] = new MethodDetails{
+					Description = "Devolution", 
+					MethodName = "Devolution",
+				},
+				["update"] = new MethodDetails{
+					Description = "Requisition", 
+					MethodName = "Requisition",
+				},
+			};
+
+			method_category["Utilizadores"] = new Dictionary<string, MethodDetails>
+			{
+				["get"] = new MethodDetails{
+					Description = "Get all Utilizadores", 
+					MethodName = "GetAllUtilizadores",
+				},
+				["get"] = new MethodDetails{
+					Description = "Get requesitions status", 
+					MethodName = "requesicao_status",
+				},
+				["get"] = new MethodDetails{
+					Description = "Insert Utilizador", 
+					MethodName = "InsertLeitor",
+				},
+				["update"] = new MethodDetails{
+					Description = "Suspender Utilizador", 
+					MethodName = "SuspendLeitor",
+				},
+				["update"] = new MethodDetails{
+					Description = "Reactivar Utilizador", 
+					MethodName = "sp_leitor_reactivate",
+				},
+				["update"] = new MethodDetails{
+					Description = "Get Requisições do Leitor", 
+					MethodName = "GetRequisicoesLeitor",
+				},
+				["delete"] = new MethodDetails{
+					Description = "sp_delete_inactive_Leitor", 
+					MethodName = "sp_delete_inactive_Leitor",
+				},
+				["delete"] = new MethodDetails{
+					Description = "sp_del_leitor", 
+					MethodName = "sp_del_leitor",
+				},
+				["update"] = new MethodDetails{
+					Description = "sp_save_leitor_history", 
+					MethodName = "sp_save_leitor_history",
+				},
+				["update"] = new MethodDetails{
+					Description = "sp_cancel_leitor", 
+					MethodName = "sp_cancel_leitor",
+				},
+			};
+		}
+
+		public Model(string connectionString)
+		{
+            _context = CreateContext(connectionString);
+			MethodCategory();
+			MethodsDict["GetTotalObra"] = null;
+			MethodsDict["GetTotalObraPorGenero"] = null;
+			MethodsDict["GetTopRequestedByTime"] = new List<MethodParameter> { 
 				new MethodParameter { name = "Data início", type = "date", size = 0, mandatory = true}, 
 				new MethodParameter { name = "Data fim", type = "date", size = 0, mandatory = true} 
 			};
-			MethodsList["GetRequisicoesByNucleo"] = new List<MethodParameter> { 
+			MethodsDict["GetRequisicoesByNucleo"] = new List<MethodParameter> { 
 				new MethodParameter { name = "Data início", type = "date", size = 0, mandatory = true}, 
 				new MethodParameter { name = "Data fim", type = "date", size = 0, mandatory = true}
 			};
-			MethodsList["InsertObra"] = new List<MethodParameter> {
+			MethodsDict["InsertObra"] = new List<MethodParameter> {
 				new MethodParameter { name = "Núcleo a adicionar (opcional)", type = "number", mandatory = false},
 				new MethodParameter { name = "Nome da obra", type = "text", size = 50, mandatory = true},
 				new MethodParameter { name = "ISBN", type = "text", size = 50, mandatory = true},
@@ -54,30 +209,30 @@ namespace WebAPI.Model
 				new MethodParameter { name = "Quantidade (opcional)", type = "number", mandatory = false},
 
 			};
-			MethodsList["UpdateImage"] = new List<MethodParameter> {
+			MethodsDict["UpdateImage"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID da obra a adicionar", type = "number", mandatory = true},
 				new MethodParameter { name = "Imagem", type = "file", mandatory = true},
 				new MethodParameter { name = "ISBN", type = "text", size = 50, mandatory = true}
 			};
-			MethodsList["GetCentralNucleo"] = null;
-			MethodsList["AddObraInNucleo"] = new List<MethodParameter> {
+			MethodsDict["GetCentralNucleo"] = null;
+			MethodsDict["AddObraInNucleo"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID da obra", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo a adicionar", type = "number", mandatory = true},
 				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 			};
-			MethodsList["RemoveObra"] = new List<MethodParameter> {
+			MethodsDict["RemoveObra"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID da obra a remover", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo a remover", type = "number", mandatory = true},
 				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 			};
-			MethodsList["TransferObra"] = new List<MethodParameter> {
+			MethodsDict["TransferObra"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID da obra a transferir", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo de origem", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo de destino", type = "number", mandatory = true},
 				new MethodParameter { name = "Quantidade", type = "number", mandatory = true},
 
 			};
-			MethodsList["InsertLeitor"] = new List<MethodParameter> {
+			MethodsDict["InsertLeitor"] = new List<MethodParameter> {
 				new MethodParameter { name = "Nome do utilizador", type = "text", size = 50, mandatory = true},
 				new MethodParameter { name = "Morada", type = "text", size = 50, mandatory = true},
 				new MethodParameter { name = "Telemóvel", type = "number", size = 9, mandatory = true},
@@ -85,65 +240,105 @@ namespace WebAPI.Model
 				new MethodParameter { name = "Password", type = "password", size = 50, mandatory = true},
 				new MethodParameter { name = "Tipo de utilizador", type = "radio", mandatory = true},
 			};
-			MethodsList["SuspendLateLeitor"] = new List<MethodParameter> {
+			MethodsDict["SuspendLateLeitor"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["GetRequisicoesLeitor"] = new List<MethodParameter> {
+			MethodsDict["GetRequisicoesLeitor"] = new List<MethodParameter> {
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["Devolution"] = new List<MethodParameter>
+			MethodsDict["Devolution"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 				new MethodParameter { name = "ID da obra a devolver", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo", type = "number", mandatory = true},
 			};
-			MethodsList["Requisition"] = new List<MethodParameter>
+			MethodsDict["Requisition"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 				new MethodParameter { name = "ID da obra a devolver", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo", type = "number", mandatory = true},
 			};
-			MethodsList["sp_leitor_reactivate"] = new List<MethodParameter>
+			MethodsDict["sp_leitor_reactivate"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 
 			};
-			MethodsList["sp_delete_inactive_Leitor"] = new List<MethodParameter>
+			MethodsDict["sp_delete_inactive_Leitor"] = new List<MethodParameter>
 			{
 				//NOT DONE, NEEDS CLARIFICATION
 			};
-			MethodsList["sp_del_leitor"] = new List<MethodParameter>
+			MethodsDict["sp_del_leitor"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_save_leitor_history"] = new List<MethodParameter>
+			MethodsDict["sp_save_leitor_history"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_cancel_leitor"] = new List<MethodParameter>
+			MethodsDict["sp_cancel_leitor"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 			};
-			MethodsList["sp_search_Obra"] = new List<MethodParameter>
+			MethodsDict["sp_search_Obra"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "Obra a pesquisar", type = "text", size = 50, mandatory = true},
 			};
 
-			MethodsList["sp_search_Obra_genero"] = new List<MethodParameter>
+			MethodsDict["sp_search_Obra_genero"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "Género a pesquisar", type = "text", size = 50, mandatory = true},
 			};
 
-			MethodsList["requesicao_status"] = new List<MethodParameter>
+			MethodsDict["requesicao_status"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 				new MethodParameter { name = "Núcleo", type = "number", mandatory = false},
 
 			};
-			MethodsDict = MethodsList;
-			MethodsJson = JsonSerializer.Serialize(MethodsList);
-
+			MethodsJson = JsonSerializer.Serialize(MethodsDict);
 		}
+
+		public void AddMethod(string category, string method, string description, List<MethodParameter> parameters)
+		{
+			if (!method_category.ContainsKey(category))
+			{
+				method_category[category] = new Dictionary<string, MethodDetails>();
+			}
+			method_category[category][method] = new MethodDetails { Description = description, MethodName = method };
+			MethodsDict[method] = parameters;
+		}
+
+		// so i want an method where i pass the category and get back an list of methods with their method name as key and parameters as value
+
+	public Dictionary<string, List<MethodParameter>> GetMethods(string category)
+	{
+		var result = new Dictionary<string, List<MethodParameter>>();
+
+		if (method_category.ContainsKey(category))
+		{
+			var methods = method_category[category].Values.ToList();
+			foreach (var method in methods)
+			{
+				if (MethodsDict.ContainsKey(method.MethodName))
+				{
+					result[method.MethodName] = MethodsDict[method.MethodName];
+					//Todo use description as key in the future
+				}
+			}
+		}
+		else
+		{
+			throw new Exception("Category not found try any:" + string.Join(", ", method_category.Keys) + "\n Se precisares que mude avisa");
+		}
+		return result;
+	}
+
+		private ProjectoContext CreateContext(string connectionString)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<ProjectoContext>();
+            optionsBuilder.UseSqlServer(connectionString);
+            return new ProjectoContext(optionsBuilder.Options);
+        }
 
 		public List <object>? GetParamList (string method, JsonElement param)
 		{
@@ -182,21 +377,19 @@ namespace WebAPI.Model
 				else
 					paramList.Add(null);
             }
-			foreach (var val in paramList)
+			foreach (var val in paramList) //TODO remove degub lines
 				Console.WriteLine(val ?? "null");
 			return paramList;
         }
 
         public object ResolveMethod (string method, List <object>? ParamList)
 		{
-            ProjectoContext context = new ProjectoContext();
-            EF_methods ef = new EF_methods(context);
+            EF_methods ef = new EF_methods(_context);
             Type type = typeof(EF_methods);
 			MethodInfo? method_fun = type.GetMethod(method);
 			try
 			{
-				if (method_fun != null)
-				{
+				if (method_fun != null){
 					if (ParamList != null && ParamList.Count > 0)
 						return method_fun.Invoke(ef, ParamList.ToArray());  // Call the method with multiple arguments
 					else
@@ -218,14 +411,13 @@ namespace WebAPI.Model
         public bool Login(JsonElement jsonRes)
 		{
             ProjectoContext context = new ProjectoContext();
-            EF_methods ef = new EF_methods(context);
+            EF_methods ef = new EF_methods(_context);
 			try
 			{
 				Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
 				string pw_res = ef.GetPassWordbyLogin(res["email"]);
 				string pw_login = res["password"];
-				if (pw_login != pw_res)
-				{
+				if (pw_login != pw_res){
 					throw new Exception("Invalid Password");
 				}	
 				return true;

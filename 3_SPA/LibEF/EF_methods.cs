@@ -37,7 +37,9 @@ namespace LibEF
             {
                 var leitor = context.Leitors.FirstOrDefault(l => l.Email == email);
                 if (leitor == null)
-                    throw new Exception("leitor not found");
+                    throw new Exception("User not found");
+                if (leitor.UserRole != "ADMIN")
+                    throw new Exception("User has no admin permitions");
                 return leitor.UserPassword;
             }
             catch (Exception)
@@ -45,8 +47,6 @@ namespace LibEF
                 throw;
             }
         }
-
-
 
 
         /////////////////////
