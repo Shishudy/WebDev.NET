@@ -21,14 +21,7 @@
         },
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -39,36 +32,6 @@
           "WebAPI"
         ],
         "operationId": "Methods",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/weatherforecast": {
-      "get": {
-        "tags": [
-          "WebAPI"
-        ],
-        "operationId": "GetWeatherForecast",
-        "parameters": [
-          {
-            "name": "str",
-            "in": "query",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -110,34 +73,6 @@
         "responses": {
           "200": {
             "description": "OK"
-          }
-        }
-      }
-    },
-    "/teste": {
-      "post": {
-        "tags": [
-          "WebAPI"
-        ],
-        "operationId": "Teste",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": { }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "text/plain": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
           }
         }
       }

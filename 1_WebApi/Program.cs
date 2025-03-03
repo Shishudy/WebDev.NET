@@ -14,7 +14,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowAll",
@@ -23,7 +22,7 @@ builder.Services.AddCors(options =>
 						.AllowAnyHeader());
 });
 
-var app = builder.Build();
+var app = builder.Build(); 
 
 if (app.Environment.IsDevelopment())
 {
@@ -33,9 +32,17 @@ if (app.Environment.IsDevelopment())
 
 Model model = new Model(app);
 
-app.MapPost("/login", (Object response) =>
+app.MapPost("/login", (JsonElement jsonRes) =>
 {
-	return model.Login(response);
+	try
+	{
+		return Results.Ok(model.Login(jsonRes));
+	}
+	catch (Exception ex)
+	{
+		//return Results.BadRequest(ex.Message);
+        return Results.BadRequest(false);
+    }
 })
 .WithName("Login")
 .WithOpenApi();
@@ -46,18 +53,6 @@ app.MapGet("/methods", () =>
 	//return (model.Methods.keys);
 })
 .WithName("Methods")
-.WithOpenApi();
-
-app.MapGet("/weatherforecast", (string str) =>
-{
-	ProjectoContext context = new ProjectoContext();
-	EF_methods EF = new EF_methods(context);
-	var forecast = EF.GetPassWordbyLogin(str);
-	var obj = new { result = forecast};
-	var json = JsonSerializer.Serialize(obj);
-	return (json);
-})
-.WithName("GetWeatherForecast")
 .WithOpenApi();
 
 app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement param) =>
@@ -87,14 +82,26 @@ app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement pa
 .WithOpenApi();
 
 
-app.MapPost("/teste", (Object response) =>
-{ 
-	Console.WriteLine(response);
-	var json = JsonSerializer.Serialize(response);
-	return (json);
-})
-.WithName("Teste")
-.WithOpenApi();
+//app.MapPost("/teste", (Object response) =>
+//{ 
+//	Console.WriteLine(response);
+//	var json = JsonSerializer.Serialize(response);
+//	return (json);
+//})
+//.WithName("Teste")
+//.WithOpenApi();
+
+//app.MapGet("/weatherforecast", (string str) =>
+//{
+//    ProjectoContext context = new ProjectoContext();
+//    EF_methods EF = new EF_methods(context);
+//    var forecast = EF.GetPassWordbyLogin(str);
+//    var obj = new { result = forecast };
+//    var json = JsonSerializer.Serialize(obj);
+//    return (json);
+//})
+//.WithName("GetWeatherForecast")
+//.WithOpenApi();
 
 app.UseCors("AllowAll");
 

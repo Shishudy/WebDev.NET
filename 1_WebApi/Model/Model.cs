@@ -215,26 +215,46 @@ namespace WebAPI.Model
 			}
 		}
 
-
-		public string Login(Object response)
+        public bool Login(JsonElement jsonRes)
 		{
-			ProjectoContext context = new ProjectoContext();
-			EF_methods ef = new EF_methods(context);
-			string jsonRes = JsonSerializer.Serialize(response);
-			Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
+            ProjectoContext context = new ProjectoContext();
+            EF_methods ef = new EF_methods(context);
 			try
 			{
-				var forecast = ef.GetPassWordbyLogin(res.GetValueOrDefault("username"));
-				var obj = new { result = forecast};
-				var json = JsonSerializer.Serialize(obj);
-				return (json);
-			}
+				Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
+				string pw_res = ef.GetPassWordbyLogin(res["email"]);
+				string pw_login = res["password"];
+				if (pw_login != pw_res)
+				{
+					throw new Exception("Invalid Password");
+				}	
+				return true;
+            }
 			catch
 			{
-				var obj = new { result = "User not found."};
-				var json = JsonSerializer.Serialize(obj);
-				return (json);
+				throw;
 			}
-		}
-	}
+				
+        }
+        //public string Login(Object response)
+        //{
+        //	ProjectoContext context = new ProjectoContext();
+        //	EF_methods ef = new EF_methods(context);
+        //	string jsonRes = JsonSerializer.Serialize(response);
+        //	Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
+        //	try
+        //	{
+        //		var forecast = ef.GetPassWordbyLogin(res.GetValueOrDefault("username"));
+        //		var obj = new { result = forecast};
+        //		var json = JsonSerializer.Serialize(obj);
+        //		return (json);
+        //	}
+        //	catch
+        //	{
+        //		var obj = new { result = "User not found."};
+        //		var json = JsonSerializer.Serialize(obj);
+        //		return (json);
+        //	}
+        //}
+    }
 }

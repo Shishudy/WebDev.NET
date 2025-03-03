@@ -31,11 +31,11 @@ namespace LibEF
             return available_copies;
         }
 
-        public string GetPassWordbyLogin(string name)
+        public string GetPassWordbyLogin(string email)
         {
             try
             {
-                var leitor = context.Leitors.FirstOrDefault(l => l.NomeLeitor == name);
+                var leitor = context.Leitors.FirstOrDefault(l => l.Email == email);
                 if (leitor == null)
                     throw new Exception("leitor not found");
                 return leitor.UserPassword;

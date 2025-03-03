@@ -3834,23 +3834,23 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Work\\.nuget\\packages\\": {},
+    "C:\\Users\\Jk\\.nuget\\packages\\": {},
     "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Work\\Desktop\\UpSkill\\M3\\WebDev.NET\\1_WebApi\\WebAPI.csproj",
+      "projectUniqueName": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\1_WebApi\\WebAPI.csproj",
       "projectName": "WebAPI",
-      "projectPath": "C:\\Users\\Work\\Desktop\\UpSkill\\M3\\WebDev.NET\\1_WebApi\\WebAPI.csproj",
-      "packagesPath": "C:\\Users\\Work\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Work\\Desktop\\UpSkill\\M3\\WebDev.NET\\1_WebApi\\obj\\",
+      "projectPath": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\1_WebApi\\WebAPI.csproj",
+      "packagesPath": "C:\\Users\\Jk\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\1_WebApi\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
       ],
       "configFilePaths": [
-        "C:\\Users\\Work\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\Jk\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
@@ -3875,9 +3875,9 @@
       "restoreAuditProperties": {
         "enableAudit": "true",
         "auditLevel": "low",
-        "auditMode": "direct"
+        "auditMode": "all"
       },
-      "SdkAnalysisLevel": "9.0.200"
+      "SdkAnalysisLevel": "9.0.100"
     },
     "frameworks": {
       "net8.0": {
@@ -3929,7 +3929,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.200/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
