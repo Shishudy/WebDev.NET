@@ -133,28 +133,38 @@ app.MapGet("/methods/{category}", (string cat) =>
 .WithOpenApi();
 // .WithAuthorization();
 
-app.MapPost("/ResolveMethod/{method}", (string method, [FromBody] JsonElement param) =>
+app.MapPost("/ResolveMethod/{method}/{page}/{size}", (string method, string? page, string? size, [FromBody] JsonElement param) =>
 {
 	try
 	{
 		var methods_dic = model.MethodsDict;
 		var ParamList = model.GetParamList(method, param);
-		//return Results.Ok(ParamList); //at this point we dio get [1]
 		if (!methods_dic.ContainsKey(method))
 			throw new Exception("no such method listed");
-		if (ParamList != null && ParamList.Count > 0 || methods_dic[method] == null)
-		{//param is an dict {} or {K:V}
-			return Results.Ok((model.ResolveMethod(method, ParamList)));
-		}
-		else // sends the parameters back for form creation
-		{
-			return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
-		}
-	}
-	catch (Exception ex)
-	{
-		return Results.BadRequest(ex.Message);
-	}
+		// retorna os parametros necessarios
+		if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
+            return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
+		// vai buscar a lista
+		var result = model.ResolveMethod(method, ParamList);
+		if (page == null || size == null)
+			return Results.Ok(result);
+		// separar pacotes a enviar
+		int sizeInt = int.Parse(size);
+		int pageInt = int.Parse(page) * sizeInt;
+		if (pageInt < 0 || sizeInt < 0)
+            throw new Exception("invalid page or size");
+        var pagedResult = result as List<object>;
+        if (pagedResult == null)
+            throw new Exception("result is not a list");
+        if (pageInt + sizeInt >= pagedResult.Count)
+            throw new Exception("page out of range");
+        pagedResult = pagedResult.Skip(pageInt * sizeInt).Take(sizeInt).ToList();
+        return Results.Ok(pagedResult);
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
 })
 .WithName("ResolveMethod")
 .WithOpenApi();
