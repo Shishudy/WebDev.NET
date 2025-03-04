@@ -652,3 +652,4 @@ C:\Users\Jk\Downloads\git_folder\M3-project\WebDev.NET\1_WebApi\obj\Debug\net8.0
 C:\Users\Jk\Downloads\git_folder\M3-project\WebDev.NET\1_WebApi\obj\Debug\net8.0\WebAPI.genruntimeconfig.cache
 C:\Users\Jk\Downloads\git_folder\M3-project\WebDev.NET\1_WebApi\obj\Debug\net8.0\ref\WebAPI.dll
 C:\Users\Jk\Downloads\git_folder\M3-project\WebDev.NET\1_WebApi\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\rafae\Desktop\UpSkill\M3\Projecto\WebDev.NET\1_WebApi\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll

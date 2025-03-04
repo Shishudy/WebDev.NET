@@ -1,10 +1,17 @@
+function showFormModal() {
+	document.getElementById("form-modal-div").style.display = "flex";
+	if (!methods)
+		getMethods();
+	else
+		buildMethodSelector();
+}
+
 function buildForm() {
 	const selector = document.getElementById('method-selector');
-	const formInputDiv = document.getElementById('form-input-div');
-	if (formInputDiv.firstElementChild)
-		formInputDiv.removeChild(formInputDiv.firstElementChild);
-	const formInput = document.createElement('form');
-	formInput.setAttribute('id', 'form-input');
+	const form = document.getElementById('form-modal-form');
+	while (form.firstElementChild)
+		form.removeChild(form.firstElementChild);
+	form.setAttribute('id', 'form-modal-form');
 	let formStructure = methods[selector.value];
 	if (formStructure)
 	{
@@ -21,40 +28,35 @@ function buildForm() {
 			if (field.mandatory) {
 				input.required = true;
 			}
-			formInput.appendChild(label);
-			formInput.appendChild(input);
+			form.appendChild(label);
+			form.appendChild(input);
 		});
 		const clearInput = document.createElement('button');
-		clearInput.setAttribute('id', 'form-clear-button');
+		clearInput.setAttribute('id', 'modal-form-clear-button');
 		clearInput.setAttribute('type', 'reset');
 		clearInput.setAttribute('value', 'Reset form');
 		clearInput.textContent = "Clear";
-		formInput.appendChild(clearInput);
+		form.appendChild(clearInput);
 	}
 	const submitButton = document.createElement('button');
-	submitButton.setAttribute('id', 'form-submit-button');
+	submitButton.setAttribute('id', 'modal-form-submit-button');
 	submitButton.setAttribute('type', 'submit');
 	submitButton.textContent = 'Submit';
-	formInput.appendChild(submitButton);
-	formInputDiv.appendChild(formInput);
-}
-
-function clearForm() {
-	document.getElementById("form-input").reset();
-	console.log("Cleared!");
+	form.appendChild(submitButton);
 }
 
 function submitForm(data) {
 	console.log(data);
-	// fetch(apiUrl + `ResolveMethod/${}`).then((response) => {
-	// 	if (!response.ok) {
-	// 		throw new Error('Network response was not ok');
-	// 	}
-	// 	return response.json();
-	// }).then((data) => {
-	// 	tabMethods = data;
-	// }).catch((error) => {
-	// 	console.error("Error:", error);
-	// });
+	const selector = document.getElementById('method-selector');
+	fetch(apiUrl + `ResolveMethod/${selector.value}`).then((response) => {
+		if (!response.ok) {
+			throw new Error('Network response was not ok');
+		}
+		return response.json();
+	}).then((data) => {
+		console.log(data);
+	}).catch((error) => {
+		console.error("Error:", error);
+	});
 	console.log("Submited!");
 }

@@ -31,19 +31,18 @@ function changeTab(tab) {
 
 function buildResultsList(tab) {
 	let resultsList = document.getElementById("results-list-div");
-	let package;
-	fetch(apiUrl + `/${tab}`).then((response) => {
+	let items = fetch(apiUrl + `/${tab}/items`).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
 	}).then((data) => {
-		package = data;
+		return (data);
 	}).catch((error) => {
 		console.error("Error:", error);
 	});
 	let i = 0;
-	while (i < package.items.length)
+	while (i < items.table.length)
 	{
 		let newResult = document.createElement("div");
 		newResult.setAttribute("id", `result-${i}-div`);
@@ -62,30 +61,30 @@ function buildResultsList(tab) {
 		resultData.setAttribute("img", "src da imagem");
 		newResult.appendChild(resultData);
 		// methods to be called on this item - if 1, button, else, dropdown
-		let resultActions = document.createElement("div");
-		resultActions.setAttribute("id", `result-${i}-actions-div`);
-		resultActions.setAttribute("class", "div div--result-actions");
-		if (package.methods.length == 1)
-		{
-			let button = document.createElement("button");
-			button.setAttribute("value", package.methods[0]);
-			resultActions.appendChild(button);
-		}
-		else
-		{
-			let select = document.createElement("select");
-			select.setAttribute("id", `result-${i}-actions-select`);
-			let n = 0;
-			while (n < package.methods.length)
-			{
-				let option = document.createElement("option");
-				option.setAttribute("value", package.methods[n].key);
-				n++;
-				select.appendChild(option);
-			}
-			resultActions.appendChild(select);
-		}
-		newResult.appendChild(resultActions);
+		// let resultActions = document.createElement("div");
+		// resultActions.setAttribute("id", `result-${i}-actions-div`);
+		// resultActions.setAttribute("class", "div div--result-actions");
+		// if (package.methods.length == 1)
+		// {
+		// 	let button = document.createElement("button");
+		// 	button.setAttribute("value", package.methods[0]);
+		// 	resultActions.appendChild(button);
+		// }
+		// else
+		// {
+		// 	let select = document.createElement("select");
+		// 	select.setAttribute("id", `result-${i}-actions-select`);
+		// 	let n = 0;
+		// 	while (n < package.methods.length)
+		// 	{
+		// 		let option = document.createElement("option");
+		// 		option.setAttribute("value", package.methods[n].key);
+		// 		n++;
+		// 		select.appendChild(option);
+		// 	}
+		// 	resultActions.appendChild(select);
+		// }
+		// newResult.appendChild(resultActions);
 		resultsList.appendChild(newResult);
 		i++;
 	}

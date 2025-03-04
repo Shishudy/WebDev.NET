@@ -26,13 +26,21 @@
         }
       }
     },
-    "/methods/{category}": {
+    "/methods/{level}/{category}": {
       "get": {
         "tags": [
           "WebAPI"
         ],
         "operationId": "Methods",
         "parameters": [
+          {
+            "name": "level",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
           {
             "name": "cat",
             "in": "query",

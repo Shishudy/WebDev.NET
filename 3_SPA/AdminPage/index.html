@@ -48,10 +48,21 @@
 				</form>
 			</div>
 		</div>
-		
+		<!-- Modal do form -->
+		<div id="form-modal-div" class="div div--modal-form">
+			<div id="form-modal-content-div" class="div div--modal-content-form">
+				<div id="method-selector-div" class="div div--method-selector">
+					
+				</div>
+				<form id="form-modal-form" class="form form--modal-form">
+
+				</form>
+			</div>
+		</div>
 		<!-- Div da opção escolhida -->
 		<div id="tab-div" class="div div--tab" data-tab="1">
 			<h1 id="tab-title">Tab</h1>
+			<button id="form-tab-div" onclick="showFormModal()">Action Form</button>
 			<div id="search-filter-div" class="div div--search-filter">
 				<div id="search-box-div" class="div div--search-box">
 					<input id="search-box-input" type="text" placeholder="Pesquisar..." />
@@ -71,7 +82,7 @@
 				<!-- EXAMPLE of result - remove this -->
 				<div id="result-${i}-div" class="div div--result" data-result="i">
 					<span>Dados da reserva</span>
-					<div id="result-${i}-actions-div" class="div div--result-actions">
+					<div id="result-actions-div" class="div div--result-actions">
 						<select name="" id="">
 							<option value="">dummy1</option>
 							<option value="">dummy2</option>
@@ -86,27 +97,6 @@
 			<div id="result-list-pagination-div" class="div div--result-list-pagination">
 
 			</div>
-		</div>
-		<!-- Dropdown para escolher métodos -->
-		<div id="method-selector-div" class="div div--method-selector">
-
-		</div>
-		<!-- Form para fornecer parâmetros aos métodos -->
-		<div id="form-input-div" class="div div--form-input">
-			<!-- <div id="book-container"></div> -->
-			<!-- <form id="form">
-				<input type="file" id="file" required>
-				<button type="submit">Entrar</button>
-			</form> -->
-			<!-- <form id="imageUploadForm" enctype="multipart/form-data">
-				<label for="image">Upload Image:</label>
-				<input type="file" id="image" name="image" accept="image/*"><br><br>
-				<input type="submit" value="Upload">
-			</form> -->
-		</div>
-		<!-- Div para mostrar resultados dos métodos -->
-		<div id="form-output-div" class="div div--form-output">
-	
 		</div>
 	</div>
 	<footer>

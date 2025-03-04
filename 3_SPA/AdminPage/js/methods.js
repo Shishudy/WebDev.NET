@@ -1,7 +1,7 @@
 let methods;
 
 function getMethods() {
-	fetch(apiUrl + "methods").then((response) => {
+	fetch(apiUrl + "methods/all/all").then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
