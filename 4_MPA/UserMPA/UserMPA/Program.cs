@@ -40,6 +40,8 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
 }
+app.Urls.Add("http://0.0.0.0:5100");
+
 
 app.UseStaticFiles();
 app.UseRouting();
