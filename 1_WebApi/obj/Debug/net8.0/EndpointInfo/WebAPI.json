@@ -49,7 +49,7 @@
         }
       }
     },
-    "/ResolveMethod/{method}": {
+    "/ResolveMethod/{method}/{page}/{size}": {
       "post": {
         "tags": [
           "WebAPI"
@@ -60,6 +60,20 @@
             "name": "method",
             "in": "path",
             "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "size",
+            "in": "path",
             "schema": {
               "type": "string"
             }

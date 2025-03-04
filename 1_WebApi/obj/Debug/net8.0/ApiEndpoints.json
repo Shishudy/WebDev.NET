@@ -48,7 +48,7 @@
   {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__5",
-    "RelativePath": "ResolveMethod/{method}",
+    "RelativePath": "ResolveMethod/{method}/{page}/{size}",
     "HttpMethod": "POST",
     "IsController": false,
     "Order": 0,
@@ -57,6 +57,16 @@
         "Name": "method",
         "Type": "System.String",
         "IsRequired": true
+      },
+      {
+        "Name": "page",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "size",
+        "Type": "System.String",
+        "IsRequired": false
       },
       {
         "Name": "param",

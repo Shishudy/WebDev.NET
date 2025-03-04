@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj": {}
+    "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj": {}
   },
   "projects": {
-    "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj": {
+    "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj",
+        "projectUniqueName": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj",
         "projectName": "LibEF",
-        "projectPath": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj",
-        "packagesPath": "C:\\Users\\rafae\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\3_SPA\\LibEF\\obj\\",
+        "projectPath": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\3_SPA\\LibEF\\LibEF.csproj",
+        "packagesPath": "C:\\Users\\Jk\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Jk\\Downloads\\git_folder\\M3-project\\WebDev.NET\\3_SPA\\LibEF\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\rafae\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Jk\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -42,7 +42,7 @@
         "restoreAuditProperties": {
           "enableAudit": "true",
           "auditLevel": "low",
-          "auditMode": "direct"
+          "auditMode": "all"
         },
         "SdkAnalysisLevel": "9.0.100"
       },
@@ -81,7 +81,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.102/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.100/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

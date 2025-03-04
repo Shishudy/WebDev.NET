@@ -149,7 +149,7 @@ namespace WebAPI.Model
 					Description = "Get requesitions status", 
 					MethodName = "requesicao_status",
 				},
-				["get"] = new MethodDetails{
+				["add"] = new MethodDetails{
 					Description = "Insert Utilizador", 
 					MethodName = "InsertLeitor",
 				},
@@ -263,10 +263,7 @@ namespace WebAPI.Model
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
 
 			};
-			MethodsDict["sp_delete_inactive_Leitor"] = new List<MethodParameter>
-			{
-				//NOT DONE, NEEDS CLARIFICATION
-			};
+			MethodsDict["sp_delete_inactive_Leitor"] = null;
 			MethodsDict["sp_del_leitor"] = new List<MethodParameter>
 			{
 				new MethodParameter { name = "ID do leitor", type = "number", mandatory = true},
@@ -310,30 +307,60 @@ namespace WebAPI.Model
 
 		// so i want an method where i pass the category and get back an list of methods with their method name as key and parameters as value
 
-	public Dictionary<string, List<MethodParameter>> GetMethods(string category)
+	public Dictionary<string, List<MethodParameter>> GetMethods(string level)
 	{
+		if (level != "all" && !method_category.ContainsKey(level))
+			throw new Exception("level not found try any:" + string.Join(", ", method_category.Keys));
 		var result = new Dictionary<string, List<MethodParameter>>();
-
-		if (method_category.ContainsKey(category))
-		{
-			var methods = method_category[category].Values.ToList();
-			foreach (var method in methods)
+		List<dynamic> methods = new List<dynamic>();
+        if (level == "all")
+        {
+			foreach (var cat in method_category.Values)
 			{
-				if (MethodsDict.ContainsKey(method.MethodName))
-				{
-					result[method.MethodName] = MethodsDict[method.MethodName];
-					//Todo use description as key in the future
-				}
+				methods.AddRange(cat.Values);
 			}
-		}
-		else
+        }
+        else if (method_category.ContainsKey(level))
+			methods = method_category[level].Values.ToList<dynamic>();
+		foreach (var method in methods)
 		{
-			throw new Exception("Category not found try any:" + string.Join(", ", method_category.Keys) + "\n Se precisares que mude avisa");
+			if (MethodsDict.ContainsKey(method.MethodName))
+				result[method.MethodName] = MethodsDict[method.MethodName];
 		}
 		return result;
 	}
 
-		private ProjectoContext CreateContext(string connectionString)
+        //Dictionary<string, Dictionary<string, MethodDetails>>()
+        public Dictionary<string, List<MethodParameter>> GetMethods(string level, string cat)
+        {
+            if (level != "all" && !method_category.ContainsKey(level))
+                throw new Exception("level not found try any:" + string.Join(", ", method_category.Keys));
+            Dictionary<string, MethodDetails> methods = new Dictionary<string, MethodDetails>();
+            if (level == "all")
+            {
+                foreach (var meth in method_category)
+                {
+                    foreach (var method in meth.Value)
+                    {
+                        methods[method.Key] = method.Value;
+                    }
+                }
+            }
+            else if (method_category.ContainsKey(level))
+                methods = method_category[level];
+            var result = new Dictionary<string, List<MethodParameter>>();
+            foreach (var method in methods)
+            {
+                if (cat != "all" && method.Key != cat)
+                    continue;
+                if (MethodsDict.ContainsKey(method.Value.MethodName))
+                    result[method.Value.MethodName] = MethodsDict[method.Value.MethodName];
+            }
+			if (result.Count == 0)
+				throw new Exception("No methods found for <" + cat + "> try: " + string.Join(", ", methods.Select(x => x.Key)));
+            return result;
+        }
+        private ProjectoContext CreateContext(string connectionString)
         {
             var optionsBuilder = new DbContextOptionsBuilder<ProjectoContext>();
             optionsBuilder.UseSqlServer(connectionString);

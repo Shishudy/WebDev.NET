@@ -114,14 +114,11 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 //.WithName("Login")
 //.WithOpenApi();
 
-app.MapGet("/methods/{category}", (string cat) =>
+app.MapGet("/methods/{level}/{category}", (string level,string cat) =>
 {
 	try
 	{
-		if (cat == "all")
-			return Results.Ok(model.MethodsJson);
-		else
-			return Results.Ok(model.GetMethods(cat));
+		return Results.Ok(model.GetMethods(level, cat));
 	}
 	catch (Exception ex)
 	{
