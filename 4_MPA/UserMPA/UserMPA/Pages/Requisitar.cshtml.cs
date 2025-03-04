@@ -8,14 +8,16 @@ namespace UserMPA.Pages
 {
     public class RequisitarModel : PageModel
     {
-        private readonly string _connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
+        private readonly string _connectionString;
 
         public List<Dictionary<string, object>> ObrasNosNucleos { get; set; } = new();
         public int PkLeitor { get; set; }
-
+        public RequisitarModel(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
         public IActionResult OnGet(int pk_obra)
         {
-
             int? idUsuario = HttpContext.Session.GetInt32("PkLeitor");
 
             if (idUsuario == null)
@@ -30,25 +32,20 @@ namespace UserMPA.Pages
             {
                 return NotFound();
             }
-
             return Page();
         }
-
-
         public IActionResult OnPost(int pk_obra, int pk_leitor, int pk_nucleo)
         {
             try
             {
-
                 Method.ProcessRequisition(_connectionString, pk_leitor, pk_obra, pk_nucleo);
                 TempData["SuccessMessage"] = "Requisição realizada com sucesso!";
-
 
                 return RedirectToPage("/Requisitions");
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("usuário já possui 4 requisições")) 
+                if (ex.Message.Contains("usuário já possui 4 requisições"))
                 {
                     TempData["ErrorMessage"] = "Você já atingiu o limite de 4 requisições!";
                 }

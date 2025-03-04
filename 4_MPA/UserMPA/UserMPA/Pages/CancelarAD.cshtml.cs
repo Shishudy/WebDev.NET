@@ -4,44 +4,49 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace UserMPA.Pages
 {
-    public class CancelarADModel : PageModel
-    {
-        private readonly string _connectionString = "Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;";
-
-        public string Mensagem { get; set; } = string.Empty;
-        public bool Sucesso { get; set; }
-
-        public IActionResult OnGet()
+        public class CancelarADModel : PageModel
         {
-            int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor");
+            private readonly string _connectionString;
 
-            if (pkLeitor == null)
+            public string Mensagem { get; set; } = string.Empty;
+            public bool Sucesso { get; set; }
+            public CancelarADModel(string connectionString)
             {
-                return RedirectToPage("/Index");
+                _connectionString = connectionString;
             }
-
-            try
+            public IActionResult OnGet()
             {
-                bool cancelado = Method.sp_cancel_leitor(pkLeitor.Value, _connectionString);
-                if (cancelado)
+                int? pkLeitor = HttpContext.Session.GetInt32("PkLeitor");
+
+                if (pkLeitor == null)
                 {
-                    HttpContext.Session.Clear();
-                    Sucesso = true;
-                    Mensagem = " Adesão cancelada com sucesso.";
+                    return RedirectToPage("/Index");
                 }
-                else
+
+                try
+                {
+                    bool cancelado = Method.sp_cancel_leitor(pkLeitor.Value, _connectionString);
+
+                    if (cancelado)
+                    {
+                        HttpContext.Session.Clear();
+                        Sucesso = true;
+                        Mensagem = "Adesão cancelada com sucesso.";
+                    }
+                    else
+                    {
+                        Sucesso = false;
+                        Mensagem = "Falha ao cancelar adesão.";
+                    }
+                }
+                catch (Exception ex)
                 {
                     Sucesso = false;
-                    Mensagem = " Falha ao cancelar adesão.";
+                    Mensagem = $"Erro ao cancelar adesão: {ex.Message}";
                 }
-            }
-            catch (Exception ex)
-            {
-                Sucesso = false;
-                Mensagem = $" Erro ao cancelar adesão: {ex.Message}";
-            }
 
-            return Page();
+                return Page();
+            }
         }
-    }
+    
 }

@@ -1,13 +1,23 @@
 using System.Reflection;
 using LibADO.Login;
 using Microsoft.AspNetCore.Http;
-
+using UserMPA.Pages;
 var builder = WebApplication.CreateBuilder(args);
+
+string connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddSingleton(connectionString);
 
 builder.Services.AddRazorPages();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<LoginRepository>(provider =>
-    new LoginRepositoryADO("Server=PC013562;Database=Projecto;Integrated Security=True;TrustServerCertificate=True;"));
+    new LoginRepositoryADO(connectionString));
+builder.Services.AddScoped(provider => new RequisitarModel(provider.GetRequiredService<string>()));
+builder.Services.AddScoped(provider => new RequisitionsModel(provider.GetRequiredService<string>()));
+builder.Services.AddScoped(provider => new CancelarADModel(provider.GetRequiredService<string>()));
+builder.Services.AddScoped(provider => new SearchModel(provider.GetRequiredService<string>()));
+
+
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
 {
@@ -15,7 +25,9 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
 {
     string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "LibDB.dll");
@@ -31,9 +43,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseSession();
-
 app.UseAuthorization();
 app.MapRazorPages();
 app.Run();
