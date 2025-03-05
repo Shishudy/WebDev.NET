@@ -1,113 +1,81 @@
-function search() {
-	let data = document.getElementById("search-box-input").value;
+let currentTab;
+let items;
+
+function searchInput() {
+	let input = document.getElementById("search-box-input").value;
+	if (input == "")
+		changeTab(currentTab, null, 1);
+	else
+		changeTab(currentTab, input, 1);
 }
 
-function changeTab(tab) {
+function changeTab(tab, search, page) {
 	document.getElementById("loading-modal-div").style.display = "flex";
+	currentTab = tab;
 	if (tab === "reservas")
-		reservas();
+		document.getElementById("tab-title").innerHTML = "Reservas";
 	else if (tab === "obras")
-		obras();
+		document.getElementById("tab-title").innerHTML = "Obras";
 	else if (tab === "nucleos")
-		nucleos();
-	else if (tab === "gestao")
-		gestaoDeUsers();
-	buildResultsList(tab);
+		document.getElementById("tab-title").innerHTML = "Núcleos";
+	else if (tab === "utilizadores")
+		document.getElementById("tab-title").innerHTML = "Gestão de Utilizadores";
+	buildResultsList(tab, search, page);
 	document.getElementById("loading-modal-div").style.display = "none";
 }
 
-function buildResultsList(tab) {
-	let resultsList = document.getElementById("results-list-div");
-	let items = fetch(apiUrl + `/${tab}/items`).then((response) => {
+function buildResultsList(tab, search, page) {
+	fetch(apiUrl + `items/${tab}/${search}/${page}`).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
 		return response.json();
 	}).then((data) => {
-		return (data);
+		if ((data.table).length == 0)
+			return alert("Pesquisa não retornou resultados!");
+		items = data;
+		Object.assign(items, { "search" : search});
+		console.log(items);
+		createResultTable();
+		buildPagination();
 	}).catch((error) => {
 		console.error("Error:", error);
 	});
+}
+
+function createResultTable() {
+	let resultsList = document.getElementById("results-list-div");
+	if (resultsList.firstElementChild)
+		resultsList.removeChild(resultsList.firstElementChild);
+	let table = document.createElement("table");
+	table.setAttribute("id", `result-table`);
+	table.setAttribute("class", "table table--result");
 	let i = 0;
-	while (i < items.table.length)
+	let head = document.createElement("thead");
+	Object.entries(items.table[0]).forEach(([key, value]) => {
+		let headMember = document.createElement("th");
+		headMember.innerHTML = `${key}`;
+		head.appendChild(headMember);
+	});
+	table.appendChild(head);
+	while (i < (items.table).length)
 	{
-		let newResult = document.createElement("div");
-		newResult.setAttribute("id", `result-${i}-div`);
-		newResult.setAttribute("class", "div div--result");
-		newResult.setAttribute("data-result", `${i}`);
-		// titulo/id ou wtv TODO
-		let resultData = document.createElement("h1");
-		resultData.innerHTML = "Nome/ID/Wtv";
-		newResult.appendChild(resultData);
-		// outros dados TODO
-		resultData = document.createElement("p");
-		resultData.innerHTML = "wtv other info";
-		newResult.appendChild(resultData);
-		// imagem se for aplicável TODO
-		resultData = document.createElement("img");
-		resultData.setAttribute("img", "src da imagem");
-		newResult.appendChild(resultData);
-		// methods to be called on this item - if 1, button, else, dropdown
-		// let resultActions = document.createElement("div");
-		// resultActions.setAttribute("id", `result-${i}-actions-div`);
-		// resultActions.setAttribute("class", "div div--result-actions");
-		// if (package.methods.length == 1)
-		// {
-		// 	let button = document.createElement("button");
-		// 	button.setAttribute("value", package.methods[0]);
-		// 	resultActions.appendChild(button);
-		// }
-		// else
-		// {
-		// 	let select = document.createElement("select");
-		// 	select.setAttribute("id", `result-${i}-actions-select`);
-		// 	let n = 0;
-		// 	while (n < package.methods.length)
-		// 	{
-		// 		let option = document.createElement("option");
-		// 		option.setAttribute("value", package.methods[n].key);
-		// 		n++;
-		// 		select.appendChild(option);
-		// 	}
-		// 	resultActions.appendChild(select);
-		// }
-		// newResult.appendChild(resultActions);
-		resultsList.appendChild(newResult);
+		let row = document.createElement("tr");
+		Object.entries(items.table[i]).forEach(([key, value]) => {
+			let rowMember = document.createElement("th");
+			rowMember.innerHTML = `${value}`;
+			row.appendChild(rowMember);
+		});
+		table.appendChild(row);
+		resultsList.appendChild(table);
 		i++;
 	}
-	
-}
-
-function reservas() {
-	let title = document.getElementById("tab-title");
-	title.innerHTML = "Reservas";
-	buildPagination();
-}
-
-function obras() {
-	let title = document.getElementById("tab-title");
-	title.innerHTML = "Obras";
-	buildPagination();
-}
-
-function nucleos() {
-	let title = document.getElementById("tab-title");
-	title.innerHTML = "Núcleos";
-	buildPagination();
-}
-
-function gestaoDeUsers() {
-	let title = document.getElementById("tab-title");
-	title.innerHTML = "Gestão de Utilizadores";
-	buildPagination();
 }
 
 function buildPagination() {
-	return ;
-	const page = document.getElementById("tab-div");
-	let pagination = document.createElement("div");
-	pagination.setAttribute("id", "pagination");
-	pagination.classList.add("pagination");
+	let pagination = document.getElementById("result-list-pagination-div");
+	while (pagination.firstElementChild)
+		pagination.removeChild(pagination.firstElementChild);
 	let node = document.createElement("a");
 	node.setAttribute("onclick", `changePage("<<");`);
 	node.textContent = `<<`;
@@ -116,19 +84,20 @@ function buildPagination() {
 	node.setAttribute("onclick", `changePage("<");`);
 	node.textContent = `<`;
 	pagination.appendChild(node);
-	let startPage = Math.max(0, cardListIterator - Math.floor(5 / 2));
-	let endPage = Math.min(cardListArray.length, startPage + 5);
+	let startPage = Math.max(1, items.currPage - Math.floor(5 / 2));
+	let endPage = Math.min(items.totalPages, startPage + 5);
 	if (endPage - startPage <= 4) {
-		startPage = Math.max(0, endPage - 5);
+		startPage = Math.max(1, endPage - 5);
 	}
-	while (startPage < endPage) {
+	while (startPage <= endPage) {
 		node = document.createElement("a");
-		node.setAttribute("href", "#lista-cursos");
 		node.setAttribute("onclick", `changePage(${startPage});`);
-		if (startPage == cardListIterator) {
+		console.log(startPage);
+
+		if (startPage == items.currPage) {
 			node.setAttribute("class", "active");
 		}
-		node.textContent = startPage + 1;
+		node.textContent = startPage;
 		pagination.appendChild(node);
 		startPage++;
 	}
@@ -140,5 +109,25 @@ function buildPagination() {
 	node.setAttribute("onclick", `changePage(">>");`);
 	node.textContent = `>>`;
 	pagination.appendChild(node);
-	page.appendChild(pagination);
+}
+
+function changePage(pageTo) {
+	if (pageTo == "<<")
+		changeTab(currentTab, items.search, 1);
+	else if (pageTo == ">>")
+		changeTab(currentTab, items.search, items.totalPages);
+	else if (pageTo == "<") {
+		if (items.currPage - 1 >= 1)
+			changeTab(currentTab, items.search, items.currPage - 1);
+		else
+			return;
+	}
+	else if (pageTo == ">") {
+		if (items.currPage + 1 < items.totalPages)
+			changeTab(currentTab, items.search, items.currPage + 1);
+		else
+			return;
+	}
+	else
+		changeTab(currentTab, items.search, pageTo);
 }

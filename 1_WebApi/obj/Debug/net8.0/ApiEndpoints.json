@@ -1,6 +1,39 @@
 [
   {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
+    "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
+    "RelativePath": "items/{tab}/{search}/{page}",
+    "HttpMethod": "GET",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "tab",
+        "Type": "System.String",
+        "IsRequired": true
+      },
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      },
+      {
+        "Name": "page",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ],
+    "EndpointName": "Items"
+  },
+  {
+    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__3",
     "RelativePath": "login",
     "HttpMethod": "POST",
@@ -24,36 +57,8 @@
   },
   {
     "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
-    "Method": "\u003C\u003CMain\u003E$\u003Eb__4",
-    "RelativePath": "methods/{level}/{category}",
-    "HttpMethod": "GET",
-    "IsController": false,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "level",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "cat",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": [
-      {
-        "Type": "System.Void",
-        "MediaTypes": [],
-        "StatusCode": 200
-      }
-    ],
-    "EndpointName": "Methods"
-  },
-  {
-    "ContainingType": "Program\u002B\u003C\u003Ec__DisplayClass0_0",
     "Method": "\u003C\u003CMain\u003E$\u003Eb__5",
-    "RelativePath": "ResolveMethod/{method}/{page}/{size}",
+    "RelativePath": "ResolveMethod/{method}",
     "HttpMethod": "POST",
     "IsController": false,
     "Order": 0,
@@ -65,11 +70,6 @@
       },
       {
         "Name": "page",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "size",
         "Type": "System.String",
         "IsRequired": false
       },

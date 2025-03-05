@@ -1,6 +1,8 @@
 @import "login.css";
 @import "forms.css";
 @import "loading.css";
+@import "pagination.css";
+
 @import "keyframes.css";
 
 body {

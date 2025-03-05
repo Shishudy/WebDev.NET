@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using System.Transactions;
 using LibEF.Models;
+using System.IO.Pipes;
 
 namespace LibEF
 {
@@ -18,63 +19,82 @@ namespace LibEF
             context = dbContext;
         }
 
-        public List<dynamic> GetAllObras()
+        public List<dynamic> GetAllObras(string? search)
         {
-            var obras = from o in context.Obras
-                        join ir in context.ImageReferences on o.FkImagem equals ir.PkImage
-                        select new
-                        {
-                            ir.ImageData, //not showing because we have no image
-                            o.PkObra,
-                            o.NomeObra,
-                            o.Isbn,
-                            o.Editora,
-                            o.Ano,
-                        };
+            if (search != null)
+            {
+                return context.Obras.Where(o => o.NomeObra.Contains(search)).ToList<dynamic>();
+            }
             return context.Obras.ToList<dynamic>();
         }
 
-        public List<dynamic> GetAllNucleos()
+        public List<dynamic> GetAllNucleos(string? search)
         {
-            var nucleos = context.Nucleos;
-            return nucleos.ToList<dynamic>();
+            if (search != null)
+            {
+                return context.Nucleos.Where(n => n.NomeNucleo.Contains(search)).ToList<dynamic>();
+            }
+            return context.Nucleos.ToList<dynamic>();
         }
 
-        public List<dynamic> GetAllLeitores()
+        public List<dynamic> GetAllLeitores(string? search)
         {
-            var Leitores = context.Leitors;
-
-            return Leitores.ToList<dynamic>();
+            if (search != null)
+            {
+                return context.Leitors.Where(l => l.NomeLeitor.Contains(search)).ToList<dynamic>();
+            }
+            return context.Leitors.ToList<dynamic>();
         }
 
-        public List<dynamic> GetAllRequisicoes()
+        public List<dynamic> GetAllRequisicoes(string? search)
         {
-            var requisicoes = context.Requisicaos.Include(r => r.PkObraNavigation).ToList();
+            var requisicoes = from r in context.Requisicaos
+                              join o in context.Obras on r.PkObra equals o.PkObra
+                              join l in context.Leitors on r.PkLeitor equals l.PkLeitor
+                              join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+                              select new
+                              {
+                                  r.PkLeitor,
+                                  r.PkObra,
+                                  r.PkNucleo,
+                                  l.NomeLeitor,
+                                  o.NomeObra,
+                                  n.NomeNucleo,
+                                  r.DataLevantamento,
+                                  r.DataDevolucao,
+                                  r.Stat,
+                              };
             var result = new List<dynamic>();
-
             foreach (var r in requisicoes)
             {
-                int date_diff = DateTime.Now.Subtract(r.DataDevolucao.Value).Days;
+                int date_diff = 0;
+                if (r.DataDevolucao.HasValue)
+                    date_diff = DateTime.Now.Subtract(r.DataDevolucao.Value).Days;
                 string statusMessage = date_diff > 15 ? "ATRASO" :
                                        date_diff > 12 ? "Devolução URGENTE" :
                                        date_diff > 10 ? "Devolver em breve" : "Em dia";
-
                 var requisicaoWithStatus = new
                 {
                     r.PkLeitor,
                     r.PkObra,
                     r.PkNucleo,
+                    r.NomeLeitor,
+                    r.NomeObra,
+                    r.NomeNucleo,
                     r.DataLevantamento,
                     r.DataDevolucao,
                     r.Stat,
                     StatusMessage = statusMessage
                 };
-
                 result.Add(requisicaoWithStatus);
             }
-
+            if (search != null)
+            {
+                return result.Where(r => r.NomeObra.Contains(search)).ToList();
+            }
             return result;
         }
+
 
         public int available_copies(int PkObra, int PkNucleo)
         {
@@ -122,31 +142,17 @@ namespace LibEF
 
         public List<dynamic> GetTotalObraPorGenero()
         {
-          var result = from g in context.Generos
-                       from o in g.PkObras
-                       join no in context.NucleoObras on o.PkObra equals no.PkObra
-                       group no by g.NomeGenero into grouped
-                       select new
-                       {
-                           NomeGenero = grouped.Key,
-                           TotalQuantidade = grouped.Sum(n => n.Quantidade)
-                       };
-          return result.ToList<dynamic>();
+            var result = from g in context.Generos
+                         from o in g.PkObras
+                         join no in context.NucleoObras on o.PkObra equals no.PkObra
+                         group no by g.NomeGenero into grouped
+                         select new
+                         {
+                             NomeGenero = grouped.Key,
+                             TotalQuantidade = grouped.Sum(n => n.Quantidade)
+                         };
+            return result.ToList<dynamic>();
         }
-
-        // public Dictionary<string, int> GetTotalObraPorGenero()
-        // {
-        //     var result = from g in context.Generos
-        //                  from o in g.PkObras
-        //                  join no in context.NucleoObras on o.PkObra equals no.PkObra
-        //                  group no by g.NomeGenero into grouped
-        //                  select new KeyValuePair<string, int>(grouped.Key, grouped.Sum(n => n.Quantidade));
-        //     return result.ToDictionary(kv => kv.Key, kv => kv.Value);
-        // }
-
-        // public Dictionary<string, int> GetTotalObraPorGenero()
-
-
 
         /////////////////////
         //		3
@@ -175,23 +181,20 @@ namespace LibEF
         //		4
         /////////////////////
 
-        //public List<(string NomeNucleo, int TotalRequisicoes)> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
-        //{
-        //    var result = from r in context.Requisicaos
-        //                 join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
-        //                 select r;
-        //    if (startDate != null)
-        //        result = result.Where(r => r.DataLevantamento >= startDate);
-        //    if (endDate != null)
-        //        result = result.Where(r => r.DataLevantamento <= endDate);
-        //    result = result.group r by new { n.PkNucleo, n.NomeNucleo } into g
-        //        select new 
-        //        {
-        //            NomeNucleo = g.Key.NomeNucleo,
-        //            TotalRequisicoes = g.Count()
-        //        };
-        //    return result.OrderByDescending(r => r.TotalRequisicoes).ToList().Select(r => (r.NomeNucleo, r.TotalRequisicoes)).ToList();
-        //}
+        public List<dynamic> GetRequisicoesByNucleo(DateTime startDate, DateTime endDate)
+        {
+            var result = from r in context.Requisicaos
+                         join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+                         where r.DataLevantamento >= startDate && r.DataLevantamento <= endDate
+                         group r by new { n.PkNucleo, n.NomeNucleo } into g
+                         select new
+                         {
+                             NomeNucleo = g.Key.NomeNucleo,
+                             TotalRequisicoes = g.Count()
+                         };
+
+            return result.OrderByDescending(r => r.TotalRequisicoes).ToList<dynamic>();
+        }
 
         /////////////////////
         //		5
@@ -676,7 +679,8 @@ namespace LibEF
                     if (leitor == null)
                         throw new Exception("leitor not found");
                     // Perform the insert into the History table
-                    var historyEntries = from r in context.Requisicaos where( r.PkLeitor == PkLeitor)
+                    var historyEntries = from r in context.Requisicaos
+                                         where (r.PkLeitor == PkLeitor)
                                          join o in context.Obras on r.PkObra equals o.PkObra
                                          join no in context.NucleoObras on o.PkObra equals no.PkObra
                                          join n in context.Nucleos on no.PkNucleo equals n.PkNucleo
@@ -748,31 +752,34 @@ namespace LibEF
             return -1;
         }
 
-        public List<dynamic> sp_search_Leitores(string leitorName)
+        public List<Leitor> sp_search_Leitores(string leitorName)
         {
             var by_name = context.Leitors.Where(n => n.NomeLeitor.Contains(leitorName));
-            return by_name.ToList<dynamic>();
+            return by_name.ToList();
         }
 
-        public List<dynamic> sp_search_Obra(string obraName)
+        public List<Obra> sp_search_Obra(string obraName)
         {
             var by_name = context.Obras.Where(n => n.NomeObra.Contains(obraName));
-            return by_name.ToList<dynamic>();
+            return by_name.ToList();
 
         }
 
-        public List<dynamic> sp_search_Nucleo(string nucleoName)
+        public List<Nucleo> sp_search_Nucleo(string nucleoName)
         {
             var by_name = context.Nucleos.Where(n => n.NomeNucleo.Contains(nucleoName));
-            return by_name.ToList<dynamic>();
+            return by_name.ToList();
         }
 
         public List<dynamic> sp_search_Request(string? obraName, string? nucleoName, string? leitorName)
         {
             var requisicoes = from r in context.Requisicaos
-                              join o in context.Obras on r.PkObra equals o.PkObra where o.NomeObra.Contains(obraName)
-                              join n in context.Nucleos on r.PkNucleo equals n.PkNucleo where n.NomeNucleo.Contains(nucleoName)
-                              join l in context.Leitors on r.PkLeitor equals l.PkLeitor where l.NomeLeitor.Contains(leitorName)
+                              join o in context.Obras on r.PkObra equals o.PkObra
+                              where o.NomeObra.Contains(obraName)
+                              join n in context.Nucleos on r.PkNucleo equals n.PkNucleo
+                              where n.NomeNucleo.Contains(nucleoName)
+                              join l in context.Leitors on r.PkLeitor equals l.PkLeitor
+                              where l.NomeLeitor.Contains(leitorName)
                               select new
                               {
                                   r.PkLeitor,
@@ -785,7 +792,7 @@ namespace LibEF
                                   r.DataDevolucao,
                                   r.Stat
                               };
-                            
+
             return requisicoes.ToList<dynamic>();
         }
 

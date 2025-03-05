@@ -13,10 +13,10 @@
 		<div id="menu-div" class="div div--menu">
 			<!-- CSS por tratar, nomes de classes/id têm de ser mudados -->
 			<span id="categoryButtons">
-				<button class="categoryButton" onclick="changeTab('reservas')">Reservas</button>
-				<button class="categoryButton" onclick="changeTab('obras')">Obras</button>
-				<button class="categoryButton" onclick="changeTab('nucleos')">Núcleos</button>
-				<button class="categoryButton" onclick="changeTab('gestao')">Gestão de Utilizadores</button>
+				<button class="categoryButton" onclick="changeTab('reservas', null, 1)">Reservas</button>
+				<button class="categoryButton" onclick="changeTab('obras', null, 1)">Obras</button>
+				<button class="categoryButton" onclick="changeTab('nucleos', null, 1)">Núcleos</button>
+				<button class="categoryButton" onclick="changeTab('gestao', null, 1)">Gestão de Utilizadores</button>
 			</span>
 			<input type="text" id="buscador" placeholder="Buscar livros...">
 			<button id="pesquisa">Pesquisar</button>
@@ -66,15 +66,7 @@
 			<div id="search-filter-div" class="div div--search-filter">
 				<div id="search-box-div" class="div div--search-box">
 					<input id="search-box-input" type="text" placeholder="Pesquisar..." />
-					<button onclick="search()">Search</button>
-				</div>
-				<div id="filter-box-div" class="div div--filter-box">
-					<!-- EXAMPLE of dropdown - remove this -->
-					<select name="" id="">
-						<option value="">dummy1</option>
-						<option value="">dummy2</option>
-					</select>
-					<!-- END OF EXAMPLE -->
+					<button onclick="searchInput()">Search</button>
 				</div>
 			</div>
 

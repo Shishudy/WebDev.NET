@@ -6,6 +6,7 @@ using System.Reflection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Drawing;
+using System.Diagnostics.Eventing.Reader;
 
 //TODO make overall / Utilizadores / nucleos / obras pages
 //each will auto show all values and will have an search bar // bonus maybe search from what is shown?
@@ -38,36 +39,19 @@ namespace WebAPI.Model
 		public object MethodCaller (string description, JsonElement param)
 		{
 			string method = _map_method.searchbyDescrition(description);
-			Console.WriteLine(method);
 			var methods_dic = _map_method.MethodsDict;
 			if (!methods_dic.ContainsKey(method))
 				throw new Exception("no such method listed.");
 			var ParamList = _map_method.GetParamList(method, param);
-			// retorna os parametros necessarios
-			if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
-				return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
+			//// retorna os parametros necessarios
+			//if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
+			//	return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
 			// vai buscar a lista
 			var result = ResolveMethod(method, ParamList);
 			return (result); // se nao for lista, nao paginar
 		}
 
-		public object paginationrow(object result, string page, string size)
-		{
-			var pagedResult = result as List<object>;
-			if (pagedResult == null)
-				return pagedResult;
-			int count = pagedResult.Count;
-			// separar pacotes a enviar
-			int sizeInt = int.Parse(size);
-			int pageInt = int.Parse(page) * sizeInt;
-			pagedResult = pagedResult.Skip(pageInt * sizeInt).Take(sizeInt).ToList();
-			var response = new Dictionary<string, object>
-			{
-				{ "page", count },
-				{ "table", pagedResult }
-			};
-			return response;
-		}
+		
 
 		public object ResolveMethod (string method, List <object>? ParamList)
 		{
@@ -116,18 +100,54 @@ namespace WebAPI.Model
 			}
 		}
 
-		public List<dynamic> GetData(string tab, string data)
+		public Object GetData(string tab, string? search = null, string? page = null)
 		{
-			ProjectoContext context = new ProjectoContext();
-			EF_methods ef = new EF_methods(_context);
-			if (tab == "reservas")
-				return ef.GetAllRequisicoes();
-			else if (tab == "obras")
-				return ef.GetAllObras();
-			else if (tab == "nucleos")
-				return ef.GetAllNucleos();
-			else if (tab == "utilizadores")
-				return ef.GetAllLeitores();
+			try
+			{
+				ProjectoContext context = new ProjectoContext();
+				EF_methods ef = new EF_methods(_context);
+				object result = new object { };
+				if (search == "null")
+					search = null;
+				if (tab == "reservas")
+                    result = ef.GetAllRequisicoes(search);
+				else if (tab == "obras")
+                    result = ef.GetAllObras(search);
+				else if (tab == "nucleos")
+                    result = ef.GetAllNucleos(search);
+				else if (tab == "utilizadores")
+                    result = ef.GetAllLeitores(search);
+				Console.WriteLine(result);
+
+				return paginationrow(result, page);
+            }
+			catch
+			{
+				throw;
+			}
 		}
-	}
+
+        public object paginationrow(object result, string? page)
+        {
+            var pagedResult = result as List<object>;
+            if (pagedResult == null)
+                return pagedResult;
+            int count = pagedResult.Count;
+            int sizeInt = 10;
+			int pageInt = 1;
+			if (int.TryParse(page, out pageInt) == true)
+				;
+            pagedResult = pagedResult.Skip((pageInt - 1) * sizeInt).Take(sizeInt).ToList();
+			var totalPages = count / sizeInt;
+			if (totalPages == 0)
+				totalPages++;
+            var response = new Dictionary<string, object>
+            {
+                { "table", pagedResult },
+                { "currPage", pageInt },
+                { "totalPages", totalPages },
+            };
+            return response;
+        }
+    }
 }

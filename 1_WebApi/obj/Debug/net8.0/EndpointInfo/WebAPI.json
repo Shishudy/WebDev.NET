@@ -26,15 +26,15 @@
         }
       }
     },
-    "/methods/{level}/{category}": {
+    "/items/{tab}/{search}/{page}": {
       "get": {
         "tags": [
           "WebAPI"
         ],
-        "operationId": "Methods",
+        "operationId": "Items",
         "parameters": [
           {
-            "name": "level",
+            "name": "tab",
             "in": "path",
             "required": true,
             "schema": {
@@ -42,9 +42,15 @@
             }
           },
           {
-            "name": "cat",
-            "in": "query",
-            "required": true,
+            "name": "search",
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "path",
             "schema": {
               "type": "string"
             }
@@ -57,7 +63,7 @@
         }
       }
     },
-    "/ResolveMethod/{method}/{page}/{size}": {
+    "/ResolveMethod/{method}": {
       "post": {
         "tags": [
           "WebAPI"
@@ -74,14 +80,7 @@
           },
           {
             "name": "page",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "size",
-            "in": "path",
+            "in": "query",
             "schema": {
               "type": "string"
             }

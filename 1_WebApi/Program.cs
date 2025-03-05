@@ -34,8 +34,8 @@ methodsMapping map_method = new methodsMapping();
 var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]); // Replace with your secret key
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+	options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 })
 .AddJwtBearer(options =>
 {
@@ -46,7 +46,7 @@ builder.Services.AddAuthentication(options =>
 		ValidateLifetime = true,
 		ValidateIssuerSigningKey = true,
 		ValidIssuer = jwtSettings["Issuer"],  // Local development (http://localhost:5000) or production (https://mywebsite.com)
-        ValidAudience = jwtSettings["Audience"], // the audience that the token is intended for ( the URL of the API)
+		ValidAudience = jwtSettings["Audience"], // the audience that the token is intended for ( the URL of the API)
 		IssuerSigningKey = new SymmetricSecurityKey(key)
 	};
 });
@@ -87,7 +87,7 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 			return Results.Ok(new { Token = tokenString });
 		}
 		else
-			return Results.Ok(null);
+			return Results.Ok("");
 	}
 	catch (Exception ex)
 	{
@@ -97,32 +97,32 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 .WithName("Login")
 .WithOpenApi();
 
-app.MapGet("/{tab}/{data}", (string tab,string data) =>
+app.MapGet("/items/{tab}/{search}/{page}", (string tab, string? search = null, string? page = null) =>
 {
-	try
+    try
 	{
-		return Results.Ok(Model.GetData(tab, data));
+		return Results.Ok(model.GetData(tab, search, page));
 	}
 	catch (Exception ex)
 	{
 		return Results.BadRequest(ex.Message);
 	}
 })
-.WithName("Methods")
+.WithName("Items")
 .WithOpenApi();
 // .WithAuthorization();
 
-app.MapPost("/ResolveMethod/{method}/{page}/{size}", (string method, string? page, string? size, [FromBody] JsonElement param) =>
+app.MapPost("/ResolveMethod/{method}", (string method, string? page, [FromBody] JsonElement param) =>
 {
 	try
 	{
-		var res = model.MethodCaller(method, param);
-        return Results.Ok(model.paginationrow(res, page, size));
-    }
-    catch (Exception ex)
-    {
-        return Results.BadRequest(ex.Message);
-    }
+		model.MethodCaller(method, param);
+		return Results.Ok("Sucesso!");
+	}
+	catch (Exception ex)
+	{
+		return Results.BadRequest(ex.Message);
+	}
 })
 .WithName("ResolveMethod")
 .WithOpenApi();
