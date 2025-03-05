@@ -19,40 +19,37 @@ namespace WebAPI.Model
 	public class Model
 	{
 
-        private readonly ProjectoContext _context;
+		private readonly ProjectoContext _context;
 		private readonly methodsMapping _map_method;
 
-        public Model(string conn_str)
+		public Model(string conn_str)
 		{
-            _context = CreateContext(conn_str);
+			_context = CreateContext(conn_str);
 			_map_method = new methodsMapping();
-        }
+		}
 
-        private ProjectoContext CreateContext(string connectionString)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<ProjectoContext>();
-            optionsBuilder.UseSqlServer(connectionString);
-            return new ProjectoContext(optionsBuilder.Options);
-        }
-
-
-		// so i want an method where i pass the category and get back an list of methods with their method name as key and parameters as value
+		private ProjectoContext CreateContext(string connectionString)
+		{
+			var optionsBuilder = new DbContextOptionsBuilder<ProjectoContext>();
+			optionsBuilder.UseSqlServer(connectionString);
+			return new ProjectoContext(optionsBuilder.Options);
+		}
 
 		public object MethodCaller (string description, JsonElement param)
 		{
-            string method = _map_method.searchbyDescrition(description);
+			string method = _map_method.searchbyDescrition(description);
 			Console.WriteLine(method);
-            var methods_dic = _map_method.MethodsDict;
-            if (!methods_dic.ContainsKey(method))
-                throw new Exception("no such method listed.");
-            var ParamList = _map_method.GetParamList(method, param);
-            // retorna os parametros necessarios
-            if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
-                return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
-            // vai buscar a lista
-            var result = ResolveMethod(method, ParamList);
-            return (result); // se nao for lista, nao paginar
-        }
+			var methods_dic = _map_method.MethodsDict;
+			if (!methods_dic.ContainsKey(method))
+				throw new Exception("no such method listed.");
+			var ParamList = _map_method.GetParamList(method, param);
+			// retorna os parametros necessarios
+			if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
+				return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
+			// vai buscar a lista
+			var result = ResolveMethod(method, ParamList);
+			return (result); // se nao for lista, nao paginar
+		}
 
 		public object paginationrow(object result, string page, string size)
 		{
@@ -70,12 +67,12 @@ namespace WebAPI.Model
 				{ "table", pagedResult }
 			};
 			return response;
-        }
+		}
 
-        public object ResolveMethod (string method, List <object>? ParamList)
+		public object ResolveMethod (string method, List <object>? ParamList)
 		{
-            EF_methods ef = new EF_methods(_context);
-            Type type = typeof(EF_methods);
+			EF_methods ef = new EF_methods(_context);
+			Type type = typeof(EF_methods);
 			MethodInfo? method_fun = type.GetMethod(method);
 			try
 			{
@@ -99,10 +96,10 @@ namespace WebAPI.Model
 			}
 		}
 
-        public bool Login(JsonElement jsonRes)
+		public bool Login(JsonElement jsonRes)
 		{
-            ProjectoContext context = new ProjectoContext();
-            EF_methods ef = new EF_methods(_context);
+			ProjectoContext context = new ProjectoContext();
+			EF_methods ef = new EF_methods(_context);
 			try
 			{
 				Dictionary<string, string> res = JsonSerializer.Deserialize<Dictionary<string, string>>(jsonRes);
@@ -112,12 +109,25 @@ namespace WebAPI.Model
 					throw new Exception("Invalid Password");
 				}	
 				return true;
-            }
+			}
 			catch
 			{
-				throw;
+				return false;
 			}
-				
-        }
-    }
+		}
+
+		public List<dynamic> GetData(string tab, string data)
+		{
+			ProjectoContext context = new ProjectoContext();
+			EF_methods ef = new EF_methods(_context);
+			if (tab == "reservas")
+				return ef.GetAllRequisicoes();
+			else if (tab == "obras")
+				return ef.GetAllObras();
+			else if (tab == "nucleos")
+				return ef.GetAllNucleos();
+			else if (tab == "utilizadores")
+				return ef.GetAllLeitores();
+		}
+	}
 }

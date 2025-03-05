@@ -20,7 +20,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\3_SPA\LibEF\LibEF.csproj" />
+    <Reference Include="LibEF">
+      <HintPath>..\3_SPA\LibEF\bin\Debug\net8.0\LibEF.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

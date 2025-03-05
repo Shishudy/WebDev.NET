@@ -69,7 +69,6 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 {
 	try
 	{
-		// Authenticate the user and generate a JWT token
 		var isAuthenticated = model.Login(jsonRes);
 		if (isAuthenticated)
 		{
@@ -88,9 +87,7 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 			return Results.Ok(new { Token = tokenString });
 		}
 		else
-		{
-			return Results.BadRequest("Invalid login attempt.");
-		}
+			return Results.Ok(null);
 	}
 	catch (Exception ex)
 	{
@@ -100,11 +97,11 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 .WithName("Login")
 .WithOpenApi();
 
-app.MapGet("/methods/{level}/{category}", (string level,string cat) =>
+app.MapGet("/{tab}/{data}", (string tab,string data) =>
 {
 	try
 	{
-		return Results.Ok(map_method.GetMethods(level, cat));
+		return Results.Ok(Model.GetData(tab, data));
 	}
 	catch (Exception ex)
 	{

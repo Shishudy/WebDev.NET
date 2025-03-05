@@ -20,8 +20,6 @@ function login(inputs)
 	}).then((data) => {
 		if (data) {
 			sessionStorage.setItem("userData", JSON.stringify(data));
-			// Let's implement JWT and we can save the token created in the sessionStorage
-			// getMethods();
 			document.getElementById("login-modal-div").style.display = "none";
 		}
 		else {

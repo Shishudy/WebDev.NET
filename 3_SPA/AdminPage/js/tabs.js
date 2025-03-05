@@ -1,6 +1,5 @@
 function search() {
 	let data = document.getElementById("search-box-input").value;
-	console.log(data);
 }
 
 function changeTab(tab) {
@@ -13,18 +12,6 @@ function changeTab(tab) {
 		nucleos();
 	else if (tab === "gestao")
 		gestaoDeUsers();
-	// let tabMethods;
-	// fetch(apiUrl + `methods/${tab}`).then((response) => {
-	// 	if (!response.ok) {
-	// 		throw new Error('Network response was not ok');
-	// 	}
-	// 	return response.json();
-	// }).then((data) => {
-	// 	tabMethods = data;
-	// }).catch((error) => {
-	// 	console.error("Error:", error);
-	// });
-	// //document.getElementById("tab-div").style.display = "flex";
 	buildResultsList(tab);
 	document.getElementById("loading-modal-div").style.display = "none";
 }
