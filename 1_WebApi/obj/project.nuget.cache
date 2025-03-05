@@ -1,6 +1,10 @@
 {
   "version": 2,
+<<<<<<< Updated upstream
   "dgSpecHash": "a1FNSpEYkFk=",
+=======
+  "dgSpecHash": "dMKbzc81+KQ=",
+>>>>>>> Stashed changes
   "success": true,
   "projectFilePath": "C:\\Users\\rafae\\Desktop\\UpSkill\\M3\\Projecto\\WebDev.NET\\1_WebApi\\WebAPI.csproj",
   "expectedPackageFiles": [

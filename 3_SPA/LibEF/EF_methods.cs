@@ -18,6 +18,64 @@ namespace LibEF
             context = dbContext;
         }
 
+        public List<dynamic> GetAllObras()
+        {
+            var obras = from o in context.Obras
+                        join ir in context.ImageReferences on o.FkImagem equals ir.PkImage
+                        select new
+                        {
+                            ir.ImageData, //not showing because we have no image
+                            o.PkObra,
+                            o.NomeObra,
+                            o.Isbn,
+                            o.Editora,
+                            o.Ano,
+                        };
+            return context.Obras.ToList<dynamic>();
+        }
+
+        public List<dynamic> GetAllNucleos()
+        {
+            var nucleos = context.Nucleos;
+            return nucleos.ToList<dynamic>();
+        }
+
+        public List<dynamic> GetAllLeitores()
+        {
+            var Leitores = context.Leitors;
+
+            return Leitores.ToList<dynamic>();
+        }
+
+        public List<dynamic> GetAllRequisicoes()
+        {
+            var requisicoes = context.Requisicaos.Include(r => r.PkObraNavigation).ToList();
+            var result = new List<dynamic>();
+
+            foreach (var r in requisicoes)
+            {
+                int date_diff = DateTime.Now.Subtract(r.DataDevolucao.Value).Days;
+                string statusMessage = date_diff > 15 ? "ATRASO" :
+                                       date_diff > 12 ? "Devolução URGENTE" :
+                                       date_diff > 10 ? "Devolver em breve" : "Em dia";
+
+                var requisicaoWithStatus = new
+                {
+                    r.PkLeitor,
+                    r.PkObra,
+                    r.PkNucleo,
+                    r.DataLevantamento,
+                    r.DataDevolucao,
+                    r.Stat,
+                    StatusMessage = statusMessage
+                };
+
+                result.Add(requisicaoWithStatus);
+            }
+
+            return result;
+        }
+
         public int available_copies(int PkObra, int PkNucleo)
         {
             int count_in_nucleo = context.NucleoObras
@@ -85,6 +143,9 @@ namespace LibEF
         //                  select new KeyValuePair<string, int>(grouped.Key, grouped.Sum(n => n.Quantidade));
         //     return result.ToDictionary(kv => kv.Key, kv => kv.Value);
         // }
+
+        // public Dictionary<string, int> GetTotalObraPorGenero()
+
 
 
         /////////////////////
@@ -677,48 +738,62 @@ namespace LibEF
 
         // 3. search for Obras by name
 
+        private int tryParseInt(string input)
+        {
+            int result;
+            if (int.TryParse(input, out result))
+            {
+                return result;
+            }
+            return -1;
+        }
+
+        public List<dynamic> sp_search_Leitores(string leitorName)
+        {
+            var by_name = context.Leitors.Where(n => n.NomeLeitor.Contains(leitorName));
+            return by_name.ToList();
+        }
+
         public List<Obra> sp_search_Obra(string obraName)
         {
-            return context.Obras.Where(o => o.NomeObra.Contains(obraName)).ToList();
+            var by_name = context.Obras.Where(n => n.NomeObra.Contains(obraName));
+            return by_name.ToList<dynamic>();
+
         }
 
-        public List<Nucleo> sp_search_Nucleo(string nucleoName)
+        public List<dynamic> sp_search_Nucleo(string nucleoName)
         {
-            return context.Nucleos.Where(n => n.NomeNucleo.Contains(nucleoName)).ToList();
+            var by_name = context.Nucleos.Where(n => n.NomeNucleo.Contains(nucleoName));
+            return by_name.ToList<dynamic>();
         }
 
-
-        public List<Obra> sp_search_Obra_genero(string generoName)
+        public List<dynamic> sp_search_Request(string? obraName, string? nucleoName, string? leitorName)
         {
-            var Obras = from g in context.Generos
-                        where g.NomeGenero.Contains(generoName)
-                        from o in g.PkObras
-                        select o;
-            return Obras.ToList();
-            //var Obra_genero = context.Obras
-            //    .Join(context.GeneroObras, o => o.PkObra, go => go.PkObra, (o, go) => new { o, go })
-            //    .Join(context.Generos, og => og.go.PkGenero, g => g.PkGenero, (og, g) => new { og, g })
-            //    .Where(og => og.g.NomeGenero.Contains(generoName))
-            //    .Select(og => og.og.o)
-            //    .ToList();
+            var requisicoes = from r in context.Requisicaos
+                              join o in context.Obras on r.PkObra equals o.PkObra where o.NomeObra.Contains(obraName)
+                              join n in context.Nucleos on r.PkNucleo equals n.PkNucleo where n.NomeNucleo.Contains(nucleoName)
+                              join l in context.Leitors on r.PkLeitor equals l.PkLeitor where l.NomeLeitor.Contains(leitorName)
+                              select new
+                              {
+                                  r.PkLeitor,
+                                  l.NomeLeitor,
+                                  r.PkObra,
+                                  o.NomeObra,
+                                  r.PkNucleo,
+                                  n.NomeNucleo,
+                                  r.DataLevantamento,
+                                  r.DataDevolucao,
+                                  r.Stat
+                              };
+                            
+            return requisicoes.ToList<dynamic>();
         }
 
-        public class Requisicaotatus
-        {
-            public string NomeObra { get; set; }
-            public int PkNucleo { get; set; }
-            public string NomeNucleo { get; set; }
-            public DateTime DataLevantamento { get; set; }
-            public DateTime DataDevolucao { get; set; }
-            public string StatusMessage { get; set; }
-        }
-
-        public List<Requisicaotatus> requesicao_status(int PkLeitor, int? PkNucleo)
+        public List<dynamic> requesicao_status(int PkLeitor, int? PkNucleo)
         {
             var leitoresFiltradas = from l in context.Leitors
                                     where l.PkLeitor == PkLeitor
                                     select l;
-
             var requisicoesFiltradas = from l in context.Requisicaos
                                        where l.Stat == "borrowed"
                                        select l;
@@ -727,12 +802,13 @@ namespace LibEF
                         join o in context.Obras on r.PkObra equals o.PkObra
                         join no in context.NucleoObras on o.PkObra equals no.PkObra
                         join n in context.Nucleos on no.PkNucleo equals n.PkNucleo // Get Núcleo Name
-                        select new Requisicaotatus// anonymous type
+                        select new // anonymous type
                         {
+                            PkLeitor = l.PkLeitor,
+                            NomeLeitor = l.NomeLeitor,
                             NomeObra = o.NomeObra,
                             PkNucleo = n.PkNucleo,
                             NomeNucleo = n.NomeNucleo,
-                            //DataLevantamento = r.DataLevantamento,
                             DataLevantamento = r.DataLevantamento.Value,
                             DataDevolucao = r.DataDevolucao.Value,
                             StatusMessage = ""
@@ -745,15 +821,27 @@ namespace LibEF
             }
 
             // Convert to List and Set Status Messages
-            foreach (var r in query) //TODO: Botle neck here
+            var result = query.ToList().Select(r =>
             {
                 int date_diff = DateTime.Now.Subtract(r.DataDevolucao).Days;
-                r.StatusMessage = date_diff > 15 ? "ATRASO" :
-                                  date_diff > 12 ? "Devolução URGENTE" :
-                                  date_diff > 10 ? "Devolver em breve" : "Em dia";
-            }
-            return query.ToList();
+                return new
+                {
+                    r.PkLeitor,
+                    r.NomeLeitor,
+                    r.NomeObra,
+                    r.PkNucleo,
+                    r.NomeNucleo,
+                    r.DataLevantamento,
+                    r.DataDevolucao,
+                    StatusMessage = date_diff > 15 ? "ATRASO" :
+                                    date_diff > 12 ? "Devolução URGENTE" :
+                                    date_diff > 10 ? "Devolver em breve" : "Em dia"
+                };
+            }).ToList<dynamic>();
+
+            return result;
         }
+
 
 
         // public async Task<bool> InsertObraAsync(int? PkNucleo, string nomeObra, string isbn, string autor, string editora, int ano, string imagePath = null, int quantidade = 0)

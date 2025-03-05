@@ -25,8 +25,6 @@ public partial class ProjectoContext : DbContext
 
     public virtual DbSet<Leitor> Leitors { get; set; }
 
-    public virtual DbSet<LookupTable> LookupTables { get; set; }
-
     public virtual DbSet<Nucleo> Nucleos { get; set; }
 
     public virtual DbSet<NucleoObra> NucleoObras { get; set; }
@@ -175,32 +173,6 @@ public partial class ProjectoContext : DbContext
                 .HasMaxLength(50)
                 .HasDefaultValue("USER")
                 .HasColumnName("user_role");
-        });
-
-        modelBuilder.Entity<LookupTable>(entity =>
-        {
-            entity.HasKey(e => e.PkLookup).HasName("PK__LookupTa__1DB356CC8FAFE216");
-
-            entity.ToTable("LookupTable");
-
-            entity.Property(e => e.PkLookup).HasColumnName("pk_lookup");
-            entity.Property(e => e.Categoty).HasColumnName("categoty");
-            entity.Property(e => e.Description)
-                .HasMaxLength(255)
-                .HasColumnName("description");
-            entity.Property(e => e.NParams)
-                .HasDefaultValue(0)
-                .HasColumnName("n_params");
-            entity.Property(e => e.NameParams)
-                .HasMaxLength(50)
-                .HasDefaultValueSql("(NULL)")
-                .HasColumnName("name_params");
-            entity.Property(e => e.SpAdoNet)
-                .HasMaxLength(50)
-                .HasColumnName("sp_AdoNet");
-            entity.Property(e => e.SpEfcore)
-                .HasMaxLength(50)
-                .HasColumnName("sp_EFCore");
         });
 
         modelBuilder.Entity<Nucleo>(entity =>
