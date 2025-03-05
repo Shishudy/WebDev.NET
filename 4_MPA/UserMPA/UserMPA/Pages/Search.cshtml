@@ -18,6 +18,20 @@
         <h1>Biblioteca Virtual</h1>
     </header>
 
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
     <div id="search">
         <form method="get">
             <input type="text" name="obra" placeholder="Buscar obra ou núcleo..." value="@Model.Request.Query["obra"]">
@@ -81,3 +95,6 @@
     </section>
 </body>
 </html>
+
+
+
