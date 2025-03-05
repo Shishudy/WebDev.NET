@@ -27,6 +27,8 @@ builder.Services.AddAuthorization(); // Add this line
 var configuration = builder.Configuration;
 var connectionString = configuration.GetConnectionString("DefaultConnection");
 var jwtSettings = configuration.GetSection("JwtSettings");
+Model model = new Model(connectionString);
+methodsMapping map_method = new methodsMapping();
 
 /////// ++++++++++ /////
 var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]); // Replace with your secret key
@@ -62,7 +64,6 @@ app.UseCors("AllowAll"); //
 app.UseAuthentication(); // Add this line
 app.UseAuthorization(); // Add this line
 
-Model model = new Model(connectionString);
 
 app.MapPost("/login", (JsonElement jsonRes) =>
 {
@@ -99,32 +100,16 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 .WithName("Login")
 .WithOpenApi();
 
-//app.MapPost("/login", (JsonElement jsonRes) =>
-//{
-//	try
-//	{
-//		return Results.Ok(model.Login(jsonRes));
-//	}
-//	catch (Exception ex)
-//	{
-//		//return Results.BadRequest(ex.Message);
-//		return Results.BadRequest(false);
-//	}
-//})
-//.WithName("Login")
-//.WithOpenApi();
-
 app.MapGet("/methods/{level}/{category}", (string level,string cat) =>
 {
 	try
 	{
-		return Results.Ok(model.GetMethods(level, cat));
+		return Results.Ok(map_method.GetMethods(level, cat));
 	}
 	catch (Exception ex)
 	{
 		return Results.BadRequest(ex.Message);
 	}
-	//return (model.Methods.keys);
 })
 .WithName("Methods")
 .WithOpenApi();
@@ -134,29 +119,8 @@ app.MapPost("/ResolveMethod/{method}/{page}/{size}", (string method, string? pag
 {
 	try
 	{
-		var methods_dic = model.MethodsDict;
-		var ParamList = model.GetParamList(method, param);
-		if (!methods_dic.ContainsKey(method))
-			throw new Exception("no such method listed");
-		// retorna os parametros necessarios
-		if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
-            return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
-		// vai buscar a lista
-		var result = model.ResolveMethod(method, ParamList);
-		if (page == null || size == null)
-			return Results.Ok(result);
-		// separar pacotes a enviar
-		int sizeInt = int.Parse(size);
-		int pageInt = int.Parse(page) * sizeInt;
-		if (pageInt < 0 || sizeInt < 0)
-            throw new Exception("invalid page or size");
-        var pagedResult = result as List<object>;
-        if (pagedResult == null)
-            throw new Exception("result is not a list");
-        if (pageInt + sizeInt >= pagedResult.Count)
-            throw new Exception("page out of range");
-        pagedResult = pagedResult.Skip(pageInt * sizeInt).Take(sizeInt).ToList();
-        return Results.Ok(pagedResult);
+		var res = model.MethodCaller(method, param);
+        return Results.Ok(model.paginationrow(res, page, size));
     }
     catch (Exception ex)
     {

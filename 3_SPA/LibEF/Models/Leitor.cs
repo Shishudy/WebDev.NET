@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
+
 
 namespace LibEF.Models;
 
@@ -9,6 +11,7 @@ public partial class Leitor
 
     public DateTime? DataInscricao { get; set; }
 
+    [JsonIgnore]
     public string UserPassword { get; set; } = null!;
 
     public string? UserRole { get; set; }
