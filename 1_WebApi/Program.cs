@@ -9,9 +9,6 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
 builder.Services.AddCors(options =>
 {
 	options.AddPolicy("AllowAll",
@@ -49,14 +46,7 @@ builder.Services.AddAuthentication(options =>
 	};
 });
 
-var app = builder.Build(); 
-
-if (app.Environment.IsDevelopment())
-{
-	app.UseSwagger();
-	app.UseSwaggerUI();
-}
-
+var app = builder.Build();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
@@ -127,14 +117,11 @@ app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 {
 	try
 	{
-		Console.WriteLine(param);
 		model.MethodCaller(method, param);
-
 		return Results.Ok("Sucesso!");
 	}
 	catch (Exception ex)
 	{
-		Console.WriteLine(ex.Message);
 		return Results.BadRequest(ex.Message);
 	}
 })

@@ -43,7 +43,6 @@ function buildForm() {
 
 function submitForm(data) {
 	let i = 0;
-	console.log(data);
 	const package = {};
 	while (i < data.length - 2)
 	{
@@ -64,9 +63,8 @@ function submitForm(data) {
 		}
 		return response.json();
 	}).then((data) => {
-		console.log(data);
+		return ;
 	}).catch((error) => {
 		console.error("Error:", error);
 	});
-	console.log("Submited!");
 }
