@@ -44,12 +44,10 @@ function buildForm() {
 function submitForm(data) {
 	let i = 0;
 	console.log(data);
-	let package = Array();
+	const package = {};
 	while (i < data.length - 2)
 	{
-		let obj = {};
-		obj[data[i].id] = data[i].value;
-		package.push(obj);
+		package[data[i].id] = data[i].value;
 		i++;
 	}
 	const selector = document.getElementById('method-selector');
