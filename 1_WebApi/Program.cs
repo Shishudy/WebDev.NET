@@ -2,7 +2,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using WebAPI.Model;
@@ -21,7 +20,7 @@ builder.Services.AddCors(options =>
 						.AllowAnyHeader());
 });
 
-builder.Services.AddAuthorization(); // Add this line
+builder.Services.AddAuthorization();
 
 // Read settings from appsettings.json
 var configuration = builder.Configuration;
@@ -30,7 +29,6 @@ var jwtSettings = configuration.GetSection("JwtSettings");
 Model model = new Model(connectionString);
 methodsMapping map_method = new methodsMapping();
 
-/////// ++++++++++ /////
 var key = Encoding.ASCII.GetBytes(jwtSettings["SecretKey"]); // Replace with your secret key
 builder.Services.AddAuthentication(options =>
 {
@@ -50,7 +48,6 @@ builder.Services.AddAuthentication(options =>
 		IssuerSigningKey = new SymmetricSecurityKey(key)
 	};
 });
-/////// ++++++++++ /////
 
 var app = builder.Build(); 
 
@@ -60,9 +57,9 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll"); //
-app.UseAuthentication(); // Add this line
-app.UseAuthorization(); // Add this line
+app.UseCors("AllowAll");
+app.UseAuthentication();
+app.UseAuthorization();
 
 
 app.MapPost("/login", (JsonElement jsonRes) =>
@@ -144,30 +141,6 @@ app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 .WithName("ResolveMethod")
 .WithOpenApi();
 // .WithAuthorization();
-
-
-//app.MapPost("/teste", (Object response) =>
-//{ 
-//	Console.WriteLine(response);
-//	var json = JsonSerializer.Serialize(response);
-//	return (json);
-//})
-//.WithName("Teste")
-//.WithOpenApi();
-
-// app.MapGet("/weatherforecast", (string str) =>
-// {
-//    ProjectoContext context = new ProjectoContext();
-//    EF_methods EF = new EF_methods(context);
-//    var forecast = EF.GetPassWordbyLogin(str);
-//    var obj = new { result = forecast };
-//    var json = JsonSerializer.Serialize(obj);
-//    return (json);
-// })
-// .WithName("GetWeatherForecast")
-// .WithOpenApi();
-// .WithAuthorization();
-
 
 app.UseCors("AllowAll");
 app.Run();

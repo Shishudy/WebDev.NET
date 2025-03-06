@@ -12,10 +12,10 @@
 
   <ItemGroup>
     <Reference Include="LibADO">
-      <HintPath>..\..\..\LibADO\LibADO\obj\Debug\LibADO.dll</HintPath>
+      <HintPath>..\..\LibADO\LibADO\bin\Debug\LibADO.dll</HintPath>
     </Reference>
     <Reference Include="LibDB">
-      <HintPath>..\..\..\..\..\dll\LibDB2.dll</HintPath>
+      <HintPath>..\..\LibADO\LibADO\bin\Debug\LibDB.dll</HintPath>
     </Reference>
   </ItemGroup>
 

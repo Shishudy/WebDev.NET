@@ -117,7 +117,7 @@ namespace WebAPI.Model
             }
 			catch (Exception ex)
             {
-				throw;
+				throw new Exception(ex.Message);
 			}
 		}
 
