@@ -2,10 +2,12 @@
 @import "forms.css";
 @import "loading.css";
 @import "pagination.css";
+@import "tabs.css";
 
 @import "keyframes.css";
 
 body {
+	width: 100%;
 	font-family: Arial, sans-serif;
 	margin: 0;
 	padding: 0;
@@ -16,76 +18,17 @@ body {
 }
 
 header {
+	width: 100%;
 	background-color: #333;
 	color: white;
 	padding: 15px;
 	text-align: center;
 }
 
-.div--tab {
-	background: white;
-	padding: 20px;
-	border-radius: 20px;
-	width: 450px;
-	text-align: center;
-	box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.div--search-filter {
-	display: flex;
-	justify-content: space-between;
-	margin-bottom: 15px;
-}
-
-.div--search-box {
-	display: flex;
-}
-
-#search-box-input {
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 5px 0 0 5px;
-	outline: none;
-}
-
-.div--search-box button {
-	background: #007bff;
-	color: white;
-	border: none;
-	padding: 8px;
-	cursor: pointer;
-	border-radius: 0 5px 5px 0;
-}
-
-.div--filter-box select {
-	padding: 8px;
-	border: 1px solid #ccc;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
-.div--results-list {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-}
-
-.div--result {
-	background: #e9ecef;
-	padding: 10px;
-	border-radius: 5px;
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
-}
-
-.div--result button {
-	background: #010101;
-	color: white;
-	border: none;
-	padding: 5px 10px;
-	border-radius: 5px;
-	cursor: pointer;
+.div--main {
+	display: grid;
+    place-items: center;
+    height: 100vh;
 }
 
 /* .div--form-input {

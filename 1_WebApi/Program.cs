@@ -112,15 +112,32 @@ app.MapGet("/items/{tab}/{search}/{page}", (string tab, string? search = null, s
 .WithOpenApi();
 // .WithAuthorization();
 
-app.MapPost("/ResolveMethod/{method}", (string method, string? page, [FromBody] JsonElement param) =>
+app.MapGet("/methods/{tab}", (string tab) =>
+{
+    try
+    {
+        return Results.Ok(map_method.GetMethods(tab, "all"));
+    }
+    catch (Exception ex)
+    {
+        return Results.BadRequest(ex.Message);
+    }
+})
+.WithName("Methods")
+.WithOpenApi();
+
+app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 {
 	try
 	{
+		Console.WriteLine(param);
 		model.MethodCaller(method, param);
+
 		return Results.Ok("Sucesso!");
 	}
 	catch (Exception ex)
 	{
+		Console.WriteLine(ex.Message);
 		return Results.BadRequest(ex.Message);
 	}
 })

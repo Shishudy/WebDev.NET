@@ -7,6 +7,7 @@ function searchInput() {
 		changeTab(currentTab, null, 1);
 	else
 		changeTab(currentTab, input, 1);
+	document.getElementById("search-box-input").value = "";
 }
 
 function changeTab(tab, search, page) {
@@ -20,7 +21,10 @@ function changeTab(tab, search, page) {
 		document.getElementById("tab-title").innerHTML = "Núcleos";
 	else if (tab === "utilizadores")
 		document.getElementById("tab-title").innerHTML = "Gestão de Utilizadores";
+	// else if (tab === "stats")
+	// 	document.getElementById("tab-title").innerHTML = "Estatísticas";
 	buildResultsList(tab, search, page);
+	document.getElementById("tab-div").style.display = "block";
 	document.getElementById("loading-modal-div").style.display = "none";
 }
 
@@ -35,7 +39,6 @@ function buildResultsList(tab, search, page) {
 			return alert("Pesquisa não retornou resultados!");
 		items = data;
 		Object.assign(items, { "search" : search});
-		console.log(items);
 		createResultTable();
 		buildPagination();
 	}).catch((error) => {
@@ -58,18 +61,20 @@ function createResultTable() {
 		head.appendChild(headMember);
 	});
 	table.appendChild(head);
+	let body = document.createElement("tbody");
 	while (i < (items.table).length)
 	{
 		let row = document.createElement("tr");
 		Object.entries(items.table[i]).forEach(([key, value]) => {
-			let rowMember = document.createElement("th");
+			let rowMember = document.createElement("td");
 			rowMember.innerHTML = `${value}`;
 			row.appendChild(rowMember);
 		});
-		table.appendChild(row);
-		resultsList.appendChild(table);
+		body.appendChild(row);
 		i++;
 	}
+	table.appendChild(body);
+	resultsList.appendChild(table);
 }
 
 function buildPagination() {
@@ -92,8 +97,6 @@ function buildPagination() {
 	while (startPage <= endPage) {
 		node = document.createElement("a");
 		node.setAttribute("onclick", `changePage(${startPage});`);
-		console.log(startPage);
-
 		if (startPage == items.currPage) {
 			node.setAttribute("class", "active");
 		}

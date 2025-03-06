@@ -9,6 +9,6 @@ document.body.addEventListener("submit", function (event) {
 	event.preventDefault();
 	if (event.target.id === "login-form")
 		login(event.target.elements);
-	else if (event.target.id === "form-input")
-		submitForm(event);
+	else if (event.target.id === "form-modal-form")
+		submitForm(event.target.elements);
 });

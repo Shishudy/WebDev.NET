@@ -42,13 +42,9 @@ namespace WebAPI.Model
 			var methods_dic = _map_method.MethodsDict;
 			if (!methods_dic.ContainsKey(method))
 				throw new Exception("no such method listed.");
-			var ParamList = _map_method.GetParamList(method, param);
-			//// retorna os parametros necessarios
-			//if ((ParamList == null || ParamList.Count == 0) && methods_dic[method] != null)
-			//	return Results.Ok(JsonSerializer.Serialize(methods_dic[method]));
-			// vai buscar a lista
+            var ParamList = _map_method.GetParamList(method, param);
 			var result = ResolveMethod(method, ParamList);
-			return (result); // se nao for lista, nao paginar
+			return (result);
 		}
 
 		
@@ -106,7 +102,7 @@ namespace WebAPI.Model
 			{
 				ProjectoContext context = new ProjectoContext();
 				EF_methods ef = new EF_methods(_context);
-				object result = new object { };
+                List<dynamic> result = new List<dynamic>();
 				if (search == "null")
 					search = null;
 				if (tab == "reservas")
@@ -117,33 +113,28 @@ namespace WebAPI.Model
                     result = ef.GetAllNucleos(search);
 				else if (tab == "utilizadores")
                     result = ef.GetAllLeitores(search);
-				Console.WriteLine(result);
-
 				return paginationrow(result, page);
             }
-			catch
-			{
+			catch (Exception ex)
+            {
 				throw;
 			}
 		}
 
-        public object paginationrow(object result, string? page)
+        public object paginationrow(List<dynamic> result, string? page)
         {
-            var pagedResult = result as List<object>;
-            if (pagedResult == null)
-                return pagedResult;
-            int count = pagedResult.Count;
+            int count = result.Count;
             int sizeInt = 10;
 			int pageInt = 1;
 			if (int.TryParse(page, out pageInt) == true)
 				;
-            pagedResult = pagedResult.Skip((pageInt - 1) * sizeInt).Take(sizeInt).ToList();
+            result = result.Skip((pageInt - 1) * sizeInt).Take(sizeInt).ToList();
 			var totalPages = count / sizeInt;
 			if (totalPages == 0)
 				totalPages++;
             var response = new Dictionary<string, object>
             {
-                { "table", pagedResult },
+                { "table", result },
                 { "currPage", pageInt },
                 { "totalPages", totalPages },
             };

@@ -182,7 +182,6 @@ public partial class ProjectoContext : DbContext
             entity.ToTable("Nucleo");
 
             entity.Property(e => e.PkNucleo).HasColumnName("pk_nucleo");
-            entity.Property(e => e.FkCentral).HasColumnName("fk_central");
             entity.Property(e => e.Morada)
                 .HasMaxLength(50)
                 .HasDefaultValueSql("(NULL)")
@@ -194,10 +193,6 @@ public partial class ProjectoContext : DbContext
                 .HasMaxLength(20)
                 .HasDefaultValueSql("(NULL)")
                 .HasColumnName("telefone");
-
-            entity.HasOne(d => d.FkCentralNavigation).WithMany(p => p.InverseFkCentralNavigation)
-                .HasForeignKey(d => d.FkCentral)
-                .HasConstraintName("FK__Nucleo__fk_centr__4222D4EF");
         });
 
         modelBuilder.Entity<NucleoObra>(entity =>

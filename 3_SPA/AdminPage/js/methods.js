@@ -1,7 +1,7 @@
 let methods;
 
 function getMethods() {
-	fetch(apiUrl + "methods/all/all").then((response) => {
+	fetch(apiUrl + `methods/${currentTab}`).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
@@ -16,12 +16,15 @@ function getMethods() {
 
 function buildMethodSelector() {
 	const selectorDiv = document.getElementById("method-selector-div");
-	if (selectorDiv.firstElementChild)
-		return ;
+	while (selectorDiv.firstElementChild)
+		selectorDiv.removeChild(selectorDiv.firstElementChild)
 	const selector = document.createElement("select");
 	selector.setAttribute("id", "method-selector");
 	selector.setAttribute("onchange", "buildForm()");
 	let option;
+	option = document.createElement("option");
+	option.textContent = "Action list";
+	selector.appendChild(option);
 	for (const key in methods) {
 		option = document.createElement("option");
 		option.setAttribute("value", key);

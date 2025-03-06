@@ -1,9 +1,6 @@
 function showFormModal() {
 	document.getElementById("form-modal-div").style.display = "flex";
-	if (!methods)
-		getMethods();
-	else
-		buildMethodSelector();
+	getMethods();
 }
 
 function buildForm() {
@@ -11,7 +8,6 @@ function buildForm() {
 	const form = document.getElementById('form-modal-form');
 	while (form.firstElementChild)
 		form.removeChild(form.firstElementChild);
-	form.setAttribute('id', 'form-modal-form');
 	let formStructure = methods[selector.value];
 	if (formStructure)
 	{
@@ -19,7 +15,6 @@ function buildForm() {
 			const label = document.createElement('label');
 			label.setAttribute('for', field.name);
 			label.textContent = field.name;
-	
 			const input = document.createElement('input');
 			input.setAttribute('id', field.name);
 			input.setAttribute('type', field.type);
@@ -30,6 +25,7 @@ function buildForm() {
 			}
 			form.appendChild(label);
 			form.appendChild(input);
+			form.appendChild(document.createElement('br'))
 		});
 		const clearInput = document.createElement('button');
 		clearInput.setAttribute('id', 'modal-form-clear-button');
@@ -37,18 +33,34 @@ function buildForm() {
 		clearInput.setAttribute('value', 'Reset form');
 		clearInput.textContent = "Clear";
 		form.appendChild(clearInput);
+		const submitButton = document.createElement('button');
+		submitButton.setAttribute('id', 'modal-form-submit-button');
+		submitButton.setAttribute('type', 'submit');
+		submitButton.textContent = 'Submit';
+		form.appendChild(submitButton);
 	}
-	const submitButton = document.createElement('button');
-	submitButton.setAttribute('id', 'modal-form-submit-button');
-	submitButton.setAttribute('type', 'submit');
-	submitButton.textContent = 'Submit';
-	form.appendChild(submitButton);
 }
 
 function submitForm(data) {
+	let i = 0;
 	console.log(data);
+	let package = Array();
+	while (i < data.length - 2)
+	{
+		let obj = {};
+		obj[data[i].id] = data[i].value;
+		package.push(obj);
+		i++;
+	}
 	const selector = document.getElementById('method-selector');
-	fetch(apiUrl + `ResolveMethod/${selector.value}`).then((response) => {
+	var options = {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+		},
+		body: JSON.stringify(package),
+	};
+	fetch(apiUrl + `ResolveMethod/${selector.value}`, options).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}

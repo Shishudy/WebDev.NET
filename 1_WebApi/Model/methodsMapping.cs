@@ -38,7 +38,7 @@ namespace WebAPI.Model
             {
 				return null;
 			}
-			var paramDict = JsonSerializer.Deserialize<Dictionary<string, JsonElement>>(param.GetRawText());
+			var paramDict = JsonSerializer.Deserialize<Dictionary<string, string>>(param);
 			var paramList = new List<object>();
 			foreach (var item in MethodsDict[method])
 			{
@@ -50,16 +50,16 @@ namespace WebAPI.Model
 					switch (paramType)
 					{
 						case "number":
-							paramList.Add(paramDict[paramName].GetInt32());
+							paramList.Add(int.Parse(paramDict[paramName]));
 							break;
 						case "text":
 						case "email":
 						case "password":
 						case "radio":
-							paramList.Add(paramDict[paramName].GetString());
+							paramList.Add(paramDict[paramName].ToString());
 							break;
 						case "date":
-							paramList.Add(paramDict[paramName].GetDateTime());
+							paramList.Add(DateTime.Parse(paramDict[paramName]));
 							break;
 						default:
 							paramList.Add(paramDict[paramName].ToString());
@@ -118,38 +118,8 @@ namespace WebAPI.Model
 
 		public void BuildMethodCategory()
 		{
-			method_category["obras"] = new List<MethodDetails>
+            method_category["obras"] = new List<MethodDetails>
 			{
-				new MethodDetails
-				{
-					Description = "Lista Todas as Obras",
-					MethodName = "GetAllObras",
-					Category = "get"
-				},
-				new MethodDetails
-				{
-					Description = "Procura Obra",
-					MethodName = "sp_search_Obra",
-					Category = "search"
-				},
-				new MethodDetails
-				{
-					Description = "Get Total de Obras",
-					MethodName = "GetTotalObra",
-					Category = "items"
-				},
-				new MethodDetails
-				{
-					Description = "Get Total de Obras por Gênero",
-					MethodName = "GetTotalObraPorGenero",
-					Category = "items"
-				},
-				new MethodDetails
-				{
-					Description = "Get Top Obras Requisitadas por Tempo",
-					MethodName = "GetTopRequestedByTime",
-					Category = "items"
-				},
 				new MethodDetails
 				{
 					Description = "Inserir Obra",
@@ -187,18 +157,6 @@ namespace WebAPI.Model
 			{
 				new MethodDetails
 				{
-					Description = "Lista Todos os Núcleos",
-					MethodName = "GetAllNucleos",
-					Category = "get"
-				},
-				new MethodDetails
-				{
-					Description = "Procura Núcleo",
-					MethodName = "sp_search_Nucleo",
-					Category = "search"
-				},
-				new MethodDetails
-				{
 					Description = "Adicionar Obra em Núcleo",
 					MethodName = "AddObraInNucleo",
 					Category = "items"
@@ -209,38 +167,14 @@ namespace WebAPI.Model
 			{
 				new MethodDetails
 				{
-					Description = "Lista Todas as Reservas",
-					MethodName = "GetAllRequisicoes",
-					Category = "get"
-				},
-				new MethodDetails
-				{
-					Description = "Procura Reserva",
-					MethodName = "sp_search_Request",
-					Category = "search"
-				},
-				new MethodDetails
-				{
 					Description = "Status da Requisição",
 					MethodName = "requesicao_status",
 					Category = "filter"
 				},
 			};
 
-			method_category["gestao"] = new List<MethodDetails>
+			method_category["utilizadores"] = new List<MethodDetails>
 			{
-				new MethodDetails
-				{
-					Description = "Lista Todos os Utilizadores",
-					MethodName = "GetAllLeitores",
-					Category = "get"
-				},
-				new MethodDetails
-				{
-					Description = "Procura Utilizador",
-					MethodName = "sp_search_Leitores",
-					Category = "search"
-				},
 				new MethodDetails
 				{
 					Description = "Inserir Utilizador",
@@ -290,7 +224,29 @@ namespace WebAPI.Model
 					Category = "items"
 				},
 			};
-		}
+
+            method_category["stats"] = new List<MethodDetails>
+            {
+                new MethodDetails
+                {
+                    Description = "Get Total de Obras",
+                    MethodName = "GetTotalObra",
+                    Category = "items"
+                },
+                new MethodDetails
+                {
+                    Description = "Get Total de Obras por Gênero",
+                    MethodName = "GetTotalObraPorGenero",
+                    Category = "items"
+                },
+                new MethodDetails
+                {
+                    Description = "Get Top Obras Requisitadas por Tempo",
+                    MethodName = "GetTopRequestedByTime",
+                    Category = "items"
+                },
+            };
+        }
 
 		public void BuildMethodsDict()
 		{

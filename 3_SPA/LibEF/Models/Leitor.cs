@@ -26,5 +26,6 @@ public partial class Leitor
 
     public string? Morada { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Requisicao> Requisicaos { get; set; } = new List<Requisicao>();
 }

@@ -63,6 +63,29 @@
         }
       }
     },
+    "/methods/{tab}": {
+      "get": {
+        "tags": [
+          "WebAPI"
+        ],
+        "operationId": "Methods",
+        "parameters": [
+          {
+            "name": "tab",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/ResolveMethod/{method}": {
       "post": {
         "tags": [
@@ -74,13 +97,6 @@
             "name": "method",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
             "schema": {
               "type": "string"
             }
