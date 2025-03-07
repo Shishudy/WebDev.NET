@@ -7,6 +7,7 @@ function login(inputs)
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${sessionStorage.getItem("myToken")}`,
 		},
 		body: JSON.stringify({ email : inputs[0].value, password : inputs[1].value }),
 	};
@@ -19,7 +20,7 @@ function login(inputs)
 		return response.json();
 	}).then((data) => {
 		if (data) {
-			sessionStorage.setItem("userData", JSON.stringify(data));
+			sessionStorage.setItem("myToken", data.token);
 			document.getElementById("login-modal-div").style.display = "none";
 		}
 		else {
@@ -39,6 +40,6 @@ function togglePassword() {
 }
 
 function logout() {
-	sessionStorage.removeItem('userData');
+	sessionStorage.removeItem('myToken');
 	location.reload(true);
 }

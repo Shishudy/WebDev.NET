@@ -54,6 +54,7 @@ function submitForm(data) {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
+			"Authorization": `Bearer ${sessionStorage.getItem("myToken")}`,
 		},
 		body: JSON.stringify(package),
 	};

@@ -10,7 +10,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddCors(options =>
-{
+{//
 	options.AddPolicy("AllowAll",
 		policy => policy.AllowAnyOrigin()
 						.AllowAnyMethod()
@@ -40,8 +40,8 @@ builder.Services.AddAuthentication(options =>
 		ValidateAudience = true,
 		ValidateLifetime = true,
 		ValidateIssuerSigningKey = true,
-		ValidIssuer = jwtSettings["Issuer"],  // Local development (http://localhost:5000) or production (https://mywebsite.com)
-		ValidAudience = jwtSettings["Audience"], // the audience that the token is intended for ( the URL of the API)
+		ValidIssuer = jwtSettings["Issuer"],
+		ValidAudience = jwtSettings["Audience"],
 		IssuerSigningKey = new SymmetricSecurityKey(key)
 	};
 });
@@ -50,7 +50,6 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapPost("/login", (JsonElement jsonRes) =>
 {
@@ -64,8 +63,8 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 			{
 				Subject = new ClaimsIdentity(new[] { new Claim(ClaimTypes.Name, "admin") }),
 				Expires = DateTime.UtcNow.AddHours(1),
-				Issuer = jwtSettings["Issuer"], // Replace with your issuer
-				Audience = jwtSettings["Audience"], // Replace with your audience
+				Issuer = jwtSettings["Issuer"],
+				Audience = jwtSettings["Audience"],
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 			var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -74,15 +73,18 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 			return Results.Ok(new { Token = tokenString });
 		}
 		else
-			return Results.Ok("");
+			return Results.Unauthorized();
+			// return Results.Ok("");
 	}
 	catch (Exception ex)
 	{
-		return Results.BadRequest(ex.Message);
+        Console.WriteLine(ex.Message);
+        return Results.BadRequest(ex.Message);
 	}
 })
 .WithName("Login")
 .WithOpenApi();
+
 
 app.MapGet("/items/{tab}/{search}/{page}", (string tab, string? search = null, string? page = null) =>
 {
@@ -92,12 +94,13 @@ app.MapGet("/items/{tab}/{search}/{page}", (string tab, string? search = null, s
 	}
 	catch (Exception ex)
 	{
-		return Results.BadRequest(ex.Message);
+        Console.WriteLine(ex.Message);
+        return Results.BadRequest(ex.Message);
 	}
 })
 .WithName("Items")
-.WithOpenApi();
-// .WithAuthorization();
+.WithOpenApi()
+.RequireAuthorization();
 
 app.MapGet("/methods/{tab}", (string tab) =>
 {
@@ -107,11 +110,13 @@ app.MapGet("/methods/{tab}", (string tab) =>
     }
     catch (Exception ex)
     {
+        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 })
 .WithName("Methods")
-.WithOpenApi();
+.WithOpenApi()
+.RequireAuthorization();
 
 app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 {
@@ -122,12 +127,13 @@ app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 	}
 	catch (Exception ex)
 	{
+		Console.WriteLine(ex.Message);
 		return Results.BadRequest(ex.Message);
 	}
 })
 .WithName("ResolveMethod")
-.WithOpenApi();
-// .WithAuthorization();
+.WithOpenApi()
+.RequireAuthorization();
 
 app.UseCors("AllowAll");
 app.Run();

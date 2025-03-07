@@ -1,7 +1,14 @@
 let methods;
 
 function getMethods() {
-	fetch(apiUrl + `methods/${currentTab}`).then((response) => {
+	var options = {
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${sessionStorage.getItem("myToken")}`,
+		},
+	};
+	fetch(apiUrl + `methods/${currentTab}`, options)
+		.then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}

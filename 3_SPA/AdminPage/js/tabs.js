@@ -29,7 +29,14 @@ function changeTab(tab, search, page) {
 }
 
 function buildResultsList(tab, search, page) {
-	fetch(apiUrl + `items/${tab}/${search}/${page}`).then((response) => {
+	console.log(sessionStorage.getItem("myToken"));
+	var options = {
+		headers: {
+			"Content-Type": "application/json",
+			"Authorization": `Bearer ${sessionStorage.getItem("myToken")}`,
+		},
+	};
+	fetch(apiUrl + `items/${tab}/${search}/${page}`, options).then((response) => {
 		if (!response.ok) {
 			throw new Error('Network response was not ok');
 		}
