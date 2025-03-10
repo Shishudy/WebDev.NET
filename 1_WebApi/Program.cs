@@ -73,12 +73,11 @@ app.MapPost("/login", (JsonElement jsonRes) =>
 			return Results.Ok(new { Token = tokenString });
 		}
 		else
-			return Results.Unauthorized();
-			// return Results.Ok("");
+			return Results.Ok("");
+			// return Results.Unauthorized();
 	}
 	catch (Exception ex)
 	{
-        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
 	}
 })
@@ -94,7 +93,6 @@ app.MapGet("/items/{tab}/{search}/{page}", (string tab, string? search = null, s
 	}
 	catch (Exception ex)
 	{
-        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
 	}
 })
@@ -110,7 +108,6 @@ app.MapGet("/methods/{tab}", (string tab) =>
     }
     catch (Exception ex)
     {
-        Console.WriteLine(ex.Message);
         return Results.BadRequest(ex.Message);
     }
 })
@@ -127,7 +124,6 @@ app.MapPost("/ResolveMethod/{method}", (string method, JsonElement param) =>
 	}
 	catch (Exception ex)
 	{
-		Console.WriteLine(ex.Message);
 		return Results.BadRequest(ex.Message);
 	}
 })
